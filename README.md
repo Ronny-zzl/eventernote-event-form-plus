@@ -7,7 +7,7 @@
 ## インストール
 
 1. ブラウザに [Tampermonkey](https://www.tampermonkey.net/) をインストールします
-2. [こちら](https://github.com/Ronny-zzl/eventernote-enhancer/raw/main/eventernote-add-enhancer.user.js) を開き、Tampermonkey の画面で「インストール」を押します
+2. [こちら](https://github.com/Ronny-zzl/eventernote-event-form-plus/raw/main/eventernote-event-form-plus.user.js) を開き、Tampermonkey の画面で「インストール」を押します
 
 ## 機能
 
@@ -34,7 +34,7 @@
 
 ## 不具合報告・要望
 
-[Issues](https://github.com/Ronny-zzl/eventernote-enhancer/issues) までお願いします。
+[Issues](https://github.com/Ronny-zzl/eventernote-event-form-plus/issues) までお願いします。
 
 ## ライセンス
 
@@ -46,7 +46,7 @@
 
 改善 [Eventernote](https://www.eventernote.com/) 活动登录页和编辑页的 Tampermonkey 用户脚本。
 
-**安装**：安装 [Tampermonkey](https://www.tampermonkey.net/) 后，打开[这个链接](https://github.com/Ronny-zzl/eventernote-enhancer/raw/main/eventernote-add-enhancer.user.js)并点击「安装」。
+**安装**：安装 [Tampermonkey](https://www.tampermonkey.net/) 后，打开[这个链接](https://github.com/Ronny-zzl/eventernote-event-form-plus/raw/main/eventernote-event-form-plus.user.js)并点击「安装」。
 
 **功能**：
 
