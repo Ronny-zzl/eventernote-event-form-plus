@@ -1,8 +1,18 @@
 // ==UserScript==
-// @name         Eventernote Add Event Enhancer
+// @name         Eventernote イベント登録エンハンサー
+// @name:ja      Eventernote イベント登録エンハンサー
+// @name:zh-CN   Eventernote 活动登录增强
+// @name:en      Eventernote Add Event Enhancer
 // @namespace    https://github.com/Ronny-zzl/eventernote-enhancer
-// @version      0.6.0
-// @description  改善 eventernote 活动创建页面的使用体验
+// @version      0.1.0
+// @description  イベンターノートのイベント登録・編集画面を使いやすくします：出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
+// @description:ja イベンターノートのイベント登録・編集画面を使いやすくします：出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
+// @description:zh-CN 改善 Eventernote 活动登录和编辑页面：出演者排序、出演者组合、从确认页返回修改、添加缩略图
+// @description:en Improves the Eventernote event add/edit forms: reorder performers, performer sets, back button on the confirm page, thumbnail images
+// @author       Ronny-zzl
+// @license      MIT
+// @homepageURL  https://github.com/Ronny-zzl/eventernote-enhancer
+// @supportURL   https://github.com/Ronny-zzl/eventernote-enhancer/issues
 // @match        https://www.eventernote.com/events/*
 // @grant        GM_setValue
 // @grant        GM_getValue
