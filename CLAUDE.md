@@ -4,7 +4,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
 - 唯一源码文件：`eventernote-event-form-plus.user.js`（无构建步骤，检查语法用 `node --check`）
-- 当前版本：`0.2.0`（已打 `v0.2.0` 标签并推送，GitHub Release 附更新说明）
+- 当前版本：`0.2.1`（已打 `v0.2.1` 标签并推送，GitHub Release 附更新说明）
 
 ## 约定
 
@@ -39,6 +39,9 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 
 ### 图片
 - S3：`https://eventernote.s3.amazonaws.com/images/events/{id}.jpg`（原图，例 1200×620）和 `{id}_s.jpg`（高 300，用于列表 / OGP）；无图时用 `no_image.png`
+- S3 允许跨域 GET（`Access-Control-Allow-Origin: *`），可读 `Last-Modified`；不存在的图片返回 **403**（不是 404）
+- **新活动登录后，网站会在后台根据「関連リンク」自动生成图片**（OGP 图或网页截图，x.com 链接会得到坏掉的截图），约 5 秒后写入 S3，覆盖在此之前上传的图片（活动 494909：12:32:51 登录，12:32:52 脚本上传，12:32:56 被覆盖）。编辑页手动上传不会触发重新生成（494891 已确认）。**没有链接时不会生成**（494912：登录后约 100 秒 S3 仍是 403），但活动页照样引用 `{id}.jpg`，显示为坏图（网站本身的行为）
+- 编辑历史 API：`GET /api/events/history?event_history_id=…`（活动页里 `showHistory(id)` 的 id）
 
 ### 已有数据的时间惯例
 - 抽查 2026-07〜10 的 11143 条时间，全部是 5 分钟一档，没有 24 点以后的值
@@ -49,7 +52,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 1. **出演者排序**：拖动 ☰ 或 ▲▼；调整 DOM 后同步 `unsafeWindow.selected_actors` 和 `#actor_ids`
 2. **出演者セット**：把已选出演者存为组合（`GM_setValue('actorPresets')`），一键添加
 3. **确认页「戻って修正する」**：登录页提交时存快照（`formSnapshot`），跳回 `/events/add?ene_restore=1` 后恢复全部字段
-4. **登录页缩略图**：拖入 / Ctrl+V / 选文件（`createImageDrop` 组件）→ `draftImage` → 确认页提交时转为 `pendingUpload`（30 分钟有效）→ 完成后在完成页链接或活动页 URL 找到新活动 ID，**核对活动名和会场**后用编辑页原样提交 + `thumbnail_image`
+4. **登录页缩略图**：拖入 / Ctrl+V / 选文件（`createImageDrop` 组件）→ `draftImage` → 确认页提交时转为 `pendingUpload`（30 分钟有效）→ 完成后在完成页链接或活动页 URL 找到新活动 ID，**核对活动名和会场**；有链接时先轮询 S3 等网站自动生成的图片出现（最多 60 秒），再用编辑页原样提交 + `thumbnail_image`，最后用 `Last-Modified` 确认已被替换。0.2.1 起；494918 实测：登录 13:03:54 → 等待后 13:04:00 上传 → 没有再被覆盖
 5. **编辑页图片框**：同一组件，选中的图片用 `DataTransfer` 塞进原生 `thumbnail_image`
 6. **时间输入**：见下方「时间输入改进」一节
 

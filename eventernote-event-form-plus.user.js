@@ -4,7 +4,7 @@
 // @name:zh-CN   Eventernote 活动登录增强
 // @name:en      Eventernote Add Event Enhancer
 // @namespace    https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version      0.2.0
+// @version      0.2.1
 // @description  イベンターノートのイベント登録・編集画面を使いやすくします：時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja イベンターノートのイベント登録・編集画面を使いやすくします：時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:zh-CN 改善 Eventernote 活动登录和编辑页面：时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图
@@ -801,6 +801,7 @@
     box.appendChild(close);
     box.appendChild(document.createTextNode(message));
     document.body.appendChild(box);
+    return box;
   }
 
   // 图片选择框（拖入 / Ctrl+V / 文件选择），登录页和编辑页共用。
@@ -1019,13 +1020,35 @@
     return data;
   }
 
-  function imageExists(url) {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
-      img.src = url + '?t=' + Date.now();
-    });
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  // S3 图片的 Last-Modified（毫秒）；不存在时 S3 返回 403 → null。S3 允许跨域 GET
+  async function imageLastModified(url) {
+    try {
+      const res = await fetch(url + '?t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) return null;
+      return Date.parse(res.headers.get('Last-Modified')) || 0;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  // 新活动登录后，网站会在后台根据「関連リンク」生成图片（OGP 图或网页截图），约 5 秒后写入 S3，
+  // 会覆盖在此之前上传的图片。所以有链接时先等这张自动图片出现再上传。
+  const SITE_IMAGE_WAIT_MS = 60 * 1000;
+  const UPLOAD_LOCK_MS = 2 * 60 * 1000;
+
+  async function waitForSiteImage(url) {
+    const deadline = Date.now() + SITE_IMAGE_WAIT_MS;
+    while (Date.now() < deadline) {
+      const lm = await imageLastModified(url);
+      if (lm !== null) {
+        await sleep(2000); // 原图和缩略图可能不是同时写完
+        return lm;
+      }
+      await sleep(2000);
+    }
+    return null;
   }
 
   async function processPendingUpload() {
@@ -1035,7 +1058,7 @@
       GM_setValue(PENDING_UPLOAD_KEY, null);
       return;
     }
-    if (pending.uploadingAt && Date.now() - pending.uploadingAt < 60 * 1000) return; // 其他标签页正在处理
+    if (pending.uploadingAt && Date.now() - pending.uploadingAt < UPLOAD_LOCK_MS) return; // 其他标签页正在处理
 
     for (const id of candidateEventIds()) {
       const edit = await fetchEditForm(id);
@@ -1049,6 +1072,16 @@
       }
 
       GM_setValue(PENDING_UPLOAD_KEY, Object.assign({}, pending, { uploadingAt: Date.now() }));
+
+      const imageUrl = S3_EVENT_IMAGE + id + '_s.jpg';
+      const hasLink = Boolean(edit.form.elements.link && edit.form.elements.link.value.trim());
+      let siteImageAt = await imageLastModified(imageUrl);
+      if (siteImageAt === null && hasLink) {
+        const waiting = showNotice('サイトによる画像の自動生成を待っています。このページを開いたままお待ちください…');
+        siteImageAt = await waitForSiteImage(imageUrl);
+        waiting.remove();
+      }
+
       try {
         const res = await fetch(edit.form.getAttribute('action'), {
           method: 'POST',
@@ -1063,11 +1096,20 @@
       }
       GM_setValue(PENDING_UPLOAD_KEY, null);
 
-      if (await imageExists(S3_EVENT_IMAGE + id + '_s.jpg')) {
+      // 确认 S3 上的图片已换成刚上传的（比自动生成的图片更新）
+      let uploadedAt = null;
+      for (let i = 0; i < 5 && uploadedAt === null; i++) {
+        const lm = await imageLastModified(imageUrl);
+        if (lm !== null && (siteImageAt === null || lm > siteImageAt)) uploadedAt = lm;
+        else await sleep(2000);
+      }
+      if (uploadedAt === null) {
+        showNotice('画像を送信しましたが、反映を確認できませんでした。しばらくしてからイベントページを確認してください。', 'error');
+      } else if (siteImageAt === null && hasLink) {
+        showNotice('サムネイル画像をアップロードしましたが、サイトの自動生成画像に置き換えられる可能性があります。しばらくしてからイベントページを確認してください。', 'error');
+      } else {
         showNotice('サムネイル画像をアップロードしました。');
         if (location.pathname.match(/^\/events\/\d+\/?$/)) setTimeout(() => location.reload(), 1500);
-      } else {
-        showNotice('画像を送信しましたが、反映を確認できませんでした。しばらくしてからイベントページを確認してください。', 'error');
       }
       return;
     }
