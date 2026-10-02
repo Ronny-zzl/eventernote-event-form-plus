@@ -4,11 +4,11 @@
 // @name:zh-CN   Eventernote 活动登录增强
 // @name:en      Eventernote Add Event Enhancer
 // @namespace    https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version      0.1.0
-// @description  イベンターノートのイベント登録・編集画面を使いやすくします：出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
-// @description:ja イベンターノートのイベント登録・編集画面を使いやすくします：出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
-// @description:zh-CN 改善 Eventernote 活动登录和编辑页面：出演者排序、出演者组合、从确认页返回修改、添加缩略图
-// @description:en Improves the Eventernote event add/edit forms: reorder performers, performer sets, back button on the confirm page, thumbnail images
+// @version      0.2.0
+// @description  イベンターノートのイベント登録・編集画面を使いやすくします：時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
+// @description:ja イベンターノートのイベント登録・編集画面を使いやすくします：時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
+// @description:zh-CN 改善 Eventernote 活动登录和编辑页面：时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图
+// @description:en Improves the Eventernote event add/edit forms: smarter time input, reorder performers, performer sets, back button on the confirm page, thumbnail images
 // @author       Ronny-zzl
 // @license      MIT
 // @homepageURL  https://github.com/Ronny-zzl/eventernote-event-form-plus
@@ -256,6 +256,386 @@
     });
 
     render();
+  }
+
+  // ---- 时间：允许 1 分钟单位 ----
+  // 原分钟下拉框只有 5 分钟一档，这里补全 00–59。保留原有选中值，提交格式不变。
+  const MINUTE_SELECT_IDS = ['open_time_minute', 'start_time_minute', 'end_time_minute'];
+
+  function initMinuteOptions() {
+    MINUTE_SELECT_IDS.forEach((id) => {
+      const select = document.getElementById(id);
+      if (!select) return;
+      const current = select.value;
+      const existing = new Set(Array.from(select.options).map((o) => o.value));
+      for (let m = 0; m < 60; m++) {
+        const value = String(m).padStart(2, '0');
+        if (existing.has(value)) continue;
+        const opt = document.createElement('option');
+        opt.value = value;
+        opt.textContent = value;
+        // 按数值顺序插入到第一个更大的选项前
+        const next = Array.from(select.options).find((o) => o.value !== '' && Number(o.value) > m);
+        select.insertBefore(opt, next || null);
+      }
+      select.value = current;
+    });
+  }
+
+  // 编辑页：已保存的非 5 分钟值在原下拉框里没有对应选项，服务器输出的 HTML 里分钟是空的，
+  // 直接提交会丢掉分钟。这时从活动页「時間」一栏（如「開場 18:29 開演 18:30 終演 21:30」）读回实际值。
+  const TIME_LABELS = { open: '開場', start: '開演', end: '終演' };
+
+  async function restoreEditMinutes(eventId) {
+    const missing = Object.keys(TIME_LABELS).filter((key) => {
+      const hour = document.getElementById(key + '_time_hour');
+      const minute = document.getElementById(key + '_time_minute');
+      return hour && minute && hour.value !== '' && minute.value === '';
+    });
+    if (!missing.length) return;
+
+    let text = '';
+    try {
+      const res = await fetch(`/events/${eventId}`, { credentials: 'same-origin' });
+      if (res.ok) {
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        const row = Array.from(doc.querySelectorAll('.gb_events_info_table td'))
+          .find((td) => td.textContent.trim() === '時間');
+        if (row && row.nextElementSibling) text = row.nextElementSibling.textContent;
+      }
+    } catch (err) {
+      // 下面统一提示
+    }
+
+    const failed = [];
+    missing.forEach((key) => {
+      const hour = document.getElementById(key + '_time_hour');
+      const minute = document.getElementById(key + '_time_minute');
+      const m = text.match(new RegExp(TIME_LABELS[key] + '\\s*(\\d{1,2}):(\\d{2})'));
+      if (m && Number(m[1]) === Number(hour.value)) {
+        minute.value = m[2];
+      } else {
+        failed.push(TIME_LABELS[key]);
+      }
+    });
+    if (failed.length) {
+      showNotice(`${failed.join('・')}の「分」を読み込めませんでした。編集完了の前に入力し直してください。`, 'error');
+    }
+  }
+
+  // ---- 时间：智能输入框 ----
+  // 用 3 个文本框代替 6 个下拉框（下拉框隐藏但保留，值同步回去，提交格式不变）。
+  // 识别 1830 / 18:30 / 18時30分 / 18時半 / 午後6時半 / 6:30pm 等；24 点以后的值换算成次日时间。
+  const TIME_KEYS = Object.keys(TIME_LABELS);
+
+  function makeTime(hour, minute, meridiem) {
+    let h = Number(hour);
+    const m = minute === '半' ? 30 : Number(minute || 0);
+    if (meridiem) {
+      const pm = /^(午後|pm|p\.m\.)$/i.test(meridiem);
+      if (h > 12) return null;
+      if (pm && h < 12) h += 12;
+      if (!pm && h === 12) h = 0;
+    }
+    if (h > 29 || m > 59) return null;
+    return { hour: h % 24, minute: m };
+  }
+
+  function formatTime(t) {
+    return String(t.hour).padStart(2, '0') + ':' + String(t.minute).padStart(2, '0');
+  }
+
+  // 解析单个输入框的内容；空 → 'empty'，无法识别 → null
+  function parseTimeInput(str) {
+    const s = str.normalize('NFKC').replace(/\s+/g, '').toLowerCase();
+    if (!s) return 'empty';
+    let m = s.match(/^(\d{1,2})(\d{2})$/);
+    if (m) return makeTime(m[1], m[2]);
+    m = s.match(/^(\d{1,2})$/);
+    if (m) return makeTime(m[1], 0);
+    m = s.match(/^(午前|午後|am|pm|a\.m\.|p\.m\.)?(\d{1,2})(?:[:.](\d{2})|時(\d{1,2}|半)?分?)?(am|pm|a\.m\.|p\.m\.)?$/);
+    if (m && !(m[1] && m[5])) return makeTime(m[2], m[3] || m[4], m[1] || m[5]);
+    return null;
+  }
+
+  // 从告知文中读取时间：支持「開場 17:30 / 開演 18:30」「開場/開演 17:30/18:30」
+  // 「OPEN 17:00 START 18:00」「17:30開場／18:30開演」等写法。返回 { open, start, end } 中找到的部分
+  const LABEL_PATTERNS = {
+    open: /^(開場|入場|open)/i,
+    start: /^(開演|開始|start|スタート)/i,
+    end: /^(終演|終了|end|close)/i,
+  };
+  // 「販売開始」「受付終了」等不是活动时间；英文要求单词边界（避免 weekend 等）
+  const LABEL_ANY_RE = /開場|入場開始|入場|開演|(?<!販売|発売|受付|抽選|予約|応募|配信)(?:開始|終了)|終演|スタート|(?<![a-z])(?:open|start|end|close)(?![a-z])/i;
+  const TOKEN_RE = new RegExp([
+    '(' + LABEL_ANY_RE.source + ')',
+    // 时间必须带「:」或「時」，避免把日期等数字当成时间；「3時間」之类排除
+    '(?<!\\d)(?:(午前|午後|am|pm)\\s*)?(\\d{1,2})\\s*(?::\\s*(\\d{2})|時(?!間)\\s*(?:(\\d{1,2})分?|(半))?)(?:\\s*(am|pm)(?![a-z]))?',
+  ].join('|'), 'gi');
+  // 标签和时间之间允许的分隔：符号、「…」（NFKC 后是 ...）、箭头和装饰符号等
+  const GAP_RE = /^(?:[\s/・|,、.:;()[\]【】〈〉<>《》「」『』〜~=_*-]|[→⇒▶▷►★☆◆◇■□●○]|時間|時刻|予定|は)*$/;
+
+  function parseAnnouncement(text) {
+    const s = text.normalize('NFKC');
+    const tokens = [];
+    for (const m of s.matchAll(TOKEN_RE)) {
+      const token = { start: m.index, end: m.index + m[0].length };
+      if (m[1]) {
+        token.label = TIME_KEYS.find((k) => LABEL_PATTERNS[k].test(m[1]));
+      } else {
+        const meridiem = m[2] || m[7];
+        token.time = makeTime(m[3], m[4] || m[5] || m[6], meridiem);
+        if (!token.time) continue;
+      }
+      tokens.push(token);
+    }
+    const adjacent = (a, b) => GAP_RE.test(s.slice(a.end, b.start));
+
+    // 写法一：标签在前。连续的标签 + 紧随的连续时间按顺序配对
+    function labelFirst() {
+      const result = {};
+      let count = 0;
+      for (let i = 0; i < tokens.length;) {
+        if (!tokens[i].label) { i++; continue; }
+        const labels = [tokens[i]];
+        let j = i + 1;
+        while (j < tokens.length && tokens[j].label && adjacent(tokens[j - 1], tokens[j])) labels.push(tokens[j++]);
+        const times = [];
+        while (j < tokens.length && tokens[j].time && adjacent(tokens[j - 1], tokens[j])) times.push(tokens[j++]);
+        labels.forEach((l, k) => {
+          if (times[k] && !result[l.label]) { result[l.label] = times[k].time; count++; }
+        });
+        i = j > i + labels.length ? j : i + labels.length;
+      }
+      return { result, count };
+    }
+
+    // 写法二：时间在前（「17:30開場」）
+    function timeFirst() {
+      const result = {};
+      let count = 0;
+      for (let i = 0; i + 1 < tokens.length; i++) {
+        const t = tokens[i];
+        const l = tokens[i + 1];
+        if (t.time && l.label && adjacent(t, l) && !result[l.label]) {
+          result[l.label] = t.time;
+          count++;
+          i++;
+        }
+      }
+      return { result, count };
+    }
+
+    const a = labelFirst();
+    const b = timeFirst();
+    return (b.count > a.count ? b : a).result;
+  }
+
+  function initSmartTime() {
+    const rows = {};
+    TIME_KEYS.forEach((key) => {
+      const hour = document.getElementById(key + '_time_hour');
+      const minute = document.getElementById(key + '_time_minute');
+      if (hour && minute) rows[key] = { hour, minute };
+    });
+    if (TIME_KEYS.some((k) => !rows[k])) return () => {};
+
+    GM_addStyle(`
+      .ene-time-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+      .ene-time-row input.ene-time { width: 70px; margin-bottom: 0; }
+      .ene-time-row input.ene-time.ene-invalid { border-color: #b94a48; background: #fdf0f0; }
+      .ene-time-row .btn { margin-bottom: 0; }
+      .ene-time-badge { font-size: 11px; color: #fff; background: #f89406; border-radius: 3px; padding: 1px 5px; }
+      .ene-time-error { font-size: 11px; color: #b94a48; }
+      .ene-announce { margin-bottom: 10px; }
+      .ene-announce input { width: 95%; margin-bottom: 0; }
+    `);
+
+    const QUICK = {
+      open: [['開演の30分前', 'start', -30], ['60分前', 'start', -60]],
+      end: [['開演の2時間後', 'start', 120], ['3時間後', 'start', 180]],
+    };
+
+    TIME_KEYS.forEach((key) => {
+      const row = rows[key];
+      // 原下拉框和「時」「分」文字收进隐藏的 span
+      const hidden = document.createElement('span');
+      hidden.style.display = 'none';
+      row.hour.before(hidden);
+      let node = hidden.nextSibling;
+      while (node) {
+        const next = node.nextSibling;
+        hidden.appendChild(node);
+        node = next;
+      }
+
+      const box = document.createElement('span');
+      box.className = 'ene-time-row';
+      box.innerHTML = `
+        <input type="text" class="ene-time" placeholder="例: 18:30" autocomplete="off">
+        <span class="ene-time-badge" style="display:none">翌日</span>
+        <span class="ene-time-error" style="display:none">時間を認識できません</span>
+      `;
+      (QUICK[key] || []).forEach(([label, base, delta]) => {
+        const btn = document.createElement('input');
+        btn.type = 'button';
+        btn.className = 'btn btn-small';
+        btn.value = label;
+        btn.addEventListener('click', () => {
+          const t = readSelect(base);
+          if (!t) {
+            showNotice('先に開演時間を入力してください', 'error');
+            return;
+          }
+          const total = (t.hour * 60 + t.minute + delta + 1440) % 1440;
+          setTime(key, { hour: Math.floor(total / 60), minute: total % 60 });
+        });
+        box.appendChild(btn);
+      });
+      hidden.before(box);
+      row.input = box.querySelector('input.ene-time');
+      row.badge = box.querySelector('.ene-time-badge');
+      row.error = box.querySelector('.ene-time-error');
+
+      row.input.addEventListener('input', () => apply(key, false));
+      row.input.addEventListener('change', () => apply(key, true));
+      row.input.addEventListener('keydown', (e) => {
+        // 文本框里按 Enter 会直接提交表单
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          apply(key, true);
+        }
+      });
+      row.input.addEventListener('paste', (e) => {
+        const text = e.clipboardData && e.clipboardData.getData('text');
+        // 只有带「開場」「開演」等标签的文字才当作告知文处理，单纯的时间照常粘贴
+        if (!text || !LABEL_ANY_RE.test(text.normalize('NFKC'))) return;
+        e.preventDefault();
+        fillFromAnnouncement(text);
+      });
+    });
+
+    // 告知文粘贴框，放在时间栏最上方
+    const announce = document.createElement('p');
+    announce.className = 'ene-announce';
+    announce.innerHTML = `
+      <span class="s">告知文から読み取る（開場・開演・終演の時間を自動入力）</span><br>
+      <input type="text" placeholder="例: 開場 17:30 / 開演 18:30 / 終演 20:30 　ここに貼り付け" autocomplete="off">
+    `;
+    const announceInput = announce.querySelector('input');
+    announceInput.addEventListener('paste', (e) => {
+      const text = e.clipboardData && e.clipboardData.getData('text');
+      if (!text) return;
+      e.preventDefault();
+      announceInput.value = text.replace(/\s+/g, ' ').trim();
+      fillFromAnnouncement(text);
+    });
+    announceInput.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      fillFromAnnouncement(announceInput.value);
+    });
+    rows.open.input.closest('p').before(announce);
+
+    function readSelect(key) {
+      const { hour, minute } = rows[key];
+      if (hour.value === '' || minute.value === '') return null;
+      return { hour: Number(hour.value), minute: Number(minute.value) };
+    }
+
+    function toMinutes(t) {
+      return t ? t.hour * 60 + t.minute : null;
+    }
+
+    // 「翌日」标记：沿用已有数据的惯例，跨午夜写成「终演早于开演」
+    function updateBadges() {
+      const open = toMinutes(readSelect('open'));
+      const start = toMinutes(readSelect('start'));
+      const end = toMinutes(readSelect('end'));
+      const nextDay = {
+        open: false,
+        start: open !== null && start !== null && start < open,
+        end: end !== null && ((start !== null && end < start) || (start === null && open !== null && end < open)),
+      };
+      TIME_KEYS.forEach((k) => {
+        rows[k].badge.style.display = nextDay[k] ? '' : 'none';
+        rows[k].badge.title = '日付をまたぐ時間として登録されます';
+      });
+    }
+
+    function showRow(key) {
+      const row = rows[key];
+      const t = readSelect(key);
+      if (t) {
+        row.input.value = formatTime(t);
+      } else if (row.hour.value !== '') {
+        // 只有小时（如编辑页读不到分钟）：留给用户补全
+        row.input.value = row.hour.value + ':';
+      } else {
+        row.input.value = '';
+      }
+      const invalid = !t && row.hour.value !== '';
+      row.input.classList.toggle('ene-invalid', invalid);
+      row.error.style.display = invalid ? '' : 'none';
+    }
+
+    function setTime(key, t) {
+      const row = rows[key];
+      row.hour.value = t ? String(t.hour).padStart(2, '0') : '';
+      row.minute.value = t ? String(t.minute).padStart(2, '0') : '';
+      showRow(key);
+      updateBadges();
+    }
+
+    // reformat=false 时（输入过程中）只同步值，不改写用户正在输入的文字
+    function apply(key, reformat) {
+      const row = rows[key];
+      const t = parseTimeInput(row.input.value);
+      if (t === null) {
+        row.input.classList.toggle('ene-invalid', reformat);
+        row.error.style.display = reformat ? '' : 'none';
+        return;
+      }
+      if (reformat) {
+        setTime(key, t === 'empty' ? null : t);
+      } else {
+        row.hour.value = t === 'empty' ? '' : String(t.hour).padStart(2, '0');
+        row.minute.value = t === 'empty' ? '' : String(t.minute).padStart(2, '0');
+        row.input.classList.remove('ene-invalid');
+        row.error.style.display = 'none';
+        updateBadges();
+      }
+    }
+
+    function fillFromAnnouncement(text) {
+      const found = parseAnnouncement(text);
+      const keys = TIME_KEYS.filter((k) => found[k]);
+      if (!keys.length) {
+        showNotice('告知文から時間を読み取れませんでした', 'error');
+        return;
+      }
+      keys.forEach((k) => setTime(k, found[k]));
+      showNotice('読み取りました：' + keys.map((k) => `${TIME_LABELS[k]} ${formatTime(found[k])}`).join(' / '));
+    }
+
+    // 有无法识别的输入时阻止提交（capture 阶段，先于页面自己的提交检查）
+    const form = document.getElementById('event_form');
+    form.addEventListener('submit', (e) => {
+      TIME_KEYS.forEach((k) => apply(k, true));
+      const bad = TIME_KEYS.filter((k) => rows[k].input.classList.contains('ene-invalid'));
+      if (!bad.length) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      alert(bad.map((k) => TIME_LABELS[k]).join('・') + 'の時間を正しく入力してください');
+      rows[bad[0]].input.focus();
+    }, true);
+
+    function refresh() {
+      TIME_KEYS.forEach(showRow);
+      updateBadges();
+    }
+    refresh();
+    return refresh;
   }
 
   // ---- 从确认页返回修改 ----
@@ -699,11 +1079,16 @@
     initConfirmBackButton();
     initConfirmImage();
   } else if (path === '/events/add') {
+    initMinuteOptions(); // 要在恢复快照之前，否则非 5 分钟的值无法恢复
     initActorSorting();
     initActorPresets();
     initFormSnapshot();
+    initSmartTime(); // 在恢复快照之后，从下拉框读取恢复后的值
     initImagePicker();
   } else if (/^\/events\/\d+\/edit$/.test(path)) {
+    initMinuteOptions();
+    const refreshTime = initSmartTime();
+    restoreEditMinutes(path.split('/')[2]).then(refreshTime);
     initEditImagePicker();
   } else {
     processPendingUpload();
