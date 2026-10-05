@@ -4,7 +4,7 @@
 // @name:zh-CN   Eventernote 活动登录增强
 // @name:en      Eventernote Add Event Enhancer
 // @namespace    https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version      0.2.1
+// @version      0.2.2
 // @description  イベンターノートのイベント登録・編集画面を使いやすくします：時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja イベンターノートのイベント登録・編集画面を使いやすくします：時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:zh-CN 改善 Eventernote 活动登录和编辑页面：时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图
@@ -1129,6 +1129,8 @@
     initImagePicker();
   } else if (/^\/events\/\d+\/edit$/.test(path)) {
     initMinuteOptions();
+    initActorSorting();
+    initActorPresets();
     const refreshTime = initSmartTime();
     restoreEditMinutes(path.split('/')[2]).then(refreshTime);
     initEditImagePicker();

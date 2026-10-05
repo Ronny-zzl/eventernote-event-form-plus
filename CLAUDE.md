@@ -4,7 +4,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
 - 唯一源码文件：`eventernote-event-form-plus.user.js`（无构建步骤，检查语法用 `node --check`）
-- 当前版本：`0.2.1`（已打 `v0.2.1` 标签并推送，GitHub Release 附更新说明）
+- 当前版本：`0.2.2`（已打 `v0.2.2` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 约定
 
@@ -51,6 +51,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 
 1. **出演者排序**：拖动 ☰ 或 ▲▼；调整 DOM 后同步 `unsafeWindow.selected_actors` 和 `#actor_ids`
 2. **出演者セット**：把已选出演者存为组合（`GM_setValue('actorPresets')`），一键添加
+   - 1、2 在登录页和编辑页都启用（编辑页从 0.2.2 起；已有出演者由内联脚本 `addActor(数字ID, 名字)` 加入，结构与登录页相同）
 3. **确认页「戻って修正する」**：登录页提交时存快照（`formSnapshot`），跳回 `/events/add?ene_restore=1` 后恢复全部字段
 4. **登录页缩略图**：拖入 / Ctrl+V / 选文件（`createImageDrop` 组件）→ `draftImage` → 确认页提交时转为 `pendingUpload`（30 分钟有效）→ 完成后在完成页链接或活动页 URL 找到新活动 ID，**核对活动名和会场**；有链接时先轮询 S3 等网站自动生成的图片出现（最多 60 秒），再用编辑页原样提交 + `thumbnail_image`，最后用 `Last-Modified` 确认已被替换。0.2.1 起；494918 实测：登录 13:03:54 → 等待后 13:04:00 上传 → 没有再被覆盖
 5. **编辑页图片框**：同一组件，选中的图片用 `DataTransfer` 塞进原生 `thumbnail_image`
@@ -78,7 +79,6 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 
 ## 其他想法（未做）
 
-- 把出演者排序 / セット也用到编辑页（结构相同）
 - 搜索框防抖、IME 处理、Enter 误提交；草稿自动保存；启用重复检查
 
 ## 调试网站的方法
