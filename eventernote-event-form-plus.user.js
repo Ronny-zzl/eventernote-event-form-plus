@@ -4,7 +4,7 @@
 // @name:zh-CN   Eventernote 活动登录增强
 // @name:en      Eventernote Add Event Enhancer
 // @namespace    https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version      0.2.2
+// @version      0.2.3
 // @description  イベンターノートのイベント登録・編集画面を使いやすくします：時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja イベンターノートのイベント登録・編集画面を使いやすくします：時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:zh-CN 改善 Eventernote 活动登录和编辑页面：时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图
@@ -45,26 +45,7 @@
       #selected_actors .ene-move { cursor: pointer; color: #08c; padding: 0 2px; user-select: none; }
     `);
 
-    function actorId(li) {
-      return li.id.replace(/^actor_/, '');
-    }
-
-    function syncOrder() {
-      const ids = Array.from(list.children).map(actorId);
-      const arr = unsafeWindow.selected_actors;
-      if (arr) {
-        // 保留数组里原有的值（页面里混有字符串和数字两种 id）
-        const ordered = ids.map((id) => {
-          for (let i = 0; i < arr.length; i++) {
-            if (String(arr[i]) === id) return arr[i];
-          }
-          return id;
-        });
-        arr.length = 0;
-        ordered.forEach((v) => arr.push(v));
-      }
-      hidden.value = ids.join(',');
-    }
+    const syncOrder = syncActorOrder;
 
     function move(li, delta) {
       if (delta < 0 && li.previousElementSibling) {
@@ -151,6 +132,27 @@
 
   // ---- 出演者公共操作 ----
 
+  // 按 DOM 顺序重写页面的 selected_actors 数组和 #actor_ids
+  function syncActorOrder() {
+    const list = document.getElementById('selected_actors');
+    const hidden = document.getElementById('actor_ids');
+    if (!list || !hidden) return;
+    const ids = Array.from(list.children).map((li) => li.id.replace(/^actor_/, ''));
+    const arr = unsafeWindow.selected_actors;
+    if (arr) {
+      // 保留数组里原有的值（页面里混有字符串和数字两种 id）
+      const ordered = ids.map((id) => {
+        for (let i = 0; i < arr.length; i++) {
+          if (String(arr[i]) === id) return arr[i];
+        }
+        return id;
+      });
+      arr.length = 0;
+      ordered.forEach((v) => arr.push(v));
+    }
+    hidden.value = ids.join(',');
+  }
+
   // 按显示顺序读取已选出演者
   function readSelectedActors() {
     const list = document.getElementById('selected_actors');
@@ -222,7 +224,27 @@
     box.querySelector('.ene-preset-add').addEventListener('click', () => {
       const preset = loadPresets()[select.value];
       if (!preset) return;
-      preset.actors.forEach(addActorIfMissing);
+      const anchor = preset.actors.length && document.getElementById('actor_' + preset.actors[0].id);
+      if (!anchor) {
+        preset.actors.forEach(addActorIfMissing);
+        return;
+      }
+      // 列表里已有セット的第一项（通常是团体名）时，新加入的成员插在它后面，而不是排到末尾。
+      // 紧跟在团体名后面的已有成员保持不动，新成员接在它们之后
+      const memberIds = new Set(preset.actors.map((a) => 'actor_' + a.id));
+      let cursor = anchor;
+      while (cursor.nextElementSibling && memberIds.has(cursor.nextElementSibling.id)) {
+        cursor = cursor.nextElementSibling;
+      }
+      preset.actors.slice(1).forEach((actor) => {
+        if (document.getElementById('actor_' + actor.id)) return;
+        addActorIfMissing(actor);
+        const li = document.getElementById('actor_' + actor.id);
+        if (!li) return;
+        cursor.after(li);
+        cursor = li;
+      });
+      syncActorOrder();
     });
 
     box.querySelector('.ene-preset-save').addEventListener('click', () => {
