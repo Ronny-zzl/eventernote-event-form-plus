@@ -32,7 +32,7 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-presets select{margin-bottom:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input{flex:1;min-width:200px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}");
+	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-presets select{margin-bottom:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input{flex:1;min-width:200px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}");
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
 	var page = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
@@ -736,6 +736,145 @@
 			set
 		};
 	};
+	var RESTORE_PARAM = "ene_restore";
+	var isReturning = new URLSearchParams(location.search).has(RESTORE_PARAM);
+	var FIELD_NAMES = [
+		"event_name",
+		"link",
+		"description",
+		"hashtag"
+	];
+	var SELECT_IDS = [
+		"date_year",
+		"date_month",
+		"date_day",
+		"open_time_hour",
+		"open_time_minute",
+		"start_time_hour",
+		"start_time_minute",
+		"end_time_hour",
+		"end_time_minute"
+	];
+	var field = (form, name) => form.elements.namedItem(name);
+	var selectById = (id) => byId(id);
+	var takeSnapshot = (form) => {
+		const option = selectById("places_list").selectedOptions[0];
+		return {
+			fields: Object.fromEntries(FIELD_NAMES.map((n) => [n, field(form, n).value])),
+			selects: Object.fromEntries(SELECT_IDS.map((id) => [id, selectById(id).value])),
+			actors: readSelectedActors(),
+			prefecture: selectById("prefecture_id").value,
+			place: option?.value ? {
+				id: option.value,
+				name: option.text
+			} : null
+		};
+	};
+	var isBlank = (s) => !s.actors.length && !s.place && ![
+		"event_name",
+		"link",
+		"description",
+		"hashtag"
+	].some((n) => s.fields[n]?.trim());
+	var restoreSnapshot = (form, snapshot, placePicker) => {
+		FIELD_NAMES.forEach((n) => {
+			field(form, n).value = snapshot.fields[n] ?? "";
+		});
+		SELECT_IDS.forEach((id) => {
+			selectById(id).value = snapshot.selects[id] ?? "";
+		});
+		snapshot.actors.forEach(addActorIfMissing);
+		selectById("prefecture_id").value = snapshot.prefecture;
+		const { place } = snapshot;
+		if (placePicker) placePicker.set(place && {
+			...place,
+			prefecture: snapshot.prefecture,
+			address: ""
+		});
+		else if (snapshot.prefecture) {
+			selectById("places_list").replaceChildren();
+			page.searchPlaces(snapshot.prefecture, place?.id);
+		} else if (place) selectById("places_list").append(new Option(place.name, place.id, true, true));
+	};
+	var initFormSnapshot = (placePicker) => {
+		const form = byId("event_form");
+		if (!form) return;
+		form.addEventListener("submit", () => save("formSnapshot", takeSnapshot(form)));
+		if (!isReturning) return;
+		const snapshot = load("formSnapshot", null);
+		if (snapshot) restoreSnapshot(form, snapshot, placePicker);
+		const params = new URLSearchParams(location.search);
+		params.delete(RESTORE_PARAM);
+		history.replaceState(null, "", location.pathname + (params.size ? "?" + params : ""));
+	};
+	var initConfirmBackButton = () => {
+		const submit = document.querySelector("form[action=\"/events/add/complete\"] input[type=\"submit\"]");
+		if (!submit) return;
+		const back = Object.assign(document.createElement("input"), {
+			type: "button",
+			className: "btn",
+			value: "戻って修正する"
+		});
+		back.style.marginRight = "8px";
+		back.addEventListener("click", () => {
+			if (load("formSnapshot", null)) location.href = `/events/add?${RESTORE_PARAM}=1`;
+			else history.back();
+		});
+		submit.before(back);
+	};
+	var INTERVAL_MS = 2e3;
+	var TTL_MS = 12096e5;
+	var savedAtText = (t) => {
+		const d = new Date(t);
+		return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
+	};
+	var initDraft = (placePicker, refresh) => {
+		const form = byId("event_form");
+		if (!form) return;
+		const draft = load("formDraft", null);
+		let banner = null;
+		if (draft && !isReturning && !new URLSearchParams(location.search).has("from_event_id") && Date.now() - draft.savedAt < TTL_MS) {
+			banner = document.createElement("div");
+			banner.className = "alert alert-info ene-draft";
+			banner.append(`前回の入力内容が残っています（${savedAtText(draft.savedAt)}・「${draft.fields.event_name?.trim() || "イベント名未入力"}」）`);
+			const button = (value, onClick) => {
+				const btn = Object.assign(document.createElement("input"), {
+					type: "button",
+					className: "btn btn-small",
+					value
+				});
+				btn.addEventListener("click", () => {
+					onClick();
+					banner?.remove();
+					banner = null;
+				});
+				banner.append(btn);
+			};
+			button("復元する", () => {
+				restoreSnapshot(form, draft, placePicker);
+				refresh();
+			});
+			button("破棄する", () => save("formDraft", null));
+			form.prepend(banner);
+		}
+		let last = JSON.stringify(takeSnapshot(form));
+		setInterval(() => {
+			const snapshot = takeSnapshot(form);
+			const json = JSON.stringify(snapshot);
+			if (json === last) return;
+			last = json;
+			if (isBlank(snapshot)) return;
+			banner?.remove();
+			banner = null;
+			save("formDraft", {
+				...snapshot,
+				savedAt: Date.now()
+			});
+		}, INTERVAL_MS);
+	};
+	var initDraftClear = () => {
+		document.querySelector("form[action=\"/events/add/complete\"]")?.addEventListener("submit", () => save("formDraft", null));
+	};
 	var cache = new Map();
 	var fetchEventDoc = (eventId) => {
 		let doc = cache.get(eventId);
@@ -895,84 +1034,28 @@
 			loadInitial
 		};
 	};
-	var RESTORE_PARAM = "ene_restore";
-	var FIELD_NAMES = [
-		"event_name",
-		"link",
-		"description",
-		"hashtag"
-	];
-	var SELECT_IDS = [
-		"date_year",
-		"date_month",
-		"date_day",
-		"open_time_hour",
-		"open_time_minute",
-		"start_time_hour",
-		"start_time_minute",
-		"end_time_hour",
-		"end_time_minute"
-	];
-	var field = (form, name) => form.elements.namedItem(name);
-	var selectById = (id) => byId(id);
-	var takeSnapshot = (form) => {
-		const option = selectById("places_list").selectedOptions[0];
-		return {
-			fields: Object.fromEntries(FIELD_NAMES.map((n) => [n, field(form, n).value])),
-			selects: Object.fromEntries(SELECT_IDS.map((id) => [id, selectById(id).value])),
-			actors: readSelectedActors(),
-			prefecture: selectById("prefecture_id").value,
-			place: option?.value ? {
-				id: option.value,
-				name: option.text
-			} : null
-		};
-	};
-	var restoreSnapshot = (form, snapshot, placePicker) => {
-		FIELD_NAMES.forEach((n) => {
-			field(form, n).value = snapshot.fields[n] ?? "";
-		});
-		SELECT_IDS.forEach((id) => {
-			selectById(id).value = snapshot.selects[id] ?? "";
-		});
-		snapshot.actors.forEach(addActorIfMissing);
-		selectById("prefecture_id").value = snapshot.prefecture;
-		const { place } = snapshot;
-		if (placePicker) placePicker.set(place && {
-			...place,
-			prefecture: snapshot.prefecture,
-			address: ""
-		});
-		else if (snapshot.prefecture) {
-			selectById("places_list").replaceChildren();
-			page.searchPlaces(snapshot.prefecture, place?.id);
-		} else if (place) selectById("places_list").append(new Option(place.name, place.id, true, true));
-	};
-	var initFormSnapshot = (placePicker) => {
+	var initSubmitCheck = () => {
 		const form = byId("event_form");
 		if (!form) return;
-		form.addEventListener("submit", () => save("formSnapshot", takeSnapshot(form)));
-		const params = new URLSearchParams(location.search);
-		if (!params.has("ene_restore")) return;
-		const snapshot = load("formSnapshot", null);
-		if (snapshot) restoreSnapshot(form, snapshot, placePicker);
-		params.delete(RESTORE_PARAM);
-		history.replaceState(null, "", location.pathname + (params.size ? "?" + params : ""));
-	};
-	var initConfirmBackButton = () => {
-		const submit = document.querySelector("form[action=\"/events/add/complete\"] input[type=\"submit\"]");
-		if (!submit) return;
-		const back = Object.assign(document.createElement("input"), {
-			type: "button",
-			className: "btn",
-			value: "戻って修正する"
-		});
-		back.style.marginRight = "8px";
-		back.addEventListener("click", () => {
-			if (load("formSnapshot", null)) location.href = `/events/add?${RESTORE_PARAM}=1`;
-			else history.back();
-		});
-		submit.before(back);
+		const searchInput = (anchorId) => byId(anchorId)?.closest("td")?.querySelector(".ene-search input[type=\"text\"]") ?? null;
+		form.addEventListener("submit", (e) => {
+			const problems = [];
+			const name = form.elements.namedItem("event_name");
+			if (!name.value.trim()) problems.push(["イベント名が入力されていません", name]);
+			const actorSearch = searchInput("selected_actors");
+			if (actorSearch?.value.trim()) problems.push([`出演者の検索欄に「${actorSearch.value.trim()}」が残っています（まだ追加されていません）`, actorSearch]);
+			else if (!byId("actor_ids")?.value) problems.push(["出演者が選択されていません", actorSearch]);
+			const placeSearch = searchInput("places_list");
+			if (placeSearch?.value.trim()) problems.push([`会場の検索欄に「${placeSearch.value.trim()}」が残っています（まだ選択されていません）`, placeSearch]);
+			else if (!byId("places_list")?.value) problems.push(["開催場所が選択されていません", placeSearch]);
+			if (!problems.length) return;
+			if (confirm(`${problems.map(([m]) => "・" + m).join("\n")}\n\nこのまま送信しますか？`)) return;
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			const target = problems[0][1];
+			target?.scrollIntoView({ block: "center" });
+			target?.focus();
+		}, true);
 	};
 	var PENDING_TTL_MS = 18e5;
 	var SERVER_IMAGE_TYPES = [
@@ -1095,7 +1178,7 @@
 	var initImagePicker = () => {
 		const submit = document.querySelector("#event_form input[type=\"submit\"]");
 		if (!submit) return;
-		if (!new URLSearchParams(location.search).has("ene_restore")) save("draftImage", null);
+		if (!isReturning) save("draftImage", null);
 		const row = document.createElement("tr");
 		row.innerHTML = `
     <td>サムネイル画像</td>
@@ -1423,6 +1506,7 @@
 	if (path === "/events/add/confirm") {
 		initConfirmBackButton();
 		initConfirmImage();
+		initDraftClear();
 	} else if (path === "/events/add") {
 		initMinuteOptions();
 		initActorList();
@@ -1431,7 +1515,14 @@
 		const placePicker = initPlacePicker();
 		initFormSnapshot(placePicker);
 		placePicker?.loadInitial(new URLSearchParams(location.search).get("from_event_id"));
-		initAnnounce(initDatePicker(), initSmartTime());
+		const date = initDatePicker();
+		const time = initSmartTime();
+		initAnnounce(date, time);
+		initSubmitCheck();
+		initDraft(placePicker, () => {
+			date?.refresh();
+			time?.refresh();
+		});
 		initImagePicker();
 	} else if (editId) {
 		initMinuteOptions();
@@ -1441,6 +1532,7 @@
 		initPlacePicker()?.loadInitial(editId);
 		const time = initSmartTime();
 		initAnnounce(initDatePicker(), time);
+		initSubmitCheck();
 		restoreEditMinutes(editId).then(() => time?.refresh());
 		initEditImagePicker();
 	} else processPendingUpload();

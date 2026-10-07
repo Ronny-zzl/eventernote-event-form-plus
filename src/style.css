@@ -84,3 +84,7 @@
 .ene-date input { width: auto; margin-bottom: 0; }
 .ene-weekday[data-day="0"] { color: #c00; }
 .ene-weekday[data-day="6"] { color: #06c; }
+
+/* 草稿 */
+.ene-draft { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ene-draft .btn { margin-bottom: 0; }

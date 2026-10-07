@@ -6,6 +6,8 @@ import type { PlacePicker } from './place';
 // 确认页没有返回按钮，浏览器后退也无法恢复由 JS 生成的出演者列表和会场列表。
 // 因此提交时把表单存成快照，确认页的「戻って修正する」跳回 ?ene_restore=1 后按快照恢复。
 export const RESTORE_PARAM = 'ene_restore';
+// 是否是从确认页返回。脚本加载时就记下来：initFormSnapshot 恢复后会把参数从 URL 里去掉
+export const isReturning = new URLSearchParams(location.search).has(RESTORE_PARAM);
 const FIELD_NAMES = ['event_name', 'link', 'description', 'hashtag'];
 const SELECT_IDS = [
   'date_year', 'date_month', 'date_day',
@@ -17,7 +19,7 @@ const SELECT_IDS = [
 const field = (form: HTMLFormElement, name: string) => form.elements.namedItem(name) as HTMLInputElement;
 const selectById = (id: string) => byId<HTMLSelectElement>(id)!;
 
-const takeSnapshot = (form: HTMLFormElement): FormSnapshot => {
+export const takeSnapshot = (form: HTMLFormElement): FormSnapshot => {
   const option = selectById('places_list').selectedOptions[0];
   return {
     fields: Object.fromEntries(FIELD_NAMES.map((n) => [n, field(form, n).value])),
@@ -28,7 +30,11 @@ const takeSnapshot = (form: HTMLFormElement): FormSnapshot => {
   };
 };
 
-const restoreSnapshot = (form: HTMLFormElement, snapshot: FormSnapshot, placePicker: PlacePicker | null) => {
+// 没填任何实质内容（日期、时间有默认值，不算）
+export const isBlank = (s: FormSnapshot) =>
+  !s.actors.length && !s.place && !['event_name', 'link', 'description', 'hashtag'].some((n) => s.fields[n]?.trim());
+
+export const restoreSnapshot =(form: HTMLFormElement, snapshot: FormSnapshot, placePicker: PlacePicker | null) => {
   FIELD_NAMES.forEach((n) => { field(form, n).value = snapshot.fields[n] ?? ''; });
   // 直接赋值而不触发 change，避免页面的时间联动逻辑覆盖恢复的值
   SELECT_IDS.forEach((id) => { selectById(id).value = snapshot.selects[id] ?? ''; });
@@ -51,11 +57,11 @@ export const initFormSnapshot = (placePicker: PlacePicker | null) => {
   if (!form) return;
   form.addEventListener('submit', () => save('formSnapshot', takeSnapshot(form)));
 
-  const params = new URLSearchParams(location.search);
-  if (!params.has(RESTORE_PARAM)) return;
+  if (!isReturning) return;
   const snapshot = load('formSnapshot', null);
   if (snapshot) restoreSnapshot(form, snapshot, placePicker);
   // 去掉参数，避免刷新时再次覆盖用户的修改
+  const params = new URLSearchParams(location.search);
   params.delete(RESTORE_PARAM);
   history.replaceState(null, '', location.pathname + (params.size ? '?' + params : ''));
 };

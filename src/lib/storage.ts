@@ -29,6 +29,7 @@ type Store = {
   formSnapshot: FormSnapshot | null;
   draftImage: ImageData | null;
   pendingUpload: PendingUpload | null;
+  formDraft: (FormSnapshot & { savedAt: number }) | null;
 };
 
 export const load = <K extends keyof Store>(key: K, fallback: Store[K]): Store[K] =>

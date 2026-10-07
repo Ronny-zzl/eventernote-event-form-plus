@@ -1,7 +1,7 @@
 import { showNotice } from '../lib/notice';
 import { findInitialPlace, parseHtml, sleep } from '../lib/page';
 import { load, save, type ImageData } from '../lib/storage';
-import { RESTORE_PARAM } from './snapshot';
+import { isReturning } from './snapshot';
 
 // 登录页没有图片字段（确认页靠隐藏字段转交数据，文件无法带过去），只有编辑页能上传 thumbnail_image。流程：
 //   登录页选图（draftImage）→ 确认页点「登録する」时转为待上传任务（pendingUpload）
@@ -118,7 +118,7 @@ export const initImagePicker = () => {
   const submit = document.querySelector('#event_form input[type="submit"]');
   if (!submit) return;
   // 新打开的登录页从空白开始；只有从确认页返回时才沿用之前选的图片
-  if (!new URLSearchParams(location.search).has(RESTORE_PARAM)) save('draftImage', null);
+  if (!isReturning) save('draftImage', null);
 
   const row = document.createElement('tr');
   row.innerHTML = `
