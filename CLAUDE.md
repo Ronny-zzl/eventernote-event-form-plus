@@ -25,6 +25,9 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - 出演者列表 `#selected_actors`，每个 `li#actor_{id}` = 名字文本节点 + `<a> [削除]`
 - 时间是 6 个 select：`#open_time_hour/minute`、`#start_time_*`、`#end_time_*`，分钟 5 分钟一档，小时 00–23
 - 会场：`#prefecture_id` → `#places_list`（`name=place_id`）；搜索框选会场时**不会**同步都道府県
+  - `/api/places/search?prefecture=13&simple=1&limit=-1`：东京都 6124 个会场、约 368KB、实测 6.5 秒，按 ID 排序（不是名字），有空名字的条目
+  - `/api/places/search?keyword=…&simple=3&limit=50[&prefecture=13]`：约 0.8 秒；名字和地址都会匹配，不支持读音（「ぜっぷ」「ぶどうかん」0 件）；返回 id/place_name/prefecture/address/capacity 等；已关闭的会场名带「(閉館)」
+  - 编辑页加载时内联脚本立即调用 `searchPlaces(都道府県, 会场ID)`；编辑页的 `searchPlaces` 回调会**先清空** `#places_list` 再重建（登录页的只追加）。大列表到达前 `place_id` 是空的
 - `?from_event_id=活动ID` 是官方的「复制活动登录」入口
 - `validateEvent()`（同日同出演者重复检查）在页面里被注释掉了
 
@@ -56,6 +59,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 4. **登录页缩略图**：拖入 / Ctrl+V / 选文件（`createImageDrop` 组件）→ `draftImage` → 确认页提交时转为 `pendingUpload`（30 分钟有效）→ 完成后在完成页链接或活动页 URL 找到新活动 ID，**核对活动名和会场**；有链接时先轮询 S3 等网站自动生成的图片出现（最多 60 秒），再用编辑页原样提交 + `thumbnail_image`，最后用 `Last-Modified` 确认已被替换。0.2.1 起；494918 实测：登录 13:03:54 → 等待后 13:04:00 上传 → 没有再被覆盖
 5. **编辑页图片框**：同一组件，选中的图片用 `DataTransfer` 塞进原生 `thumbnail_image`
 6. **时间输入**：见下方「时间输入改进」一节
+7. **会场搜索框**（`initPlacePicker`）：都道府県 / 会场下拉框 / 原搜索框隐藏，换成一个搜索框（300ms 防抖、都道府県筛选、名字匹配优先、闭馆的排最后变灰、↑↓Enter）；`#places_list` 只保留选中的一项，用 MutationObserver 防止编辑页大列表到达后覆盖选择；编辑页 / `from_event_id` 从活动页「開催場所」读会场名立即显示；最近使った会場存在 `GM_setValue('recentPlaces')`（10 个）。活动页通过 `fetchEventDoc()` 只请求一次（时间分钟恢复也用它）
 
 `@match` 是 `https://www.eventernote.com/events/*`，入口在文件末尾按 pathname 分发。
 

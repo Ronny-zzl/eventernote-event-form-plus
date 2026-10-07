@@ -304,6 +304,28 @@
     });
   }
 
+  // 活动页（/events/{id}）的信息表，编辑页需要从这里补充读取一些值；多处使用，只请求一次
+  const eventDocCache = {};
+
+  function fetchEventDoc(eventId) {
+    if (!eventDocCache[eventId]) {
+      eventDocCache[eventId] = fetch(`/events/${eventId}`, { credentials: 'same-origin' })
+        .then((res) => (res.ok ? res.text() : null))
+        .then((html) => (html ? new DOMParser().parseFromString(html, 'text/html') : null))
+        .catch(() => null);
+    }
+    return eventDocCache[eventId];
+  }
+
+  // 信息表中标题为 label 的那一行的内容单元格
+  async function eventInfoCell(eventId, label) {
+    const doc = await fetchEventDoc(eventId);
+    if (!doc) return null;
+    const head = Array.from(doc.querySelectorAll('.gb_events_info_table td'))
+      .find((td) => td.textContent.trim() === label);
+    return head ? head.nextElementSibling : null;
+  }
+
   // 编辑页：已保存的非 5 分钟值在原下拉框里没有对应选项，服务器输出的 HTML 里分钟是空的，
   // 直接提交会丢掉分钟。这时从活动页「時間」一栏（如「開場 18:29 開演 18:30 終演 21:30」）读回实际值。
   const TIME_LABELS = { open: '開場', start: '開演', end: '終演' };
@@ -316,18 +338,8 @@
     });
     if (!missing.length) return;
 
-    let text = '';
-    try {
-      const res = await fetch(`/events/${eventId}`, { credentials: 'same-origin' });
-      if (res.ok) {
-        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
-        const row = Array.from(doc.querySelectorAll('.gb_events_info_table td'))
-          .find((td) => td.textContent.trim() === '時間');
-        if (row && row.nextElementSibling) text = row.nextElementSibling.textContent;
-      }
-    } catch (err) {
-      // 下面统一提示
-    }
+    const cell = await eventInfoCell(eventId, '時間');
+    const text = cell ? cell.textContent : '';
 
     const failed = [];
     missing.forEach((key) => {
@@ -660,6 +672,317 @@
     return refresh;
   }
 
+  // ---- 会场：搜索框 ----
+  // 原 UI 是「都道府県 → 该县全部会场的下拉框」，东京都有 6000 多个会场（约 370KB，加载数秒），
+  // 且按 ID 排序，下拉框几乎无法使用。这里改成一个搜索框（/api/places/search?keyword=…），
+  // 原控件隐藏但保留：#places_list 里只放选中的那一项，#prefecture_id 同步为该会场的都道府県，提交格式不变。
+  const RECENT_PLACES_KEY = 'recentPlaces';
+  const RECENT_PLACES_MAX = 10;
+  const CLOSED_PLACE_RE = /閉館|閉店|閉校|閉鎖|閉場|移転/;
+
+  function initPlacePicker() {
+    const select = document.getElementById('places_list');
+    const prefSelect = document.getElementById('prefecture_id');
+    const suggest = document.getElementById('places_suggest');
+    if (!select || !prefSelect) return null;
+    const cell = select.closest('td');
+
+    GM_addStyle(`
+      .ene-place { position: relative; margin-bottom: 8px; }
+      .ene-place-current {
+        display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        padding: 6px 8px; margin-bottom: 6px; border: 1px solid #ddd; border-radius: 3px; background: #fff;
+      }
+      .ene-place-current .ene-place-name { font-weight: bold; }
+      .ene-place-current .ene-place-sub { color: #888; font-size: 11px; flex: 1; }
+      .ene-place-current .btn { margin-bottom: 0; }
+      .ene-place-search { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+      .ene-place-search select { width: auto; margin-bottom: 0; }
+      .ene-place-search input { flex: 1; min-width: 200px; margin-bottom: 0; }
+      .ene-place-results {
+        position: absolute; left: 0; right: 0; z-index: 1000; margin: 2px 0 0; padding: 0; list-style: none;
+        max-height: 360px; overflow-y: auto; background: #fff; border: 1px solid #ccc; border-radius: 3px;
+        box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      }
+      .ene-place-results li { padding: 5px 8px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+      .ene-place-results li.ene-active { background: #eef6fb; }
+      .ene-place-results li.ene-closed { opacity: .5; }
+      .ene-place-results li.ene-heading { cursor: default; background: #f7f7f7; color: #888; font-size: 11px; }
+      .ene-place-results .ene-place-sub { display: block; color: #888; font-size: 11px; }
+    `);
+
+    // 都道府県名：取原下拉框的文字，去掉「 (538)」之类的件数
+    const prefNames = {};
+    Array.from(prefSelect.options).forEach((o) => {
+      if (o.value) prefNames[o.value] = o.textContent.replace(/\s*\(\d+\)\s*$/, '').trim();
+    });
+
+    // 原控件收起来（「→上記のリストに無い会場を登録」链接保留）
+    [prefSelect, select, suggest].forEach((el) => {
+      const p = el && el.closest('p');
+      if (p) p.style.display = 'none';
+    });
+    const suggestBox = cell.querySelector('.gb_suggest');
+    if (suggestBox) suggestBox.style.display = 'none';
+
+    const box = document.createElement('div');
+    box.className = 'ene-place';
+    box.innerHTML = `
+      <div class="ene-place-current" style="display:none">
+        <span class="ene-place-name"></span><span class="ene-place-sub"></span>
+        <input type="button" class="btn btn-small ene-place-clear" value="取り消す">
+      </div>
+      <div class="ene-place-search">
+        <select class="ene-place-pref"><option value="">全国</option></select>
+        <input type="text" class="ene-place-input" placeholder="会場名・住所で検索（例: Zepp、武道館、渋谷）" autocomplete="off">
+      </div>
+      <ul class="ene-place-results" style="display:none"></ul>
+    `;
+    cell.prepend(box);
+
+    const current = box.querySelector('.ene-place-current');
+    const input = box.querySelector('.ene-place-input');
+    const prefFilter = box.querySelector('.ene-place-pref');
+    const results = box.querySelector('.ene-place-results');
+    Object.keys(prefNames).forEach((value) => {
+      const opt = document.createElement('option');
+      opt.value = value;
+      opt.textContent = prefNames[value];
+      prefFilter.appendChild(opt);
+    });
+
+    let chosen = null;
+
+    function placeSub(place) {
+      // 容量一栏常常很长（分楼层、站席/座席），只显示都道府県和地址
+      return [prefNames[place.prefecture], place.address].filter(Boolean).join(' / ');
+    }
+
+    // 把选择写回隐藏的原控件
+    function applyToForm() {
+      if (!chosen) {
+        if (select.value !== '' || select.options.length !== 1) {
+          select.innerHTML = '<option value="">選択してください</option>';
+        }
+        return;
+      }
+      const id = String(chosen.id);
+      if (select.options.length === 1 && select.value === id && select.options[0].textContent === chosen.name) return;
+      select.innerHTML = '';
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = chosen.name;
+      opt.selected = true;
+      select.appendChild(opt);
+      if (chosen.prefecture && prefNames[chosen.prefecture]) prefSelect.value = String(chosen.prefecture);
+    }
+
+    // 编辑页的 searchPlaces 加载完 6000 多项后会清空下拉框重建，这里发现选择被改掉就改回来
+    // （用户取消选择后也一样，否则原会场会被重新选上）。顺便丢掉那 6000 多个 option，减轻页面负担
+    new MutationObserver(() => {
+      if (select.options.length !== 1 || select.value !== (chosen ? String(chosen.id) : '')) applyToForm();
+    }).observe(select, { childList: true });
+
+    function render() {
+      current.style.display = chosen ? '' : 'none';
+      if (chosen) {
+        current.querySelector('.ene-place-name').textContent = chosen.name;
+        current.querySelector('.ene-place-sub').textContent = placeSub(chosen);
+      }
+    }
+
+    function set(place, remember) {
+      chosen = place ? {
+        id: String(place.id),
+        name: place.place_name || place.name || '',
+        prefecture: place.prefecture ? String(place.prefecture) : '',
+        address: place.address || '',
+      } : null;
+      applyToForm();
+      render();
+      if (chosen && remember) rememberPlace(chosen);
+    }
+
+    function rememberPlace(place) {
+      const list = GM_getValue(RECENT_PLACES_KEY, []).filter((p) => p.id !== place.id);
+      list.unshift(place);
+      GM_setValue(RECENT_PLACES_KEY, list.slice(0, RECENT_PLACES_MAX));
+    }
+
+    current.querySelector('.ene-place-clear').addEventListener('click', () => {
+      set(null);
+      input.focus();
+    });
+
+    // ---- 搜索结果列表 ----
+    let items = [];
+    let active = -1;
+
+    function closeResults() {
+      results.style.display = 'none';
+      items = [];
+      active = -1;
+    }
+
+    function showResults(places, heading, emptyText) {
+      results.innerHTML = '';
+      items = [];
+      active = -1;
+      if (heading) {
+        const li = document.createElement('li');
+        li.className = 'ene-heading';
+        li.textContent = heading;
+        results.appendChild(li);
+      }
+      if (!places.length) {
+        const li = document.createElement('li');
+        li.className = 'ene-heading';
+        li.textContent = emptyText;
+        results.appendChild(li);
+      }
+      places.forEach((place) => {
+        const li = document.createElement('li');
+        const name = place.place_name || place.name || '';
+        if (CLOSED_PLACE_RE.test(name)) li.classList.add('ene-closed');
+        li.textContent = name;
+        const sub = document.createElement('span');
+        sub.className = 'ene-place-sub';
+        sub.textContent = placeSub(place);
+        li.appendChild(sub);
+        // mousedown 先于输入框的 blur，避免列表先被关掉
+        li.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          choose(place);
+        });
+        results.appendChild(li);
+        items.push({ li, place });
+      });
+      results.style.display = '';
+    }
+
+    function setActive(index) {
+      if (!items.length) return;
+      active = (index + items.length) % items.length;
+      items.forEach((it, i) => it.li.classList.toggle('ene-active', i === active));
+      items[active].li.scrollIntoView({ block: 'nearest' });
+    }
+
+    function choose(place) {
+      set(place, true);
+      input.value = '';
+      closeResults();
+    }
+
+    function showRecent() {
+      const recent = GM_getValue(RECENT_PLACES_KEY, []);
+      if (recent.length) showResults(recent, '最近使った会場');
+      else closeResults();
+    }
+
+    // 名字完全一致 > 名字开头一致 > 名字包含 > 只有地址等匹配；闭馆的排最后
+    function rank(places, keyword) {
+      const kw = keyword.normalize('NFKC').toLowerCase();
+      const score = (p) => {
+        const name = (p.place_name || '').normalize('NFKC').toLowerCase();
+        let s = name === kw ? 0 : name.startsWith(kw) ? 1 : name.includes(kw) ? 2 : 3;
+        if (CLOSED_PLACE_RE.test(p.place_name || '')) s += 10;
+        return s;
+      };
+      return places
+        .map((p, i) => ({ p, s: score(p), i }))
+        .sort((a, b) => a.s - b.s || a.i - b.i)
+        .map((x) => x.p);
+    }
+
+    let timer = null;
+    let seq = 0;
+
+    async function search() {
+      const keyword = input.value.trim();
+      if (!keyword) {
+        showRecent();
+        return;
+      }
+      const mySeq = ++seq;
+      const params = new URLSearchParams({ keyword, simple: '3', limit: '50' });
+      if (prefFilter.value) params.set('prefecture', prefFilter.value);
+      let places = [];
+      try {
+        const res = await fetch('/api/places/search?' + params, { credentials: 'same-origin' });
+        const data = await res.json();
+        places = data.results || [];
+      } catch (err) {
+        if (mySeq === seq) showResults([], null, '検索に失敗しました');
+        return;
+      }
+      if (mySeq !== seq || document.activeElement !== input) return; // 已有更新的搜索，或焦点已离开
+      showResults(rank(places, keyword).slice(0, 30), null, '見つかりませんでした');
+    }
+
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(search, 300);
+    });
+    input.addEventListener('focus', () => search());
+    input.addEventListener('blur', () => setTimeout(closeResults, 100));
+    prefFilter.addEventListener('change', () => {
+      if (input.value.trim()) {
+        input.focus();
+        search();
+      }
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActive(active + 1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActive(active - 1);
+      } else if (e.key === 'Enter') {
+        // 文本框里按 Enter 会直接提交表单
+        e.preventDefault();
+        if (items[active]) choose(items[active].place);
+        else if (items.length === 1) choose(items[0].place);
+      } else if (e.key === 'Escape') {
+        closeResults();
+      }
+    });
+
+    // 页面加载时已指定的会场（编辑页、「この情報をもとに登録」等）：页面脚本里有 searchPlaces(都道府県, 会场ID)
+    let initial = null;
+    for (const s of document.querySelectorAll('script:not([src])')) {
+      const m = s.textContent.match(/searchPlaces\(\s*(\d*)\s*,\s*(\d+)\s*\)/);
+      if (m) { initial = { prefecture: m[1], id: m[2] }; break; }
+    }
+
+    return {
+      set,
+      // 编辑页：不等 6000 多项的列表，先从活动页读出会场名，再用搜索 API 补全地址
+      async loadInitial(eventId) {
+        if (!initial || chosen) return;
+        set({ id: initial.id, name: '読み込み中…', prefecture: initial.prefecture });
+        const placeCell = eventId ? await eventInfoCell(eventId, '開催場所') : null;
+        const link = placeCell && placeCell.querySelector(`a[href$="/places/${initial.id}"]`);
+        if (!chosen || chosen.id !== initial.id) return; // 加载期间用户已选了别的会场
+        if (!link) {
+          set({ id: initial.id, name: `会場ID ${initial.id}`, prefecture: initial.prefecture });
+          return;
+        }
+        const name = link.textContent.trim();
+        set({ id: initial.id, name, prefecture: initial.prefecture });
+        try {
+          const params = new URLSearchParams({ keyword: name, simple: '3', limit: '50' });
+          if (initial.prefecture) params.set('prefecture', initial.prefecture);
+          const res = await fetch('/api/places/search?' + params, { credentials: 'same-origin' });
+          const found = ((await res.json()).results || []).find((p) => String(p.id) === initial.id);
+          if (found && chosen && chosen.id === initial.id) set(found);
+        } catch (err) {
+          // 地址只是补充信息，取不到就算了
+        }
+      },
+    };
+  }
+
   // ---- 从确认页返回修改 ----
   // 确认页没有返回按钮，浏览器后退也无法恢复由 JS 生成的出演者列表和会场列表。
   // 因此提交时把表单存成快照，确认页的「戻って修正する」跳回 ?ene_restore=1 后按快照恢复。
@@ -714,7 +1037,12 @@
     const prefecture = document.getElementById('prefecture_id');
     const places = document.getElementById('places_list');
     prefecture.value = snapshot.prefecture || '';
-    if (snapshot.prefecture) {
+    if (placePicker) {
+      // 有会场搜索框时直接设置，不用再加载整个都道府県的会场列表
+      placePicker.set(snapshot.place
+        ? { id: snapshot.place.id, name: snapshot.place.name, prefecture: snapshot.prefecture }
+        : null);
+    } else if (snapshot.prefecture) {
       places.innerHTML = '';
       unsafeWindow.searchPlaces(snapshot.prefecture, snapshot.place ? snapshot.place.id : undefined);
     } else if (snapshot.place) {
@@ -1138,6 +1466,8 @@
     // 没找到对应活动时保留任务：用户打开新活动页面时会再次尝试（30 分钟内）
   }
 
+  let placePicker = null;
+
   const path = location.pathname.replace(/\/$/, '');
   if (path === '/events/add/confirm') {
     initConfirmBackButton();
@@ -1146,13 +1476,18 @@
     initMinuteOptions(); // 要在恢复快照之前，否则非 5 分钟的值无法恢复
     initActorSorting();
     initActorPresets();
+    placePicker = initPlacePicker(); // 同样要在恢复快照之前
     initFormSnapshot();
+    // ?from_event_id=… 复制登录时页面会预先指定会场
+    if (placePicker) placePicker.loadInitial(new URLSearchParams(location.search).get('from_event_id'));
     initSmartTime(); // 在恢复快照之后，从下拉框读取恢复后的值
     initImagePicker();
   } else if (/^\/events\/\d+\/edit$/.test(path)) {
     initMinuteOptions();
     initActorSorting();
     initActorPresets();
+    placePicker = initPlacePicker();
+    if (placePicker) placePicker.loadInitial(path.split('/')[2]);
     const refreshTime = initSmartTime();
     restoreEditMinutes(path.split('/')[2]).then(refreshTime);
     initEditImagePicker();
