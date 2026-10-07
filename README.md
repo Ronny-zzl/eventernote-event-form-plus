@@ -78,6 +78,7 @@ pnpm build        # eventernote-event-form-plus.user.js を生成
 pnpm test         # 単体テスト
 pnpm site login   # e2e テスト用にログイン（Chrome が開きます）
 pnpm test:e2e     # 実際のページを使ったテスト
+pnpm preview:serve # テスト版をビルドして LAN に公開（スマートフォンで http://PCのIP:4173/eventernote-event-form-plus.preview.user.js を開いてインストール）
 ```
 
 ## ライセンス

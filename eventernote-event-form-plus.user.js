@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.3.0
+// @version            0.3.1
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -32,7 +32,7 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-presets select{margin-bottom:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input{flex:1;min-width:200px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}");
+	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-presets select{margin-bottom:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input{flex:1;min-width:200px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}.ene-sp input.btn{color:#007aff;-webkit-appearance:none;background:#fff;border:1px solid #007aff;border-radius:0;height:30px;margin:2px 0;padding:0 10px;font-size:14px}.ene-sp .ene-time-row input.ene-time{width:80px}.ene-sp .ene-drop img{max-width:100%}.ene-sp .ene-notice{max-width:none;left:10px;right:10px}");
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
 	var page = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
@@ -62,6 +62,27 @@
 		e.preventDefault();
 		fn();
 	});
+	var isSmartphone = () => !!document.querySelector("link[href*=\"smartphone.css\"]");
+	var usesHeadRows = (row) => !!row.closest("table")?.querySelector("th");
+	var fieldStart = (row) => {
+		const prev = row.previousElementSibling;
+		return usesHeadRows(row) && prev?.querySelector("th") ? prev : row;
+	};
+	var insertField = (before, label) => {
+		const cell = document.createElement("td");
+		if (usesHeadRows(before)) {
+			const head = document.createElement("tr");
+			const body = document.createElement("tr");
+			head.append(Object.assign(document.createElement("th"), { textContent: label }));
+			body.append(cell);
+			before.before(head, body);
+		} else {
+			const row = document.createElement("tr");
+			row.append(Object.assign(document.createElement("td"), { textContent: label }), cell);
+			before.before(row);
+		}
+		return cell;
+	};
 	var load = (key, fallback) => _GM_getValue(key, fallback);
 	var save = (key, value) => _GM_setValue(key, value);
 	var actorId = (li) => li.id.replace(/^actor_/, "");
@@ -656,17 +677,13 @@
 			if (read.length) showNotice("読み取りました：" + read.join(" / "));
 			else showNotice("告知文から日付・時間を読み取れませんでした", "error");
 		};
-		const row = document.createElement("tr");
-		row.innerHTML = `
-    <td>告知文から入力</td>
-    <td>
-      <input type="text" class="ene-announce" autocomplete="off"
-        placeholder="例: 2026年12月19日(土) 開場 17:30 / 開演 18:30　告知文をここに貼り付け">
-      <p class="s">開催日と開場・開演・終演の時間を自動で入力します</p>
-    </td>
+		const cell = insertField(fieldStart(dateRow), "告知文から入力");
+		cell.innerHTML = `
+    <input type="text" class="ene-announce" autocomplete="off"
+      placeholder="例: 2026年12月19日(土) 開場 17:30 / 開演 18:30　告知文をここに貼り付け">
+    <p class="s">開催日と開場・開演・終演の時間を自動で入力します</p>
   `;
-		dateRow.before(row);
-		const input = row.querySelector("input");
+		const input = cell.querySelector("input");
 		input.addEventListener("paste", (e) => {
 			const text = e.clipboardData?.getData("text");
 			if (!text) return;
@@ -884,9 +901,9 @@
 		}
 		return doc;
 	};
-	var eventInfoCell = async (eventId, label) => {
+	var eventInfoCell = async (eventId, ...labels) => {
 		const doc = await fetchEventDoc(eventId);
-		const head = doc && [...doc.querySelectorAll(".gb_events_info_table td")].find((td) => td.textContent?.trim() === label);
+		const head = doc && [...doc.querySelectorAll(".gb_events_info_table td, h2.gb_subtitle")].find((el) => labels.includes(el.textContent?.trim() ?? ""));
 		return head ? head.nextElementSibling : null;
 	};
 	var CLOSED_RE = /閉館|閉店|閉校|閉鎖|閉場|移転/;
@@ -1176,17 +1193,15 @@
 		};
 	};
 	var initImagePicker = () => {
-		const submit = document.querySelector("#event_form input[type=\"submit\"]");
-		if (!submit) return;
+		const submitRow = document.querySelector("#event_form input[type=\"submit\"]")?.closest("tr");
+		if (!submitRow) return;
 		if (!isReturning) save("draftImage", null);
-		const row = document.createElement("tr");
-		row.innerHTML = `
-    <td>サムネイル画像</td>
-    <td><p class="ene-image-note">登録完了後、イベント編集機能を使って自動でアップロードします。</p></td>
-  `;
-		submit.closest("tr").before(row);
+		const cell = insertField(submitRow, "サムネイル画像");
 		const picker = createImageDrop((image) => save("draftImage", image), () => save("draftImage", null));
-		row.cells[1].prepend(picker.element);
+		cell.append(picker.element, Object.assign(document.createElement("p"), {
+			className: "ene-image-note",
+			textContent: "登録完了後、イベント編集機能を使って自動でアップロードします。"
+		}));
 		const draft = load("draftImage", null);
 		if (draft) picker.show(draft.dataUrl);
 	};
@@ -1220,14 +1235,9 @@
 		const form = document.querySelector("form[action=\"/events/add/complete\"]");
 		const image = load("draftImage", null);
 		if (!form || !image) return;
-		const row = document.createElement("tr");
-		row.innerHTML = `
-    <td>サムネイル画像</td>
-    <td><img style="max-width:300px;max-height:200px"><br>
-      <span class="s">登録完了後に自動でアップロードします</span></td>
-  `;
-		row.querySelector("img").src = image.dataUrl;
-		form.querySelector("input[type=\"submit\"]").closest("tr").before(row);
+		const cell = insertField(form.querySelector("input[type=\"submit\"]").closest("tr"), "サムネイル画像");
+		cell.innerHTML = `<img style="max-width:100%;max-height:200px"><br><span class="s">登録完了後に自動でアップロードします</span>`;
+		cell.querySelector("img").src = image.dataUrl;
 		const value = (name) => form.elements.namedItem(name).value;
 		form.addEventListener("submit", () => {
 			save("pendingUpload", {
@@ -1372,7 +1382,7 @@
 			return hour?.value && minute && !minute.value;
 		});
 		if (!missing.length) return;
-		const text = (await eventInfoCell(eventId, "時間"))?.textContent ?? "";
+		const text = (await eventInfoCell(eventId, "時間", "開場/開演/終演時間"))?.textContent ?? "";
 		const failed = missing.filter((key) => {
 			const { hour, minute } = selects(key);
 			const m = text.match(new RegExp(TIME_LABELS[key] + String.raw`\s*(\d{1,2}):(\d{2})`));
@@ -1501,6 +1511,7 @@
 			setTime
 		};
 	};
+	document.documentElement.classList.toggle("ene-sp", isSmartphone());
 	var path = location.pathname.replace(/\/$/, "");
 	var editId = path.match(/^\/events\/(\d+)\/edit$/)?.[1];
 	if (path === "/events/add/confirm") {

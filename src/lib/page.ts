@@ -44,3 +44,32 @@ export const onEnter = (input: HTMLInputElement, fn: () => void) =>
     e.preventDefault();
     fn();
   });
+
+// 手机浏览器访问时网站返回另一套页面（smartphone.css），表单的 ID 相同但表格结构不同
+export const isSmartphone = () => !!document.querySelector('link[href*="smartphone.css"]');
+
+// 表单的一个项目：电脑版是 <tr><td>标题</td><td>内容</td></tr>，手机版是 <tr><th>标题</th></tr><tr><td>内容</td></tr>
+const usesHeadRows = (row: Element) => !!row.closest('table')?.querySelector('th');
+
+// row 所在项目的第一行（手机版是它前面的标题行）
+export const fieldStart = (row: HTMLTableRowElement) => {
+  const prev = row.previousElementSibling;
+  return usesHeadRows(row) && prev?.querySelector('th') ? (prev as HTMLTableRowElement) : row;
+};
+
+// 在 before 这一行之前插入一个项目（按页面的表格结构），返回内容单元格
+export const insertField = (before: HTMLTableRowElement, label: string) => {
+  const cell = document.createElement('td');
+  if (usesHeadRows(before)) {
+    const head = document.createElement('tr');
+    const body = document.createElement('tr');
+    head.append(Object.assign(document.createElement('th'), { textContent: label }));
+    body.append(cell);
+    before.before(head, body);
+  } else {
+    const row = document.createElement('tr');
+    row.append(Object.assign(document.createElement('td'), { textContent: label }), cell);
+    before.before(row);
+  }
+  return cell;
+};

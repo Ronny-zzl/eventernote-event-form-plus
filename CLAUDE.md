@@ -3,7 +3,7 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 当前已发布版本：`0.3.0`（已打 `v0.3.0` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 当前已发布版本：`0.3.1`（已打 `v0.3.1` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 工程结构
 
@@ -43,6 +43,14 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
   - 编辑页加载时内联脚本立即调用 `searchPlaces(都道府県, 会场ID)`；编辑页的 `searchPlaces` 回调会**先清空** `#places_list` 再重建（登录页的只追加）。大列表到达前 `place_id` 是空的
 - `?from_event_id=活动ID` 是官方的「复制活动登录」入口
 - `validateEvent()`（同日同出演者重复检查）在页面里被注释掉了
+
+### 手机版页面（按 User-Agent 切换）
+- 手机浏览器访问时，登录页 / 编辑页 / 确认页 / 活动页都返回另一套模板（`smartphone.css`，`viewport=width=device-width`，没有 Bootstrap）。表单的元素 ID 和页面函数（`addActor`、`searchPlaces` 等）与电脑版相同
+- 表单项目是两行：`<tr><th>标题</th></tr><tr><td>内容</td></tr>`（电脑版是一行 `<td>标题</td><td>内容</td>`）。插入项目用 `insertField`，定位项目开头用 `fieldStart`（`src/lib/page.ts`）
+- 活动页没有 `.gb_events_info_table`，是 `<h2 class="gb_subtitle">開場/開演/終演時間</h2>` + 内容、`<h2 class="gb_subtitle">開催場所</h2>` + `<p class="t"><a href="/places/{id}">`；`eventInfoCell` 两种都支持
+- 按钮是网站自己的 `gb_btn_add_s` / `gb_btn_add`（蓝底 #007aff）。脚本给 `<html>` 加 `ene-sp` 类，在其下给 `.btn` 定义描边样式
+- 手机版编辑页**没有图片上传栏**（`thumbnail_image`）
+- 用户用 iPhone 的 Tampermonkey for Safari 实测 0.3.1 测试版没有问题（2026-10-07）
 
 ### 确认页 `/events/add/confirm`
 - 全部值放在隐藏字段，POST 到 `/events/add/complete`，只有一个「登録する」按钮，没有返回按钮
@@ -117,3 +125,5 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - 2026-10-07 的调查：之前以为是「登录过期」，其实是没带 CSRF token。Rails 校验失败时作废会话 → 被重定向到 `/login`。另外只提交 token + 活动名（缺日期等字段）时服务器直接 500，服务器几乎不做输入检查
 - e2e 测试（`pnpm test:e2e`，先 `vite build`）：`test/e2e/harness.ts` 用 `siteFetch` 实时获取页面，在 jsdom 里连同页面自带的脚本运行构建好的用户脚本；用户脚本发出的 fetch 也经过 `siteFetch`（jsdom 的 AbortSignal 要转成 Node 的）。页面自带脚本的 XHR 不带登录状态，也不经过 `siteFetch`（目前只有 GET）。编辑页测试用活动 494909（用户自己登录的）。未登录时整组跳过；CI 只跑 `pnpm test`（单元测试）
 - 旧的 `cookie.local.txt` 已不再使用
+- e2e 的 `openPage(path, { mobile: true })` 用手机版页面（页面和用户脚本的请求都带 iPhone 的 User-Agent），见 `test/e2e/mobile.test.ts`
+- **发布前在手机上试用**：`pnpm preview:serve` 构建测试版（`--mode preview`：名字带「（テスト版）」、命名空间 `…#preview`、版本号 `{version}.{构建时间}`，和正式版是两个脚本；输出 `dist/eventernote-event-form-plus.preview.user.js`，不复制到根目录）并在局域网提供（端口 4173）。手机连同一 Wi-Fi，在 Safari 打开 `http://{电脑的局域网 IP}:4173/eventernote-event-form-plus.preview.user.js` 安装。`pnpm dev` 不能用于手机：https 页面加载 http 开发服务器的代码会被当作混合内容拦截

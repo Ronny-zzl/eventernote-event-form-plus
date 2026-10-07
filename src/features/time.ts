@@ -28,7 +28,7 @@ export const restoreEditMinutes = async (eventId: string) => {
   });
   if (!missing.length) return;
 
-  const text = (await eventInfoCell(eventId, '時間'))?.textContent ?? '';
+  const text = (await eventInfoCell(eventId, '時間', '開場/開演/終演時間'))?.textContent ?? '';
   const failed = missing.filter((key) => {
     const { hour, minute } = selects(key);
     const m = text.match(new RegExp(TIME_LABELS[key] + String.raw`\s*(\d{1,2}):(\d{2})`));

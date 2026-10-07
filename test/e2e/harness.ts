@@ -15,10 +15,14 @@ export const EDIT_EVENT_ID = '494909';
 const SCRIPT = join(import.meta.dirname, '..', '..', 'dist', 'eventernote-event-form-plus.user.js');
 const THIRD_PARTY = /<script[^>]*(googlesyndication|twitter|mixi|rakuten|googletagmanager)[^>]*><\/script>/g;
 
+// 手机浏览器的 User-Agent：网站会返回另一套页面（smartphone.css）
+export const MOBILE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 19_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Mobile/15E148 Safari/604.1';
+
 const pages = new Map<string, Promise<string>>();
-export const fetchHtml = (path: string) => {
-  if (!pages.has(path)) pages.set(path, siteFetch(path).then((res) => res.text()));
-  return pages.get(path)!;
+export const fetchHtml = (path: string, mobile = false) => {
+  const key = (mobile ? 'sp:' : '') + path;
+  if (!pages.has(key)) pages.set(key, siteFetch(path, { headers: mobile ? { 'User-Agent': MOBILE_UA } : {} }).then((res) => res.text()));
+  return pages.get(key)!;
 };
 
 type Options = {
@@ -26,12 +30,13 @@ type Options = {
   store?: Record<string, unknown>; // GM 存储，多个页面共用同一个对象即可模拟跨页
   routes?: Record<string, string>; // 用户脚本请求这些 path 时返回指定的 HTML
   confirm?: boolean; // window.confirm 的返回值
+  mobile?: boolean; // 用手机版页面（页面和用户脚本的请求都带手机的 User-Agent）
 };
 
 export type Page = Awaited<ReturnType<typeof openPage>>;
 
-export const openPage = async (path: string, { html, store = {}, routes = {}, confirm = true }: Options = {}) => {
-  const source = (html ?? (await fetchHtml(path))).replace(THIRD_PARTY, '');
+export const openPage = async (path: string, { html, store = {}, routes = {}, confirm = true, mobile = false }: Options = {}) => {
+  const source = (html ?? (await fetchHtml(path, mobile))).replace(THIRD_PARTY, '');
   const dom = new JSDOM(source, {
     url: BASE + path,
     runScripts: 'dangerously',
@@ -56,7 +61,9 @@ export const openPage = async (path: string, { html, store = {}, routes = {}, co
       // jsdom 的 AbortSignal 不能直接交给 Node 的 fetch，转成 Node 的
       const controller = new AbortController();
       signal?.addEventListener('abort', () => controller.abort());
-      return siteFetch(url, { ...init, signal: controller.signal });
+      const headers = new Headers(init.headers);
+      if (mobile) headers.set('User-Agent', MOBILE_UA);
+      return siteFetch(url, { ...init, headers, signal: controller.signal });
     },
   });
   w.HTMLElement.prototype.scrollIntoView = () => {};

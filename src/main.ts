@@ -9,6 +9,10 @@ import { initConfirmBackButton, initFormSnapshot } from './features/snapshot';
 import { initSubmitCheck } from './features/submitCheck';
 import { initConfirmImage, initEditImagePicker, initImagePicker, processPendingUpload } from './features/thumbnail';
 import { initMinuteOptions, initSmartTime, restoreEditMinutes } from './features/time';
+import { isSmartphone } from './lib/page';
+
+// 手机版页面没有 Bootstrap，按钮等用 .ene-sp 下的样式
+document.documentElement.classList.toggle('ene-sp', isSmartphone());
 
 const path = location.pathname.replace(/\/$/, '');
 const editId = path.match(/^\/events\/(\d+)\/edit$/)?.[1];

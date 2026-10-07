@@ -53,11 +53,11 @@ export const whoami = async () => {
   return (await res.text()).match(/alt="([^"]+)" class="user-icon/)?.[1] ?? null;
 };
 
-// 按浏览器的方式提交登录表单到确认页（自动带上 CSRF token）。fill 用来填表单
-export const postConfirm = async (fill: (form: HTMLFormElement) => void) => {
-  const { window } = new JSDOM(await (await siteFetch('/events/add')).text());
+// 按浏览器的方式提交登录表单到确认页（自动带上 CSRF token）。fill 用来填表单；headers 可指定 User-Agent 等
+export const postConfirm = async (fill: (form: HTMLFormElement) => void, headers?: HeadersInit) => {
+  const { window } = new JSDOM(await (await siteFetch('/events/add', { headers })).text());
   const form = window.document.getElementById('event_form') as HTMLFormElement;
   fill(form);
   const body = new URLSearchParams([...new window.FormData(form)].map(([k, v]) => [k, String(v)]));
-  return siteFetch('/events/add/confirm', { method: 'POST', body });
+  return siteFetch('/events/add/confirm', { method: 'POST', body, headers });
 };

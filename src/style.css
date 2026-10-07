@@ -88,3 +88,12 @@
 /* 草稿 */
 .ene-draft { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ene-draft .btn { margin-bottom: 0; }
+
+/* 手机版页面（smartphone.css，没有 Bootstrap）：按钮做成和网站同色的描边按钮，高度和网站的按钮一致 */
+.ene-sp input.btn {
+  height: 30px; padding: 0 10px; margin: 2px 0; font-size: 14px;
+  color: #007aff; background: #fff; border: 1px solid #007aff; border-radius: 0; -webkit-appearance: none;
+}
+.ene-sp .ene-time-row input.ene-time { width: 80px; }
+.ene-sp .ene-drop img { max-width: 100%; }
+.ene-sp .ene-notice { left: 10px; right: 10px; max-width: none; }

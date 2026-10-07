@@ -1,5 +1,5 @@
 import { showNotice } from '../lib/notice';
-import { findInitialPlace, parseHtml, sleep } from '../lib/page';
+import { findInitialPlace, insertField, parseHtml, sleep } from '../lib/page';
 import { load, save, type ImageData } from '../lib/storage';
 import { isReturning } from './snapshot';
 
@@ -115,19 +115,17 @@ const createImageDrop = (onImage: (image: ImageData) => void, onRemove: () => vo
 
 // 登录页：选中的图片存入 draftImage，登录完成后自动上传
 export const initImagePicker = () => {
-  const submit = document.querySelector('#event_form input[type="submit"]');
-  if (!submit) return;
+  const submitRow = document.querySelector('#event_form input[type="submit"]')?.closest('tr');
+  if (!submitRow) return;
   // 新打开的登录页从空白开始；只有从确认页返回时才沿用之前选的图片
   if (!isReturning) save('draftImage', null);
 
-  const row = document.createElement('tr');
-  row.innerHTML = `
-    <td>サムネイル画像</td>
-    <td><p class="ene-image-note">登録完了後、イベント編集機能を使って自動でアップロードします。</p></td>
-  `;
-  submit.closest('tr')!.before(row);
+  const cell = insertField(submitRow, 'サムネイル画像');
   const picker = createImageDrop((image) => save('draftImage', image), () => save('draftImage', null));
-  row.cells[1].prepend(picker.element);
+  cell.append(picker.element, Object.assign(document.createElement('p'), {
+    className: 'ene-image-note',
+    textContent: '登録完了後、イベント編集機能を使って自動でアップロードします。',
+  }));
   const draft = load('draftImage', null);
   if (draft) picker.show(draft.dataUrl);
 };
@@ -163,14 +161,9 @@ export const initConfirmImage = () => {
   const form = document.querySelector<HTMLFormElement>('form[action="/events/add/complete"]');
   const image = load('draftImage', null);
   if (!form || !image) return;
-  const row = document.createElement('tr');
-  row.innerHTML = `
-    <td>サムネイル画像</td>
-    <td><img style="max-width:300px;max-height:200px"><br>
-      <span class="s">登録完了後に自動でアップロードします</span></td>
-  `;
-  row.querySelector('img')!.src = image.dataUrl;
-  form.querySelector('input[type="submit"]')!.closest('tr')!.before(row);
+  const cell = insertField(form.querySelector('input[type="submit"]')!.closest('tr')!, 'サムネイル画像');
+  cell.innerHTML = `<img style="max-width:100%;max-height:200px"><br><span class="s">登録完了後に自動でアップロードします</span>`;
+  cell.querySelector('img')!.src = image.dataUrl;
 
   const value = (name: string) => (form.elements.namedItem(name) as HTMLInputElement).value;
   form.addEventListener('submit', () => {

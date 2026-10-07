@@ -15,10 +15,11 @@ const fetchEventDoc = (eventId: string) => {
   return doc;
 };
 
-// 信息表中标题为 label 的那一行的内容单元格
-export const eventInfoCell = async (eventId: string, label: string) => {
+// 标题为 labels 之一的那一项的内容。电脑版是信息表 <td>标题</td><td>内容</td>，
+// 手机版是 <h2 class="gb_subtitle">标题</h2> 后面跟内容（标题文字也可能不同，如「時間」/「開場/開演/終演時間」）
+export const eventInfoCell = async (eventId: string, ...labels: string[]) => {
   const doc = await fetchEventDoc(eventId);
-  const head = doc && [...doc.querySelectorAll('.gb_events_info_table td')]
-    .find((td) => td.textContent?.trim() === label);
+  const head = doc && [...doc.querySelectorAll('.gb_events_info_table td, h2.gb_subtitle')]
+    .find((el) => labels.includes(el.textContent?.trim() ?? ''));
   return head ? head.nextElementSibling : null;
 };

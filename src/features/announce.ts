@@ -1,5 +1,5 @@
 import { showNotice } from '../lib/notice';
-import { byId, onEnter } from '../lib/page';
+import { byId, fieldStart, insertField, onEnter } from '../lib/page';
 import type { DatePicker } from './date';
 import { parseDate } from './dateParse';
 import type { SmartTime } from './time';
@@ -25,17 +25,13 @@ export const initAnnounce = (date: DatePicker | null, time: SmartTime | null) =>
     else showNotice('告知文から日付・時間を読み取れませんでした', 'error');
   };
 
-  const row = document.createElement('tr');
-  row.innerHTML = `
-    <td>告知文から入力</td>
-    <td>
-      <input type="text" class="ene-announce" autocomplete="off"
-        placeholder="例: 2026年12月19日(土) 開場 17:30 / 開演 18:30　告知文をここに貼り付け">
-      <p class="s">開催日と開場・開演・終演の時間を自動で入力します</p>
-    </td>
+  const cell = insertField(fieldStart(dateRow), '告知文から入力');
+  cell.innerHTML = `
+    <input type="text" class="ene-announce" autocomplete="off"
+      placeholder="例: 2026年12月19日(土) 開場 17:30 / 開演 18:30　告知文をここに貼り付け">
+    <p class="s">開催日と開場・開演・終演の時間を自動で入力します</p>
   `;
-  dateRow.before(row);
-  const input = row.querySelector('input')!;
+  const input = cell.querySelector('input')!;
   input.addEventListener('paste', (e) => {
     const text = e.clipboardData?.getData('text');
     if (!text) return;

@@ -1,6 +1,6 @@
 {
   "name": "eventernote-event-form-plus",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -12,7 +12,9 @@
     "lint": "oxlint",
     "test": "vitest run --project unit",
     "test:e2e": "vite build && vitest run --project e2e",
-    "site": "node scripts/site.ts"
+    "site": "node scripts/site.ts",
+    "build:preview": "vite build --mode preview",
+    "preview:serve": "vite build --mode preview && vite preview"
   },
   "devDependencies": {
     "@types/jsdom": "^30.0.0",
