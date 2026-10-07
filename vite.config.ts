@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { copyFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import monkey from 'vite-plugin-monkey';
@@ -6,6 +7,14 @@ const fileName = 'eventernote-event-form-plus.user.js';
 const repo = 'https://github.com/Ronny-zzl/eventernote-event-form-plus';
 
 export default defineConfig({
+  test: {
+    projects: [
+      // 不依赖网络的单元测试（CI 跑这一组）
+      { test: { name: 'unit', include: ['test/*.test.ts'] } },
+      // 用真实页面和 API 的测试：需要 pnpm site login，先 vite build
+      { test: { name: 'e2e', include: ['test/e2e/*.test.ts'], testTimeout: 90_000, hookTimeout: 90_000, fileParallelism: false } },
+    ],
+  },
   plugins: [
     monkey({
       entry: 'src/main.ts',

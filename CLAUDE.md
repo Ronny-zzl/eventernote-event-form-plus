@@ -11,13 +11,13 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - 源码在 `src/`（TypeScript 7），用 Vite + `vite-plugin-monkey` 打包。`==UserScript==` 头部在 `vite.config.ts` 里配置，版本号取自 `package.json`，`@grant` 自动生成
 - **根目录的 `eventernote-event-form-plus.user.js` 是构建产物，不要手改**。它必须留在这个路径并提交：已安装的用户和 Greasy Fork 都从它的 raw URL 更新。构建先输出到 `dist/`（忽略），再由 `vite.config.ts` 里的小插件复制到根目录
 - **产物不压缩**：Greasy Fork 禁止压缩 / 混淆的代码
-- 包管理器 pnpm。命令：`pnpm build` / `pnpm dev`（开发服务器，Tampermonkey 自动更新）/ `pnpm typecheck` / `pnpm lint`（oxlint）/ `pnpm test`（vitest）
+- 包管理器 pnpm。命令：`pnpm build` / `pnpm dev`（开发服务器，Tampermonkey 自动更新）/ `pnpm typecheck`（src 和 scripts、e2e 分两个 tsconfig）/ `pnpm lint`（oxlint）/ `pnpm test` / `pnpm test:e2e` / `pnpm site …`（见下）
 - CI（`.github/workflows/ci.yml`）：typecheck、lint、test、build，并检查提交的 `.user.js` 和构建结果一致
 - 目录：`src/main.ts`（按页面分发）、`src/style.css`（全部样式，打包时用 GM_addStyle 注入）、`src/lib/`（page = 页面全局变量与小工具、storage = 带类型的 GM 存储、notice、eventPage = 活动页读取缓存、suggest = 会场和出演者共用的输入即搜索候选列表）、`src/features/`（actors、actorSearch、announce、date、time、place、snapshot、thumbnail；纯函数放在 `timeParse.ts`、`dateParse.ts`、`placeRank.ts`、`actorRank.ts`，供单元测试）
 - GM API 从 `'$'` 导入（vite-plugin-monkey 的别名）。依赖 `'$'` 的模块在 vitest 里无法加载，所以要测试的逻辑写成不依赖它的纯函数模块
 - 代码风格：类型用 `type`，函数用箭头函数（oxlint 的 `consistent-type-definitions`、`func-style` 规则强制）；尽量简洁
 - 换行统一 LF（`.gitattributes`：`* text=auto eol=lf`）
-- 页面级的 jsdom 测试（用保存的页面 HTML + 真实 API）目前只在本地临时脚本里跑过，没有放进仓库：页面 HTML 含登录用户的信息，不适合提交
+- 测试分两组：`pnpm test`（vitest 的 unit 项目，纯函数，CI 跑）和 `pnpm test:e2e`（e2e 项目，真实页面 + API，需要登录，见「调试网站的方法」）。页面 HTML 含登录用户的信息，只在运行时获取，不提交
 
 ## 约定
 
@@ -105,11 +105,16 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 
 - 重复登录检查：`/api/events/validate?event_date=YYYY-MM-DD&actor_ids=…` 仍可用（2〜5 秒），页面自带的 `validateEvent()` 调用被注释掉了。其他候选：告知文读取话题标签、X 链接缩略图提示、关联链接清理
 
-## 调试网站的方法
+## 调试网站的方法（开发环境）
 
-- `/events/add`、编辑页等需要登录。用户提供过 Cookie：放在仓库根目录 `cookie.local.txt`（已被 `.gitignore` 忽略），内容是**不带 `Cookie:` 前缀**的原始 Cookie 字符串，用法：
-  `curl -H "Cookie: $(tr -d '\r\n' < cookie.local.txt)" ...`
-- 不要打印 Cookie 内容
-- 只允许 GET，以及 POST 到 `/events/add/confirm`（不会登录活动，测试数据用活动名「テスト（登録しません）」）。**不要**在未经同意的情况下 POST 到 `/events/add/complete` 或 `edit/complete`
-- 2026-10-07 起用 curl POST `/events/add/confirm` 会被重定向到登录页（带上 `authenticity_token` 也一样），原因未查明；需要时请用户在浏览器里操作
-- 新机器上没有这个文件，需要时请用户重新提供
+- 登录状态只保存 `_session_id` 一个值，在 `.local/session.json`（`.local/` 整个被 gitignore）。服务器每次请求都会续期（约 14 天滚动）
+  - `pnpm site login`：用 playwright-core 启动本机 Chrome（独立配置 `.local/chrome-profile`，会保留），用户在里面登录后自动保存
+  - `pnpm site login --paste`：粘贴 `_session_id`（或整串 Cookie），也可以用管道传入
+  - `pnpm site check`：显示登录状态和到期时间；`pnpm site fetch <path>`：页面存到 `.local/pages/`
+- **所有请求都走 `scripts/lib/site.ts` 的 `siteFetch`**：只发一个 Cookie 头，并且只允许 GET 和 POST `/events/add/confirm`，其他请求直接抛错（`test/e2e/guard.test.ts` 有测试）。不要再手写 curl 带 Cookie
+  - 提交到确认页用 `postConfirm(fill)`：按浏览器的方式序列化 `#event_form`，自动带上 CSRF token。测试数据用活动名「テスト（登録しません）」
+- 不要打印 Cookie / session 的值
+- **不要**在未经同意的情况下 POST 到 `/events/add/complete` 或 `edit/complete`（`siteFetch` 也会拒绝）
+- 2026-10-07 的调查：之前以为是「登录过期」，其实是没带 CSRF token。Rails 校验失败时作废会话 → 被重定向到 `/login`。另外只提交 token + 活动名（缺日期等字段）时服务器直接 500，服务器几乎不做输入检查
+- e2e 测试（`pnpm test:e2e`，先 `vite build`）：`test/e2e/harness.ts` 用 `siteFetch` 实时获取页面，在 jsdom 里连同页面自带的脚本运行构建好的用户脚本；用户脚本发出的 fetch 也经过 `siteFetch`（jsdom 的 AbortSignal 要转成 Node 的）。页面自带脚本的 XHR 不带登录状态，也不经过 `siteFetch`（目前只有 GET）。编辑页测试用活动 494909（用户自己登录的）。未登录时整组跳过；CI 只跑 `pnpm test`（单元测试）
+- 旧的 `cookie.local.txt` 已不再使用

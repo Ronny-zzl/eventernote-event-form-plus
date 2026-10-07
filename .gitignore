@@ -5,3 +5,4 @@ Thumbs.db
 cookies.json
 *.local.txt
 dist/
+.local/

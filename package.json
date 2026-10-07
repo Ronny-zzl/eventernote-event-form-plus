@@ -8,13 +8,18 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "lint": "oxlint",
-    "test": "vitest run"
+    "test": "vitest run --project unit",
+    "test:e2e": "vite build && vitest run --project e2e",
+    "site": "node scripts/site.ts"
   },
   "devDependencies": {
+    "@types/jsdom": "^30.0.0",
+    "@types/node": "^26.6.4",
     "jsdom": "^30.1.2",
     "oxlint": "^1.87.0",
+    "playwright-core": "^1.63.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.2",
     "vite-plugin-monkey": "^8.1.1",
