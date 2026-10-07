@@ -1,5 +1,5 @@
 import { byId, page } from '../lib/page';
-import { load, save, type Actor } from '../lib/storage';
+import { load, save, type Actor, type ActorPreset } from '../lib/storage';
 
 const actorId = (li: Element) => li.id.replace(/^actor_/, '');
 
@@ -101,6 +101,21 @@ export const initActorSorting = () => {
 
 // ---- 出演者セット：把已选的出演者（如团体 + 全体成员）存成组合，之后一键全部添加 ----
 
+// 从没保存过セット时显示的示例，让用户知道怎么用。删光セット后存的是空数组，不会再出现
+const defaultPresets = (): ActorPreset[] => [{
+  name: '前橋ウィッチーズ',
+  actors: [
+    { id: '80126', name: '前橋ウィッチーズ' },
+    { id: '63283', name: '春日さくら' },
+    { id: '80112', name: '咲川ひなの' },
+    { id: '80113', name: '本村玲奈' },
+    { id: '65986', name: '三波春香' },
+    { id: '69358', name: '百瀬帆南' },
+  ],
+}];
+
+const loadPresets = () => load('actorPresets', defaultPresets());
+
 // 列表里已有セット的第一项（通常是团体名）时，新成员插在它后面（以及紧随其后的已有成员之后），
 // 而不是排到末尾；否则按顺序追加
 const addPreset = (actors: Actor[]) => {
@@ -142,7 +157,7 @@ export const initActorPresets = () => {
   const [addBtn, saveBtn, deleteBtn] = box.querySelectorAll('input');
 
   const render = (selectedName?: string) => {
-    const presets = load('actorPresets', []);
+    const presets = loadPresets();
     select.replaceChildren(
       new Option(presets.length ? '出演者セットを選んでください' : '（保存済みのセットはありません）', ''),
       ...presets.map((p, i) => new Option(`${p.name}（${p.actors.length}名）`, String(i), false, p.name === selectedName)),
@@ -150,7 +165,7 @@ export const initActorPresets = () => {
   };
 
   addBtn.addEventListener('click', () => {
-    const preset = load('actorPresets', [])[Number(select.value)];
+    const preset = loadPresets()[Number(select.value)];
     if (select.value && preset) addPreset(preset.actors);
   });
 
@@ -162,7 +177,7 @@ export const initActorPresets = () => {
     }
     const name = (prompt('セット名', actors[0].name) ?? '').trim();
     if (!name) return;
-    const presets = load('actorPresets', []);
+    const presets = loadPresets();
     const existing = presets.find((p) => p.name === name);
     if (existing) {
       if (!confirm(`セット「${name}」は既に存在します。上書きしますか？`)) return;
@@ -175,7 +190,7 @@ export const initActorPresets = () => {
   });
 
   deleteBtn.addEventListener('click', () => {
-    const presets = load('actorPresets', []);
+    const presets = loadPresets();
     const preset = presets[Number(select.value)];
     if (!select.value || !preset) return;
     if (!confirm(`セット「${preset.name}」を削除しますか？`)) return;

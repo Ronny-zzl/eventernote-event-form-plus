@@ -1,10 +1,7 @@
 import { eventInfoCell } from '../lib/eventPage';
 import { showNotice } from '../lib/notice';
-import { byId, pad2 } from '../lib/page';
-import {
-  LABEL_ANY_RE, TIME_KEYS, TIME_LABELS, formatTime, parseAnnouncement, parseTimeInput,
-  type Time, type TimeKey,
-} from './timeParse';
+import { byId, hideFrom, onEnter, pad2 } from '../lib/page';
+import { TIME_KEYS, TIME_LABELS, formatTime, parseTimeInput, type Time, type TimeKey } from './timeParse';
 
 const selects = (key: TimeKey) => ({
   hour: byId<HTMLSelectElement>(`${key}_time_hour`),
@@ -58,10 +55,14 @@ const QUICK: Partial<Record<TimeKey, [label: string, delta: number][]>> = {
 };
 
 // 用 3 个文本框代替 6 个下拉框。原下拉框隐藏但保留，值同步回去，提交格式不变。
-// 返回 refresh()：外部直接改了下拉框（恢复快照、补读分钟）后用来刷新文本框
-export const initSmartTime = () => {
+export type SmartTime = {
+  refresh: () => void; // 外部直接改了下拉框（恢复快照、补读分钟）后用来刷新文本框
+  setTime: (key: TimeKey, t: Time | null) => void;
+};
+
+export const initSmartTime = (): SmartTime | null => {
   const rows = {} as Record<TimeKey, Row>;
-  if (TIME_KEYS.some((k) => !selects(k).hour || !selects(k).minute)) return () => {};
+  if (TIME_KEYS.some((k) => !selects(k).hour || !selects(k).minute)) return null;
 
   const readSelect = (key: TimeKey): Time | null => {
     const { hour, minute } = rows[key];
@@ -121,32 +122,9 @@ export const initSmartTime = () => {
     }
   };
 
-  const fillFromAnnouncement = (text: string) => {
-    const found = parseAnnouncement(text);
-    const keys = TIME_KEYS.filter((k) => found[k]);
-    if (!keys.length) {
-      showNotice('告知文から時間を読み取れませんでした', 'error');
-      return;
-    }
-    keys.forEach((k) => setTime(k, found[k]!));
-    showNotice('読み取りました：' + keys.map((k) => `${TIME_LABELS[k]} ${formatTime(found[k]!)}`).join(' / '));
-  };
-
-  // 文本框里按 Enter 会直接提交表单
-  const onEnter = (input: HTMLInputElement, fn: () => void) =>
-    input.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter') return;
-      e.preventDefault();
-      fn();
-    });
-
   for (const key of TIME_KEYS) {
     const { hour, minute } = selects(key) as { hour: HTMLSelectElement; minute: HTMLSelectElement };
-    // 原下拉框和「時」「分」文字收进隐藏的 span
-    const hidden = document.createElement('span');
-    hidden.style.display = 'none';
-    hour.before(hidden);
-    while (hidden.nextSibling) hidden.append(hidden.nextSibling);
+    const hidden = hideFrom(hour);
 
     const box = document.createElement('span');
     box.className = 'ene-time-row';
@@ -175,32 +153,7 @@ export const initSmartTime = () => {
     input.addEventListener('input', () => apply(key, false));
     input.addEventListener('change', () => apply(key, true));
     onEnter(input, () => apply(key, true));
-    // 只有带「開場」「開演」等标签的文字才当作告知文处理，单纯的时间照常粘贴
-    input.addEventListener('paste', (e) => {
-      const text = e.clipboardData?.getData('text');
-      if (!text || !LABEL_ANY_RE.test(text.normalize('NFKC'))) return;
-      e.preventDefault();
-      fillFromAnnouncement(text);
-    });
   }
-
-  // 告知文粘贴框，放在时间栏最上方
-  const announce = document.createElement('p');
-  announce.className = 'ene-announce';
-  announce.innerHTML = `
-    <span class="s">告知文から読み取る（開場・開演・終演の時間を自動入力）</span><br>
-    <input type="text" placeholder="例: 開場 17:30 / 開演 18:30 / 終演 20:30 　ここに貼り付け" autocomplete="off">
-  `;
-  const announceInput = announce.querySelector('input')!;
-  announceInput.addEventListener('paste', (e) => {
-    const text = e.clipboardData?.getData('text');
-    if (!text) return;
-    e.preventDefault();
-    announceInput.value = text.replace(/\s+/g, ' ').trim();
-    fillFromAnnouncement(text);
-  });
-  onEnter(announceInput, () => fillFromAnnouncement(announceInput.value));
-  rows.open.input.closest('p')!.before(announce);
 
   // 有无法识别的输入时阻止提交（capture 阶段，先于页面自己的提交检查）
   byId('event_form')!.addEventListener('submit', (e) => {
@@ -218,5 +171,5 @@ export const initSmartTime = () => {
     updateBadges();
   };
   refresh();
-  return refresh;
+  return { refresh, setTime };
 };

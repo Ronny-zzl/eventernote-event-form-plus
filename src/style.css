@@ -21,8 +21,6 @@
 .ene-time-row .btn { margin-bottom: 0; }
 .ene-time-badge { font-size: 11px; color: #fff; background: #f89406; border-radius: 3px; padding: 1px 5px; }
 .ene-time-error { font-size: 11px; color: #b94a48; }
-.ene-announce { margin-bottom: 10px; }
-.ene-announce input { width: 95%; margin-bottom: 0; }
 
 /* 会场 */
 .ene-place { position: relative; margin-bottom: 8px; }
@@ -64,3 +62,12 @@
 }
 .ene-notice.ene-error { background: #f2dede; color: #a94442; border-color: #ebccd1; }
 .ene-notice .ene-close { float: right; margin-left: 10px; cursor: pointer; }
+
+/* 告知文から入力 */
+.ene-announce { width: 95%; margin-bottom: 0; }
+
+/* 開催日 */
+.ene-date { display: inline-flex; align-items: center; gap: 6px; }
+.ene-date input { width: auto; margin-bottom: 0; }
+.ene-weekday[data-day="0"] { color: #c00; }
+.ene-weekday[data-day="6"] { color: #06c; }

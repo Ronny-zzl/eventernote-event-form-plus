@@ -26,3 +26,20 @@ export const findInitialPlace = (doc: Document = document) => {
 };
 
 export const parseHtml = (html: string) => new DOMParser().parseFromString(html, 'text/html');
+
+// 把 el 及其后面的兄弟节点（原下拉框和「年」「時」等文字）收进一个隐藏的 span，返回这个 span
+export const hideFrom = (el: Element) => {
+  const hidden = document.createElement('span');
+  hidden.style.display = 'none';
+  el.before(hidden);
+  while (hidden.nextSibling) hidden.append(hidden.nextSibling);
+  return hidden;
+};
+
+// 文本框里按 Enter 会直接提交表单，改成执行 fn
+export const onEnter = (input: HTMLInputElement, fn: () => void) =>
+  input.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    fn();
+  });

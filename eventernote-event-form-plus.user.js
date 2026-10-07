@@ -32,7 +32,7 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-presets select{margin-bottom:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-announce{margin-bottom:10px}.ene-announce input{width:95%;margin-bottom:0}.ene-place{margin-bottom:8px;position:relative}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-place-search{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-place-search select{width:auto;margin-bottom:0}.ene-place-search input{flex:1;min-width:200px;margin-bottom:0}.ene-place-results{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-place-results li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px}.ene-place-results li.ene-active{background:#eef6fb}.ene-place-results li.ene-closed{opacity:.5}.ene-place-results li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-place-results .ene-place-sub{color:#888;font-size:11px;display:block}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}");
+	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-presets select{margin-bottom:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-place{margin-bottom:8px;position:relative}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-place-search{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-place-search select{width:auto;margin-bottom:0}.ene-place-search input{flex:1;min-width:200px;margin-bottom:0}.ene-place-results{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-place-results li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px}.ene-place-results li.ene-active{background:#eef6fb}.ene-place-results li.ene-closed{opacity:.5}.ene-place-results li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-place-results .ene-place-sub{color:#888;font-size:11px;display:block}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}");
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
 	var page = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
@@ -50,6 +50,18 @@
 		return null;
 	};
 	var parseHtml = (html) => new DOMParser().parseFromString(html, "text/html");
+	var hideFrom = (el) => {
+		const hidden = document.createElement("span");
+		hidden.style.display = "none";
+		el.before(hidden);
+		while (hidden.nextSibling) hidden.append(hidden.nextSibling);
+		return hidden;
+	};
+	var onEnter = (input, fn) => input.addEventListener("keydown", (e) => {
+		if (e.key !== "Enter") return;
+		e.preventDefault();
+		fn();
+	});
 	var load = (key, fallback) => _GM_getValue(key, fallback);
 	var save = (key, value) => _GM_setValue(key, value);
 	var actorId = (li) => li.id.replace(/^actor_/, "");
@@ -134,6 +146,36 @@
 		new MutationObserver(decorateAll).observe(list, { childList: true });
 		decorateAll();
 	};
+	var defaultPresets = () => [{
+		name: "前橋ウィッチーズ",
+		actors: [
+			{
+				id: "80126",
+				name: "前橋ウィッチーズ"
+			},
+			{
+				id: "63283",
+				name: "春日さくら"
+			},
+			{
+				id: "80112",
+				name: "咲川ひなの"
+			},
+			{
+				id: "80113",
+				name: "本村玲奈"
+			},
+			{
+				id: "65986",
+				name: "三波春香"
+			},
+			{
+				id: "69358",
+				name: "百瀬帆南"
+			}
+		]
+	}];
+	var loadPresets = () => load("actorPresets", defaultPresets());
 	var addPreset = (actors) => {
 		const anchor = actors.length ? byId("actor_" + actors[0].id) : null;
 		if (!anchor) {
@@ -168,11 +210,11 @@
 		const select = box.querySelector("select");
 		const [addBtn, saveBtn, deleteBtn] = box.querySelectorAll("input");
 		const render = (selectedName) => {
-			const presets = load("actorPresets", []);
+			const presets = loadPresets();
 			select.replaceChildren(new Option(presets.length ? "出演者セットを選んでください" : "（保存済みのセットはありません）", ""), ...presets.map((p, i) => new Option(`${p.name}（${p.actors.length}名）`, String(i), false, p.name === selectedName)));
 		};
 		addBtn.addEventListener("click", () => {
-			const preset = load("actorPresets", [])[Number(select.value)];
+			const preset = loadPresets()[Number(select.value)];
 			if (select.value && preset) addPreset(preset.actors);
 		});
 		saveBtn.addEventListener("click", () => {
@@ -183,7 +225,7 @@
 			}
 			const name = (prompt("セット名", actors[0].name) ?? "").trim();
 			if (!name) return;
-			const presets = load("actorPresets", []);
+			const presets = loadPresets();
 			const existing = presets.find((p) => p.name === name);
 			if (existing) {
 				if (!confirm(`セット「${name}」は既に存在します。上書きしますか？`)) return;
@@ -196,7 +238,7 @@
 			render(name);
 		});
 		deleteBtn.addEventListener("click", () => {
-			const presets = load("actorPresets", []);
+			const presets = loadPresets();
 			const preset = presets[Number(select.value)];
 			if (!select.value || !preset) return;
 			if (!confirm(`セット「${preset.name}」を削除しますか？`)) return;
@@ -205,6 +247,254 @@
 			render();
 		});
 		render();
+	};
+	var showNotice = (message, kind) => {
+		const box = document.createElement("div");
+		box.className = kind === "error" ? "ene-notice ene-error" : "ene-notice";
+		const close = document.createElement("span");
+		close.className = "ene-close";
+		close.textContent = "×";
+		close.addEventListener("click", () => box.remove());
+		box.append(close, message);
+		document.body.append(box);
+		return box;
+	};
+	var WEEKDAYS$1 = "日月火水木金土";
+	var DAY_MS = 864e5;
+	var DATE_RE = new RegExp(String.raw`(?<!\d)(?:(\d{4})\s*[年/.-]\s*(\d{1,2})\s*[月/.-]\s*(\d{1,2})\s*日?|(\d{1,2})\s*(?:月\s*(\d{1,2})\s*日|/\s*(\d{1,2})))(?![\d:])` + String.raw`(?:\s*\(\s*([${WEEKDAYS$1}])[^)]{0,4}\)|\s*([${WEEKDAYS$1}])曜)?`, "g");
+	var toDate = ({ year, month, day }) => new Date(year, month - 1, day);
+	var isValid = (d) => {
+		const date = toDate(d);
+		return date.getMonth() === d.month - 1 && date.getDate() === d.day;
+	};
+	var guessYear = (month, day, weekday, today) => {
+		const thisYear = today.getFullYear();
+		const parts = (toDate({
+			year: thisYear,
+			month,
+			day
+		}).getTime() >= today.getTime() - 30 * DAY_MS ? [
+			thisYear,
+			thisYear + 1,
+			thisYear - 1
+		] : [
+			thisYear + 1,
+			thisYear,
+			thisYear - 1
+		]).map((year) => ({
+			year,
+			month,
+			day
+		})).filter(isValid);
+		return (weekday === null ? parts[0] : parts.find((d) => toDate(d).getDay() === weekday)) ?? null;
+	};
+	var parseDate = (text, today = new Date()) => {
+		let best = null;
+		for (const m of text.normalize("NFKC").matchAll(DATE_RE)) {
+			const w = m[7] ?? m[8];
+			const weekday = w ? WEEKDAYS$1.indexOf(w) : null;
+			const date = m[1] ? {
+				year: Number(m[1]),
+				month: Number(m[2]),
+				day: Number(m[3])
+			} : guessYear(Number(m[4]), Number(m[5] ?? m[6]), weekday, today);
+			if (!date || !isValid(date)) continue;
+			const rank = m[1] ? 0 : weekday !== null ? 1 : 2;
+			if (!best || rank < best.rank) best = {
+				date,
+				rank
+			};
+		}
+		return best?.date ?? null;
+	};
+	var TIME_LABELS = {
+		open: "開場",
+		start: "開演",
+		end: "終演"
+	};
+	var TIME_KEYS = Object.keys(TIME_LABELS);
+	var makeTime = (hour, minute, meridiem) => {
+		let h = Number(hour);
+		const m = minute === "半" ? 30 : Number(minute || 0);
+		if (meridiem) {
+			const pm = /^(午後|pm|p\.m\.)$/i.test(meridiem);
+			if (h > 12) return null;
+			if (pm && h < 12) h += 12;
+			if (!pm && h === 12) h = 0;
+		}
+		if (h > 29 || m > 59) return null;
+		return {
+			hour: h % 24,
+			minute: m
+		};
+	};
+	var formatTime = (t) => `${String(t.hour).padStart(2, "0")}:${String(t.minute).padStart(2, "0")}`;
+	var parseTimeInput = (str) => {
+		const s = str.normalize("NFKC").replace(/\s+/g, "").toLowerCase();
+		if (!s) return "empty";
+		let m = s.match(/^(\d{1,2})(\d{2})$/);
+		if (m) return makeTime(m[1], m[2]);
+		m = s.match(/^(\d{1,2})$/);
+		if (m) return makeTime(m[1]);
+		m = s.match(/^(午前|午後|am|pm|a\.m\.|p\.m\.)?(\d{1,2})(?:[:.](\d{2})|時(\d{1,2}|半)?分?)?(am|pm|a\.m\.|p\.m\.)?$/);
+		if (m && !(m[1] && m[5])) return makeTime(m[2], m[3] || m[4], m[1] || m[5]);
+		return null;
+	};
+	var LABEL_PATTERNS = {
+		open: /^(開場|入場|open)/i,
+		start: /^(開演|開始|start|スタート)/i,
+		end: /^(終演|終了|end|close)/i
+	};
+	var LABEL_ANY_RE = /開場|入場開始|入場|開演|(?<!販売|発売|受付|抽選|予約|応募|配信)(?:開始|終了)|終演|スタート|(?<![a-z])(?:open|start|end|close)(?![a-z])/i;
+	var TOKEN_RE = new RegExp([`(${LABEL_ANY_RE.source})`, String.raw`(?<!\d)(?:(午前|午後|am|pm)\s*)?(\d{1,2})\s*(?::\s*(\d{2})|時(?!間)\s*(?:(\d{1,2})分?|(半))?)(?:\s*(am|pm)(?![a-z]))?`].join("|"), "gi");
+	var GAP_RE = /^(?:[\s/・|,、.:;()[\]【】〈〉<>《》「」『』〜~=_*-]|[→⇒▶▷►★☆◆◇■□●○]|時間|時刻|予定|は)*$/;
+	var parseAnnouncement = (text) => {
+		const s = text.normalize("NFKC");
+		const tokens = [];
+		for (const m of s.matchAll(TOKEN_RE)) {
+			const token = {
+				start: m.index,
+				end: m.index + m[0].length
+			};
+			if (m[1]) token.label = TIME_KEYS.find((k) => LABEL_PATTERNS[k].test(m[1]));
+			else {
+				const time = makeTime(m[3], m[4] || m[5] || m[6], m[2] || m[7]);
+				if (!time) continue;
+				token.time = time;
+			}
+			tokens.push(token);
+		}
+		const adjacent = (a, b) => GAP_RE.test(s.slice(a.end, b.start));
+		const labelFirst = () => {
+			const found = {};
+			for (let i = 0; i < tokens.length;) {
+				if (!tokens[i].label) {
+					i++;
+					continue;
+				}
+				const labels = [tokens[i]];
+				let j = i + 1;
+				while (j < tokens.length && tokens[j].label && adjacent(tokens[j - 1], tokens[j])) labels.push(tokens[j++]);
+				const times = [];
+				while (j < tokens.length && tokens[j].time && adjacent(tokens[j - 1], tokens[j])) times.push(tokens[j++]);
+				labels.forEach((l, k) => {
+					if (times[k] && !found[l.label]) found[l.label] = times[k].time;
+				});
+				i = Math.max(j, i + labels.length);
+			}
+			return found;
+		};
+		const timeFirst = () => {
+			const found = {};
+			for (let i = 0; i + 1 < tokens.length; i++) {
+				const [t, l] = [tokens[i], tokens[i + 1]];
+				if (t.time && l.label && adjacent(t, l) && !found[l.label]) {
+					found[l.label] = t.time;
+					i++;
+				}
+			}
+			return found;
+		};
+		const a = labelFirst();
+		const b = timeFirst();
+		return Object.keys(b).length > Object.keys(a).length ? b : a;
+	};
+	var initAnnounce = (date, time) => {
+		const dateRow = byId("date_year")?.closest("tr");
+		if (!dateRow || !date && !time) return;
+		const fill = (text) => {
+			const read = [];
+			const d = date && parseDate(text);
+			if (d && date.set(d)) read.push(`${d.year}年${d.month}月${d.day}日`);
+			const times = time ? parseAnnouncement(text) : {};
+			for (const k of TIME_KEYS) {
+				const t = times[k];
+				if (!t) continue;
+				time.setTime(k, t);
+				read.push(`${TIME_LABELS[k]} ${formatTime(t)}`);
+			}
+			if (read.length) showNotice("読み取りました：" + read.join(" / "));
+			else showNotice("告知文から日付・時間を読み取れませんでした", "error");
+		};
+		const row = document.createElement("tr");
+		row.innerHTML = `
+    <td>告知文から入力</td>
+    <td>
+      <input type="text" class="ene-announce" autocomplete="off"
+        placeholder="例: 2026年12月19日(土) 開場 17:30 / 開演 18:30　告知文をここに貼り付け">
+      <p class="s">開催日と開場・開演・終演の時間を自動で入力します</p>
+    </td>
+  `;
+		dateRow.before(row);
+		const input = row.querySelector("input");
+		input.addEventListener("paste", (e) => {
+			const text = e.clipboardData?.getData("text");
+			if (!text) return;
+			e.preventDefault();
+			input.value = text.replace(/\s+/g, " ").trim();
+			fill(text);
+		});
+		onEnter(input, () => fill(input.value));
+		for (const el of document.querySelectorAll("input.ene-time")) el.addEventListener("paste", (e) => {
+			const text = e.clipboardData?.getData("text");
+			if (!text || !LABEL_ANY_RE.test(text.normalize("NFKC"))) return;
+			e.preventDefault();
+			fill(text);
+		});
+	};
+	var WEEKDAYS = [
+		"日",
+		"月",
+		"火",
+		"水",
+		"木",
+		"金",
+		"土"
+	];
+	var initDatePicker = () => {
+		const [year, month, day] = [
+			"date_year",
+			"date_month",
+			"date_day"
+		].map((id) => byId(id));
+		if (!year || !month || !day) return null;
+		const hidden = hideFrom(year);
+		const box = document.createElement("span");
+		box.className = "ene-date";
+		box.innerHTML = "<input type=\"date\" required><span class=\"ene-weekday\"></span>";
+		hidden.before(box);
+		const input = box.querySelector("input");
+		const weekday = box.querySelector(".ene-weekday");
+		const years = [...year.options].map((o) => Number(o.value)).filter(Boolean);
+		input.min = `${Math.min(...years)}-01-01`;
+		input.max = `${Math.max(...years)}-12-31`;
+		const refresh = () => {
+			input.value = `${year.value}-${pad2(Number(month.value))}-${pad2(Number(day.value))}`;
+			const w = new Date(Number(year.value), Number(month.value) - 1, Number(day.value)).getDay();
+			weekday.textContent = `（${WEEKDAYS[w]}）`;
+			weekday.dataset.day = String(w);
+		};
+		const set = ({ year: y, month: m, day: d }) => {
+			if (![...year.options].some((o) => o.value === String(y))) return false;
+			year.value = String(y);
+			month.value = String(m);
+			day.value = String(d);
+			refresh();
+			return true;
+		};
+		input.addEventListener("change", () => {
+			const [y, m, d] = input.value.split("-").map(Number);
+			if (!(y && set({
+				year: y,
+				month: m,
+				day: d
+			}))) refresh();
+		});
+		refresh();
+		return {
+			refresh,
+			set
+		};
 	};
 	var cache = new Map();
 	var fetchEventDoc = (eventId) => {
@@ -502,17 +792,6 @@
 		});
 		submit.before(back);
 	};
-	var showNotice = (message, kind) => {
-		const box = document.createElement("div");
-		box.className = kind === "error" ? "ene-notice ene-error" : "ene-notice";
-		const close = document.createElement("span");
-		close.className = "ene-close";
-		close.textContent = "×";
-		close.addEventListener("click", () => box.remove());
-		box.append(close, message);
-		document.body.append(box);
-		return box;
-	};
 	var PENDING_TTL_MS = 18e5;
 	var SERVER_IMAGE_TYPES = [
 		"image/jpeg",
@@ -809,98 +1088,6 @@
 			return;
 		}
 	};
-	var TIME_LABELS = {
-		open: "開場",
-		start: "開演",
-		end: "終演"
-	};
-	var TIME_KEYS = Object.keys(TIME_LABELS);
-	var makeTime = (hour, minute, meridiem) => {
-		let h = Number(hour);
-		const m = minute === "半" ? 30 : Number(minute || 0);
-		if (meridiem) {
-			const pm = /^(午後|pm|p\.m\.)$/i.test(meridiem);
-			if (h > 12) return null;
-			if (pm && h < 12) h += 12;
-			if (!pm && h === 12) h = 0;
-		}
-		if (h > 29 || m > 59) return null;
-		return {
-			hour: h % 24,
-			minute: m
-		};
-	};
-	var formatTime = (t) => `${String(t.hour).padStart(2, "0")}:${String(t.minute).padStart(2, "0")}`;
-	var parseTimeInput = (str) => {
-		const s = str.normalize("NFKC").replace(/\s+/g, "").toLowerCase();
-		if (!s) return "empty";
-		let m = s.match(/^(\d{1,2})(\d{2})$/);
-		if (m) return makeTime(m[1], m[2]);
-		m = s.match(/^(\d{1,2})$/);
-		if (m) return makeTime(m[1]);
-		m = s.match(/^(午前|午後|am|pm|a\.m\.|p\.m\.)?(\d{1,2})(?:[:.](\d{2})|時(\d{1,2}|半)?分?)?(am|pm|a\.m\.|p\.m\.)?$/);
-		if (m && !(m[1] && m[5])) return makeTime(m[2], m[3] || m[4], m[1] || m[5]);
-		return null;
-	};
-	var LABEL_PATTERNS = {
-		open: /^(開場|入場|open)/i,
-		start: /^(開演|開始|start|スタート)/i,
-		end: /^(終演|終了|end|close)/i
-	};
-	var LABEL_ANY_RE = /開場|入場開始|入場|開演|(?<!販売|発売|受付|抽選|予約|応募|配信)(?:開始|終了)|終演|スタート|(?<![a-z])(?:open|start|end|close)(?![a-z])/i;
-	var TOKEN_RE = new RegExp([`(${LABEL_ANY_RE.source})`, String.raw`(?<!\d)(?:(午前|午後|am|pm)\s*)?(\d{1,2})\s*(?::\s*(\d{2})|時(?!間)\s*(?:(\d{1,2})分?|(半))?)(?:\s*(am|pm)(?![a-z]))?`].join("|"), "gi");
-	var GAP_RE = /^(?:[\s/・|,、.:;()[\]【】〈〉<>《》「」『』〜~=_*-]|[→⇒▶▷►★☆◆◇■□●○]|時間|時刻|予定|は)*$/;
-	var parseAnnouncement = (text) => {
-		const s = text.normalize("NFKC");
-		const tokens = [];
-		for (const m of s.matchAll(TOKEN_RE)) {
-			const token = {
-				start: m.index,
-				end: m.index + m[0].length
-			};
-			if (m[1]) token.label = TIME_KEYS.find((k) => LABEL_PATTERNS[k].test(m[1]));
-			else {
-				const time = makeTime(m[3], m[4] || m[5] || m[6], m[2] || m[7]);
-				if (!time) continue;
-				token.time = time;
-			}
-			tokens.push(token);
-		}
-		const adjacent = (a, b) => GAP_RE.test(s.slice(a.end, b.start));
-		const labelFirst = () => {
-			const found = {};
-			for (let i = 0; i < tokens.length;) {
-				if (!tokens[i].label) {
-					i++;
-					continue;
-				}
-				const labels = [tokens[i]];
-				let j = i + 1;
-				while (j < tokens.length && tokens[j].label && adjacent(tokens[j - 1], tokens[j])) labels.push(tokens[j++]);
-				const times = [];
-				while (j < tokens.length && tokens[j].time && adjacent(tokens[j - 1], tokens[j])) times.push(tokens[j++]);
-				labels.forEach((l, k) => {
-					if (times[k] && !found[l.label]) found[l.label] = times[k].time;
-				});
-				i = Math.max(j, i + labels.length);
-			}
-			return found;
-		};
-		const timeFirst = () => {
-			const found = {};
-			for (let i = 0; i + 1 < tokens.length; i++) {
-				const [t, l] = [tokens[i], tokens[i + 1]];
-				if (t.time && l.label && adjacent(t, l) && !found[l.label]) {
-					found[l.label] = t.time;
-					i++;
-				}
-			}
-			return found;
-		};
-		const a = labelFirst();
-		const b = timeFirst();
-		return Object.keys(b).length > Object.keys(a).length ? b : a;
-	};
 	var selects = (key) => ({
 		hour: byId(`${key}_time_hour`),
 		minute: byId(`${key}_time_minute`)
@@ -936,7 +1123,7 @@
 	};
 	var initSmartTime = () => {
 		const rows = {};
-		if (TIME_KEYS.some((k) => !selects(k).hour || !selects(k).minute)) return () => {};
+		if (TIME_KEYS.some((k) => !selects(k).hour || !selects(k).minute)) return null;
 		const readSelect = (key) => {
 			const { hour, minute } = rows[key];
 			return hour.value && minute.value ? {
@@ -987,27 +1174,9 @@
 				updateBadges();
 			}
 		};
-		const fillFromAnnouncement = (text) => {
-			const found = parseAnnouncement(text);
-			const keys = TIME_KEYS.filter((k) => found[k]);
-			if (!keys.length) {
-				showNotice("告知文から時間を読み取れませんでした", "error");
-				return;
-			}
-			keys.forEach((k) => setTime(k, found[k]));
-			showNotice("読み取りました：" + keys.map((k) => `${TIME_LABELS[k]} ${formatTime(found[k])}`).join(" / "));
-		};
-		const onEnter = (input, fn) => input.addEventListener("keydown", (e) => {
-			if (e.key !== "Enter") return;
-			e.preventDefault();
-			fn();
-		});
 		for (const key of TIME_KEYS) {
 			const { hour, minute } = selects(key);
-			const hidden = document.createElement("span");
-			hidden.style.display = "none";
-			hour.before(hidden);
-			while (hidden.nextSibling) hidden.append(hidden.nextSibling);
+			const hidden = hideFrom(hour);
 			const box = document.createElement("span");
 			box.className = "ene-time-row";
 			box.innerHTML = `
@@ -1047,29 +1216,7 @@
 			input.addEventListener("input", () => apply(key, false));
 			input.addEventListener("change", () => apply(key, true));
 			onEnter(input, () => apply(key, true));
-			input.addEventListener("paste", (e) => {
-				const text = e.clipboardData?.getData("text");
-				if (!text || !LABEL_ANY_RE.test(text.normalize("NFKC"))) return;
-				e.preventDefault();
-				fillFromAnnouncement(text);
-			});
 		}
-		const announce = document.createElement("p");
-		announce.className = "ene-announce";
-		announce.innerHTML = `
-    <span class="s">告知文から読み取る（開場・開演・終演の時間を自動入力）</span><br>
-    <input type="text" placeholder="例: 開場 17:30 / 開演 18:30 / 終演 20:30 　ここに貼り付け" autocomplete="off">
-  `;
-		const announceInput = announce.querySelector("input");
-		announceInput.addEventListener("paste", (e) => {
-			const text = e.clipboardData?.getData("text");
-			if (!text) return;
-			e.preventDefault();
-			announceInput.value = text.replace(/\s+/g, " ").trim();
-			fillFromAnnouncement(text);
-		});
-		onEnter(announceInput, () => fillFromAnnouncement(announceInput.value));
-		rows.open.input.closest("p").before(announce);
 		byId("event_form").addEventListener("submit", (e) => {
 			TIME_KEYS.forEach((k) => apply(k, true));
 			const bad = TIME_KEYS.filter((k) => rows[k].input.classList.contains("ene-invalid"));
@@ -1084,7 +1231,10 @@
 			updateBadges();
 		};
 		refresh();
-		return refresh;
+		return {
+			refresh,
+			setTime
+		};
 	};
 	var path = location.pathname.replace(/\/$/, "");
 	var editId = path.match(/^\/events\/(\d+)\/edit$/)?.[1];
@@ -1098,15 +1248,16 @@
 		const placePicker = initPlacePicker();
 		initFormSnapshot(placePicker);
 		placePicker?.loadInitial(new URLSearchParams(location.search).get("from_event_id"));
-		initSmartTime();
+		initAnnounce(initDatePicker(), initSmartTime());
 		initImagePicker();
 	} else if (editId) {
 		initMinuteOptions();
 		initActorSorting();
 		initActorPresets();
 		initPlacePicker()?.loadInitial(editId);
-		const refreshTime = initSmartTime();
-		restoreEditMinutes(editId).then(refreshTime);
+		const time = initSmartTime();
+		initAnnounce(initDatePicker(), time);
+		restoreEditMinutes(editId).then(() => time?.refresh());
 		initEditImagePicker();
 	} else processPendingUpload();
 })();
