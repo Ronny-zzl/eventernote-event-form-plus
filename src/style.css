@@ -1,4 +1,4 @@
-/* 出演者排序 */
+/* 已选出演者列表 */
 #selected_actors { margin-left: 0; list-style: none; }
 #selected_actors li.ene-actor {
   display: flex; align-items: center; gap: 6px;
@@ -9,6 +9,12 @@
 #selected_actors .ene-handle { cursor: grab; color: #999; user-select: none; }
 #selected_actors .ene-name { flex: 1; }
 #selected_actors .ene-move { cursor: pointer; color: #08c; padding: 0 2px; user-select: none; }
+#selected_actors li.ene-selected { background: #eef6fb; border-color: #9cc6e0; }
+#selected_actors .ene-check { margin: 0; }
+.ene-actor-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; font-size: 12px; }
+.ene-actor-tools label { display: inline-flex; align-items: center; gap: 4px; margin: 0; }
+.ene-actor-tools label input { margin: 0; }
+.ene-actor-tools .btn { margin-bottom: 0; }
 
 /* 出演者セット */
 .ene-presets { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -22,8 +28,28 @@
 .ene-time-badge { font-size: 11px; color: #fff; background: #f89406; border-radius: 3px; padding: 1px 5px; }
 .ene-time-error { font-size: 11px; color: #b94a48; }
 
+/* 搜索框（会场、出演者） */
+.ene-search { position: relative; margin-bottom: 8px; }
+.ene-search-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.ene-search-row select { width: auto; margin-bottom: 0; }
+.ene-search-row input { flex: 1; min-width: 200px; margin-bottom: 0; }
+.ene-suggest {
+  position: absolute; left: 0; right: 0; z-index: 1000; margin: 2px 0 0; padding: 0; list-style: none;
+  max-height: 360px; overflow-y: auto; background: #fff; border: 1px solid #ccc; border-radius: 3px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+}
+.ene-suggest li { position: relative; padding: 5px 8px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+.ene-suggest li.ene-active { background: #eef6fb; }
+.ene-suggest li.ene-dim { opacity: .5; }
+.ene-suggest li.ene-done { color: #999; cursor: default; padding-right: 72px; }
+.ene-suggest li.ene-done::after {
+  content: "追加済み"; position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  font-size: 11px; padding: 1px 6px; border: 1px solid #ccc; border-radius: 3px;
+}
+.ene-suggest li.ene-heading { cursor: default; background: #f7f7f7; color: #888; font-size: 11px; }
+.ene-suggest .ene-suggest-sub { display: block; color: #888; font-size: 11px; }
+
 /* 会场 */
-.ene-place { position: relative; margin-bottom: 8px; }
 .ene-place-current {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   padding: 6px 8px; margin-bottom: 6px; border: 1px solid #ddd; border-radius: 3px; background: #fff;
@@ -31,19 +57,6 @@
 .ene-place-current .ene-place-name { font-weight: bold; }
 .ene-place-current .ene-place-sub { color: #888; font-size: 11px; flex: 1; }
 .ene-place-current .btn { margin-bottom: 0; }
-.ene-place-search { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.ene-place-search select { width: auto; margin-bottom: 0; }
-.ene-place-search input { flex: 1; min-width: 200px; margin-bottom: 0; }
-.ene-place-results {
-  position: absolute; left: 0; right: 0; z-index: 1000; margin: 2px 0 0; padding: 0; list-style: none;
-  max-height: 360px; overflow-y: auto; background: #fff; border: 1px solid #ccc; border-radius: 3px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
-}
-.ene-place-results li { padding: 5px 8px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
-.ene-place-results li.ene-active { background: #eef6fb; }
-.ene-place-results li.ene-closed { opacity: .5; }
-.ene-place-results li.ene-heading { cursor: default; background: #f7f7f7; color: #888; font-size: 11px; }
-.ene-place-results .ene-place-sub { display: block; color: #888; font-size: 11px; }
 
 /* 图片 */
 .ene-drop {

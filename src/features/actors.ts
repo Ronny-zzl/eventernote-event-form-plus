@@ -40,63 +40,147 @@ const control = (text: string, title: string, className: string) => {
   return el;
 };
 
-export const initActorSorting = () => {
+// 已选出演者列表：拖动 ☰ / ▲▼ 排序，复选框（Shift+点击选范围）选中多人后一起移动、拖动或删除
+export const initActorList = () => {
   const list = byId('selected_actors');
   if (!list || !byId('actor_ids')) return;
 
-  const move = (li: Element, delta: -1 | 1) => {
-    if (delta < 0 && li.previousElementSibling) li.previousElementSibling.before(li);
-    else if (delta > 0 && li.nextElementSibling) li.nextElementSibling.after(li);
+  const rows = () => [...list.children] as HTMLElement[];
+  const isSelected = (li: Element) => li.classList.contains('ene-selected');
+  const selected = () => rows().filter(isSelected);
+
+  const tools = document.createElement('div');
+  tools.className = 'ene-actor-tools';
+  tools.innerHTML = `
+    <label><input type="checkbox"> <span></span></label>
+    <span>
+      <input type="button" class="btn btn-small" value="▲" title="選択した出演者を上へ">
+      <input type="button" class="btn btn-small" value="▼" title="選択した出演者を下へ">
+      <input type="button" class="btn btn-small" value="削除">
+    </span>
+  `;
+  list.before(tools);
+  const [all, upBtn, downBtn, deleteBtn] = tools.querySelectorAll('input');
+  const label = tools.querySelector('label span')!;
+  const actions = tools.querySelector<HTMLElement>(':scope > span')!;
+
+  const update = () => {
+    const n = selected().length;
+    const total = rows().length;
+    tools.style.display = total ? '' : 'none';
+    all.checked = n > 0 && n === total;
+    all.indeterminate = n > 0 && n < total;
+    label.textContent = n ? `${n}名選択中` : 'すべて選択';
+    actions.style.visibility = n ? '' : 'hidden'; // 只隐藏不移除，保持工具栏高度不变
+  };
+
+  const select = (li: Element, on: boolean) => {
+    li.classList.toggle('ene-selected', on);
+    li.querySelector<HTMLInputElement>('.ene-check')!.checked = on;
+  };
+
+  // 单个移动；选中的多人则作为一组移动（被前面也选中的人挡住时不动，保持相对顺序）
+  const move = (targets: Element[], delta: -1 | 1) => {
+    if (delta < 0) {
+      for (const li of targets) {
+        const prev = li.previousElementSibling;
+        if (prev && !targets.includes(prev)) prev.before(li);
+      }
+    } else {
+      for (const li of [...targets].reverse()) {
+        const next = li.nextElementSibling;
+        if (next && !targets.includes(next)) next.after(li);
+      }
+    }
     syncActorOrder();
   };
 
-  const decorate = (li: Element) => {
+  const decorate = (li: HTMLElement) => {
     if (li.classList.contains('ene-actor')) return;
     li.classList.add('ene-actor');
-    (li as HTMLElement).draggable = true;
+    const check = Object.assign(document.createElement('input'), { type: 'checkbox', className: 'ene-check' });
     const name = document.createElement('span');
     name.className = 'ene-name';
     name.append(...[...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE));
     const up = control('▲', '上へ', 'ene-move');
     const down = control('▼', '下へ', 'ene-move');
-    up.addEventListener('click', () => move(li, -1));
-    down.addEventListener('click', () => move(li, 1));
-    li.prepend(control('☰', 'ドラッグで並び替え', 'ene-handle'), name, up, down);
+    up.addEventListener('click', () => move([li], -1));
+    down.addEventListener('click', () => move([li], 1));
+    // 只有 ☰ 能拖动，名字可以正常选中复制
+    const handle = control('☰', 'ドラッグで並び替え', 'ene-handle');
+    handle.draggable = true;
+    li.prepend(check, handle, name, up, down);
   };
 
-  let dragging: HTMLElement | null = null;
+  // 点复选框切换选中；Shift+点击把上次点的行到这一行都选中
+  let anchor: Element | null = null;
+  list.addEventListener('click', (e) => {
+    const check = e.target as HTMLInputElement;
+    const li = check.classList.contains('ene-check') ? check.closest<HTMLElement>('li.ene-actor') : null;
+    if (!li) return;
+    const on = check.checked; // 复选框的 checked 在 click 事件前就已切换
+    if (e.shiftKey && anchor?.parentElement === list) {
+      const r = rows();
+      const [from, to] = [r.indexOf(anchor as HTMLElement), r.indexOf(li)].sort((a, b) => a - b);
+      r.slice(from, to + 1).forEach((x) => select(x, true));
+    } else {
+      select(li, on);
+    }
+    anchor = li;
+    update();
+  });
+
+  all.addEventListener('change', () => {
+    rows().forEach((li) => select(li, all.checked));
+    update();
+  });
+  upBtn.addEventListener('click', () => move(selected(), -1));
+  downBtn.addEventListener('click', () => move(selected(), 1));
+  deleteBtn.addEventListener('click', () => {
+    const targets = selected();
+    if (targets.length > 1 && !confirm(`選択した${targets.length}名を削除しますか？`)) return;
+    targets.forEach((li) => page.removeActor(actorId(li)));
+  });
+
+  // 拖动：拖的是选中的行时，所有选中的行作为一组一起移动
+  let group: HTMLElement[] = [];
   const actorAt = (e: Event) => (e.target as Element).closest?.<HTMLElement>('li.ene-actor') ?? null;
 
   list.addEventListener('dragstart', (e) => {
-    dragging = actorAt(e);
-    if (!dragging) return;
-    dragging.classList.add('ene-dragging');
+    const li = actorAt(e);
+    if (!li) return;
+    group = isSelected(li) ? selected() : [li];
+    group.forEach((x) => x.classList.add('ene-dragging'));
+    e.dataTransfer!.setDragImage(li, 0, 0); // 拖的是 ☰，预览显示整行
     e.dataTransfer!.effectAllowed = 'move';
-    e.dataTransfer!.setData('text/plain', dragging.id); // Firefox 需要设置数据才能拖动
+    e.dataTransfer!.setData('text/plain', li.id); // Firefox 需要设置数据才能拖动
   });
   list.addEventListener('dragover', (e) => {
-    if (!dragging) return;
+    if (!group.length) return;
     e.preventDefault();
     const over = actorAt(e);
-    if (!over || over === dragging) return;
+    if (!over || group.includes(over)) return;
     const rect = over.getBoundingClientRect();
-    if (e.clientY > rect.top + rect.height / 2) over.after(dragging);
-    else over.before(dragging);
+    if (e.clientY > rect.top + rect.height / 2) over.after(...group);
+    else over.before(...group);
   });
   list.addEventListener('drop', (e) => {
-    if (dragging) e.preventDefault();
+    if (group.length) e.preventDefault();
   });
   list.addEventListener('dragend', () => {
-    if (!dragging) return;
-    dragging.classList.remove('ene-dragging');
-    dragging = null;
+    if (!group.length) return;
+    group.forEach((x) => x.classList.remove('ene-dragging'));
+    group = [];
     syncActorOrder();
   });
 
-  // 出演者由页面脚本动态添加，新加入的 li 在这里补上排序控件
-  const decorateAll = () => [...list.children].forEach(decorate);
-  new MutationObserver(decorateAll).observe(list, { childList: true });
-  decorateAll();
+  // 出演者由页面脚本动态添加 / 删除，新加入的 li 在这里补上控件
+  const refresh = () => {
+    rows().forEach(decorate);
+    update();
+  };
+  new MutationObserver(refresh).observe(list, { childList: true });
+  refresh();
 };
 
 // ---- 出演者セット：把已选的出演者（如团体 + 全体成员）存成组合，之后一键全部添加 ----

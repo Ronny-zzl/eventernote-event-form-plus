@@ -4,6 +4,7 @@ import { unsafeWindow } from '$';
 type PageWindow = Window & {
   selected_actors?: (string | number)[];
   addActor: (id: string, name: string) => void;
+  removeActor: (id: string) => void;
   searchPlaces: (prefecture: string, placeId?: string) => void;
 };
 

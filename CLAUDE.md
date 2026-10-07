@@ -4,7 +4,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
 - 当前已发布版本：`0.2.3`（已打 `v0.2.3` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
-- 开发中：`0.3.0`（会场搜索框 + 日期选择器 + TypeScript 工程化），已全部提交，**尚未推送 / 发布**
+- 开发中：`0.3.0`（会场搜索框、日期选择器、告知文读取日期、出演者搜索与多选、默认セット + TypeScript 工程化），已全部提交，**尚未推送 / 发布**
 
 ## 工程结构
 
@@ -13,7 +13,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - **产物不压缩**：Greasy Fork 禁止压缩 / 混淆的代码
 - 包管理器 pnpm。命令：`pnpm build` / `pnpm dev`（开发服务器，Tampermonkey 自动更新）/ `pnpm typecheck` / `pnpm lint`（oxlint）/ `pnpm test`（vitest）
 - CI（`.github/workflows/ci.yml`）：typecheck、lint、test、build，并检查提交的 `.user.js` 和构建结果一致
-- 目录：`src/main.ts`（按页面分发）、`src/style.css`（全部样式，打包时用 GM_addStyle 注入）、`src/lib/`（page = 页面全局变量与小工具、storage = 带类型的 GM 存储、notice、eventPage = 活动页读取缓存）、`src/features/`（actors、announce、date、time、place、snapshot、thumbnail；纯函数放在 `timeParse.ts`、`dateParse.ts`、`placeRank.ts`，供单元测试）
+- 目录：`src/main.ts`（按页面分发）、`src/style.css`（全部样式，打包时用 GM_addStyle 注入）、`src/lib/`（page = 页面全局变量与小工具、storage = 带类型的 GM 存储、notice、eventPage = 活动页读取缓存、suggest = 会场和出演者共用的输入即搜索候选列表）、`src/features/`（actors、actorSearch、announce、date、time、place、snapshot、thumbnail；纯函数放在 `timeParse.ts`、`dateParse.ts`、`placeRank.ts`、`actorRank.ts`，供单元测试）
 - GM API 从 `'$'` 导入（vite-plugin-monkey 的别名）。依赖 `'$'` 的模块在 vitest 里无法加载，所以要测试的逻辑写成不依赖它的纯函数模块
 - 代码风格：类型用 `type`，函数用箭头函数（oxlint 的 `consistent-type-definitions`、`func-style` 规则强制）；尽量简洁
 - 换行统一 LF（`.gitattributes`：`* text=auto eol=lf`）
@@ -36,6 +36,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
   - `addActor(id, name)`：去重用 `$.inArray`（严格比较，字符串和数字 ID 会被当成不同值）
   - `searchPlaces(prefecture, selectedPlaceId)`：只追加 option，不清空 `#places_list`
 - 出演者列表 `#selected_actors`，每个 `li#actor_{id}` = 名字文本节点 + `<a> [削除]`
+- 出演者选择原 UI：`#actors_initial`（页面加载时请求 `/api/actors/all`，只是各头文字的人数，实测 4.6 秒）→ `#actors_list`（`/api/actors/search?initial=あ&limit=-1`：6634 人、约 2MB、13 秒）+「追加する」；另有 `#actors_suggest` 关键词搜索（keyup 无防抖，20 件）  - `/api/actors/search?keyword=…&simple=3&limit=50`：匹配名字、平假名读音（kana）和 keyword 字段（团体成员名等），**每次 2〜5 秒**，结果不按相关度排序（搜「水樹奈々」第一个是乐队成员 渡辺豊）；返回 id/name/kana/favorite_count/keyword 等。片假名读音（「カスガ」）不会匹配平假名 kana
 - 时间是 6 个 select：`#open_time_hour/minute`、`#start_time_*`、`#end_time_*`，分钟 5 分钟一档，小时 00–23
 - 会场：`#prefecture_id` → `#places_list`（`name=place_id`）；搜索框选会场时**不会**同步都道府県
   - `/api/places/search?prefecture=13&simple=1&limit=-1`：东京都 6124 个会场、约 368KB、实测 6.5 秒，按 ID 排序（不是名字），有空名字的条目
@@ -65,7 +66,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 
 ## 已实现功能（1–5 在 0.1.0，6 在 0.2.0）
 
-1. **出演者排序**：拖动 ☰ 或 ▲▼；调整 DOM 后同步 `unsafeWindow.selected_actors` 和 `#actor_ids`
+1. **已选出演者列表**（`initActorList`）：拖动 ☰ 或 ▲▼ 排序；只有 ☰ 可拖动（名字可选中复制）；复选框（Shift+点击选范围）选中多人，列表上方工具栏可成组 ▲▼、删除（多人时确认，调用页面的 `removeActor`），用全选框全选 / 清除；按钮用 visibility 隐藏以免工具栏高度变化；拖动选中的行时整组移动。调整 DOM 后同步 `unsafeWindow.selected_actors` 和 `#actor_ids`
 2. **出演者セット**：把已选出演者存为组合（`GM_setValue('actorPresets')`），从没保存过时默认显示示例セット「前橋ウィッチーズ」（`defaultPresets`，删光后存的是 `[]`，不会再出现），一键添加；列表里已有セット第一项（团体名）时，新成员插在它（及紧随其后的已有成员）后面，否则追加到末尾
    - 1、2 在登录页和编辑页都启用（编辑页从 0.2.2 起；已有出演者由内联脚本 `addActor(数字ID, 名字)` 加入，结构与登录页相同）
 3. **确认页「戻って修正する」**：登录页提交时存快照（`formSnapshot`），跳回 `/events/add?ene_restore=1` 后恢复全部字段
@@ -75,6 +76,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 7. **会场搜索框**（`initPlacePicker`）：都道府県 / 会场下拉框 / 原搜索框隐藏，换成一个搜索框（300ms 防抖、都道府県筛选、名字匹配优先、闭馆的排最后变灰、↑↓Enter）；`#places_list` 只保留选中的一项，用 MutationObserver 防止编辑页大列表到达后覆盖选择；编辑页 / `from_event_id` 从活动页「開催場所」读会场名立即显示；最近使った会場存在 `GM_setValue('recentPlaces')`（10 个）。活动页通过 `fetchEventDoc()` 只请求一次（时间分钟恢复也用它）
 8. **開催日**（`features/date.ts`）：年 / 月 / 日三个下拉框隐藏，换成原生 `<input type="date">` + 星期显示；可选范围取自原年份下拉框（1980–2027），清空或超范围时恢复原值（原下拉框没有空选项）。下拉框的值不补零（`1`～`12`）
 9. **告知文から入力**（`features/announce.ts`）：独立的一行，放在「開催日」行上方；粘贴告知文后同时填入開催日（`parseDate`）和開場・開演・終演（`parseAnnouncement`）。往时间框里粘贴带标签的文字也走这里。日期：带年份 > 带星期 > 其他；没写年份时按星期在今年 / 明年 / 去年里找，没有星期则取最近的将来（30 天内的过去算今年）
+10. **出演者搜索**（`features/actorSearch.ts`）：头文字 / 出演者下拉框 / 原搜索框隐藏，换成搜索框（在已选列表下方、セット上方），用页面的 `addActor` 加入；结果按 `rankActors`（名字或读音的一致度，同档按收藏人数）排序；显示「検索中…」，结果按关键词缓存（不中止请求，让结果进缓存）；选中后列表不关闭、标「追加済み」，可连续添加；最近追加的 20 人存在 `recentActors`
 
 `@match` 是 `https://www.eventernote.com/events/*`，入口在文件末尾按 pathname 分发。
 

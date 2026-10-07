@@ -25,6 +25,7 @@ export type PendingUpload = {
 type Store = {
   actorPresets: ActorPreset[];
   recentPlaces: Place[];
+  recentActors: Actor[];
   formSnapshot: FormSnapshot | null;
   draftImage: ImageData | null;
   pendingUpload: PendingUpload | null;

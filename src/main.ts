@@ -1,5 +1,6 @@
 import './style.css';
-import { initActorPresets, initActorSorting } from './features/actors';
+import { initActorPresets, initActorList } from './features/actors';
+import { initActorSearch } from './features/actorSearch';
 import { initAnnounce } from './features/announce';
 import { initDatePicker } from './features/date';
 import { initPlacePicker } from './features/place';
@@ -16,8 +17,9 @@ if (path === '/events/add/confirm') {
 } else if (path === '/events/add') {
   // 分钟选项和会场搜索框要在恢复快照之前准备好，日期和时间的输入框在恢复之后读取下拉框的值
   initMinuteOptions();
-  initActorSorting();
+  initActorList();
   initActorPresets();
+  initActorSearch();
   const placePicker = initPlacePicker();
   initFormSnapshot(placePicker);
   // ?from_event_id=… 复制登录时页面会预先指定会场
@@ -26,8 +28,9 @@ if (path === '/events/add/confirm') {
   initImagePicker();
 } else if (editId) {
   initMinuteOptions();
-  initActorSorting();
+  initActorList();
   initActorPresets();
+  initActorSearch();
   initPlacePicker()?.loadInitial(editId);
   const time = initSmartTime();
   initAnnounce(initDatePicker(), time);

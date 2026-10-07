@@ -32,7 +32,7 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-presets select{margin-bottom:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-place{margin-bottom:8px;position:relative}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-place-search{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-place-search select{width:auto;margin-bottom:0}.ene-place-search input{flex:1;min-width:200px;margin-bottom:0}.ene-place-results{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-place-results li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px}.ene-place-results li.ene-active{background:#eef6fb}.ene-place-results li.ene-closed{opacity:.5}.ene-place-results li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-place-results .ene-place-sub{color:#888;font-size:11px;display:block}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}");
+	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-presets select{margin-bottom:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input{flex:1;min-width:200px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}");
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
 	var page = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
@@ -94,57 +94,128 @@
 		el.title = title;
 		return el;
 	};
-	var initActorSorting = () => {
+	var initActorList = () => {
 		const list = byId("selected_actors");
 		if (!list || !byId("actor_ids")) return;
-		const move = (li, delta) => {
-			if (delta < 0 && li.previousElementSibling) li.previousElementSibling.before(li);
-			else if (delta > 0 && li.nextElementSibling) li.nextElementSibling.after(li);
+		const rows = () => [...list.children];
+		const isSelected = (li) => li.classList.contains("ene-selected");
+		const selected = () => rows().filter(isSelected);
+		const tools = document.createElement("div");
+		tools.className = "ene-actor-tools";
+		tools.innerHTML = `
+    <label><input type="checkbox"> <span></span></label>
+    <span>
+      <input type="button" class="btn btn-small" value="▲" title="選択した出演者を上へ">
+      <input type="button" class="btn btn-small" value="▼" title="選択した出演者を下へ">
+      <input type="button" class="btn btn-small" value="削除">
+    </span>
+  `;
+		list.before(tools);
+		const [all, upBtn, downBtn, deleteBtn] = tools.querySelectorAll("input");
+		const label = tools.querySelector("label span");
+		const actions = tools.querySelector(":scope > span");
+		const update = () => {
+			const n = selected().length;
+			const total = rows().length;
+			tools.style.display = total ? "" : "none";
+			all.checked = n > 0 && n === total;
+			all.indeterminate = n > 0 && n < total;
+			label.textContent = n ? `${n}名選択中` : "すべて選択";
+			actions.style.visibility = n ? "" : "hidden";
+		};
+		const select = (li, on) => {
+			li.classList.toggle("ene-selected", on);
+			li.querySelector(".ene-check").checked = on;
+		};
+		const move = (targets, delta) => {
+			if (delta < 0) for (const li of targets) {
+				const prev = li.previousElementSibling;
+				if (prev && !targets.includes(prev)) prev.before(li);
+			}
+			else for (const li of [...targets].reverse()) {
+				const next = li.nextElementSibling;
+				if (next && !targets.includes(next)) next.after(li);
+			}
 			syncActorOrder();
 		};
 		const decorate = (li) => {
 			if (li.classList.contains("ene-actor")) return;
 			li.classList.add("ene-actor");
-			li.draggable = true;
+			const check = Object.assign(document.createElement("input"), {
+				type: "checkbox",
+				className: "ene-check"
+			});
 			const name = document.createElement("span");
 			name.className = "ene-name";
 			name.append(...[...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE));
 			const up = control("▲", "上へ", "ene-move");
 			const down = control("▼", "下へ", "ene-move");
-			up.addEventListener("click", () => move(li, -1));
-			down.addEventListener("click", () => move(li, 1));
-			li.prepend(control("☰", "ドラッグで並び替え", "ene-handle"), name, up, down);
+			up.addEventListener("click", () => move([li], -1));
+			down.addEventListener("click", () => move([li], 1));
+			const handle = control("☰", "ドラッグで並び替え", "ene-handle");
+			handle.draggable = true;
+			li.prepend(check, handle, name, up, down);
 		};
-		let dragging = null;
+		let anchor = null;
+		list.addEventListener("click", (e) => {
+			const check = e.target;
+			const li = check.classList.contains("ene-check") ? check.closest("li.ene-actor") : null;
+			if (!li) return;
+			const on = check.checked;
+			if (e.shiftKey && anchor?.parentElement === list) {
+				const r = rows();
+				const [from, to] = [r.indexOf(anchor), r.indexOf(li)].sort((a, b) => a - b);
+				r.slice(from, to + 1).forEach((x) => select(x, true));
+			} else select(li, on);
+			anchor = li;
+			update();
+		});
+		all.addEventListener("change", () => {
+			rows().forEach((li) => select(li, all.checked));
+			update();
+		});
+		upBtn.addEventListener("click", () => move(selected(), -1));
+		downBtn.addEventListener("click", () => move(selected(), 1));
+		deleteBtn.addEventListener("click", () => {
+			const targets = selected();
+			if (targets.length > 1 && !confirm(`選択した${targets.length}名を削除しますか？`)) return;
+			targets.forEach((li) => page.removeActor(actorId(li)));
+		});
+		let group = [];
 		const actorAt = (e) => e.target.closest?.("li.ene-actor") ?? null;
 		list.addEventListener("dragstart", (e) => {
-			dragging = actorAt(e);
-			if (!dragging) return;
-			dragging.classList.add("ene-dragging");
+			const li = actorAt(e);
+			if (!li) return;
+			group = isSelected(li) ? selected() : [li];
+			group.forEach((x) => x.classList.add("ene-dragging"));
+			e.dataTransfer.setDragImage(li, 0, 0);
 			e.dataTransfer.effectAllowed = "move";
-			e.dataTransfer.setData("text/plain", dragging.id);
+			e.dataTransfer.setData("text/plain", li.id);
 		});
 		list.addEventListener("dragover", (e) => {
-			if (!dragging) return;
+			if (!group.length) return;
 			e.preventDefault();
 			const over = actorAt(e);
-			if (!over || over === dragging) return;
+			if (!over || group.includes(over)) return;
 			const rect = over.getBoundingClientRect();
-			if (e.clientY > rect.top + rect.height / 2) over.after(dragging);
-			else over.before(dragging);
+			if (e.clientY > rect.top + rect.height / 2) over.after(...group);
+			else over.before(...group);
 		});
 		list.addEventListener("drop", (e) => {
-			if (dragging) e.preventDefault();
+			if (group.length) e.preventDefault();
 		});
 		list.addEventListener("dragend", () => {
-			if (!dragging) return;
-			dragging.classList.remove("ene-dragging");
-			dragging = null;
+			if (!group.length) return;
+			group.forEach((x) => x.classList.remove("ene-dragging"));
+			group = [];
 			syncActorOrder();
 		});
-		const decorateAll = () => [...list.children].forEach(decorate);
-		new MutationObserver(decorateAll).observe(list, { childList: true });
-		decorateAll();
+		const refresh = () => {
+			rows().forEach(decorate);
+			update();
+		};
+		new MutationObserver(refresh).observe(list, { childList: true });
+		refresh();
 	};
 	var defaultPresets = () => [{
 		name: "前橋ウィッチーズ",
@@ -247,6 +318,175 @@
 			render();
 		});
 		render();
+	};
+	var createSuggest = ({ input, list, search, idle, choose, keepOpen, emptyText }) => {
+		let items = [];
+		let active = -1;
+		let controller;
+		const heading = (text) => Object.assign(document.createElement("li"), {
+			className: "ene-heading",
+			textContent: text
+		});
+		const close = () => {
+			list.style.display = "none";
+			items = [];
+			active = -1;
+		};
+		const pick = (entry) => {
+			if (entry.item.done) return;
+			choose(entry.item.value);
+			if (!keepOpen) {
+				input.value = "";
+				close();
+				return;
+			}
+			entry.item.done = true;
+			entry.li.classList.add("ene-done");
+		};
+		const show = (entries, head, empty = emptyText) => {
+			items = entries.map((item) => {
+				const li = document.createElement("li");
+				li.classList.toggle("ene-dim", !!item.dim);
+				li.classList.toggle("ene-done", !!item.done);
+				li.append(item.title, Object.assign(document.createElement("span"), {
+					className: "ene-suggest-sub",
+					textContent: item.sub ?? ""
+				}));
+				return {
+					li,
+					item
+				};
+			});
+			items.forEach((entry) => entry.li.addEventListener("mousedown", (e) => {
+				e.preventDefault();
+				pick(entry);
+			}));
+			active = -1;
+			list.replaceChildren(...head ? [heading(head)] : [], ...items.length ? items.map((it) => it.li) : [heading(empty)]);
+			list.style.display = "";
+		};
+		const setActive = (index) => {
+			if (!items.length) return;
+			active = (index + items.length) % items.length;
+			items.forEach((it, i) => it.li.classList.toggle("ene-active", i === active));
+			items[active].li.scrollIntoView({ block: "nearest" });
+		};
+		const run = async () => {
+			controller?.abort();
+			const keyword = input.value.trim();
+			if (!keyword) {
+				const content = idle();
+				if (content?.items.length) show(content.items, content.heading);
+				else close();
+				return;
+			}
+			const mine = controller = new AbortController();
+			await sleep(300);
+			if (mine.signal.aborted) return;
+			if (list.style.display === "none" || !items.length) show([], void 0, "検索中…");
+			try {
+				const found = await search(keyword, mine.signal);
+				if (!mine.signal.aborted && document.activeElement === input) show(found);
+			} catch {
+				if (!mine.signal.aborted) show([], void 0, "検索に失敗しました");
+			}
+		};
+		input.addEventListener("input", run);
+		input.addEventListener("focus", run);
+		input.addEventListener("blur", () => {
+			controller?.abort();
+			setTimeout(close, 100);
+		});
+		input.addEventListener("keydown", (e) => {
+			if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+				e.preventDefault();
+				setActive(active + (e.key === "ArrowDown" ? 1 : -1));
+			} else if (e.key === "Enter") {
+				e.preventDefault();
+				const entry = items[active] ?? (items.length === 1 ? items[0] : void 0);
+				if (entry) pick(entry);
+			} else if (e.key === "Escape") close();
+		});
+		close();
+		return { run };
+	};
+	var normalize = (s) => s.normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 96));
+	var rankActors = (actors, keyword) => {
+		const kw = normalize(keyword);
+		const match = (text = "") => {
+			const t = normalize(text);
+			return t === kw ? 0 : t.startsWith(kw) ? 1 : t.includes(kw) ? 2 : 3;
+		};
+		return actors.map((a, i) => ({
+			a,
+			s: Math.min(match(a.name), match(a.kana)),
+			i
+		})).sort((x, y) => x.s - y.s || (y.a.favorite_count ?? 0) - (x.a.favorite_count ?? 0) || x.i - y.i).map((x) => x.a);
+	};
+	var RECENT_MAX$1 = 20;
+	var cache$1 = new Map();
+	var searchActors = (keyword) => {
+		let result = cache$1.get(keyword);
+		if (!result) {
+			const params = new URLSearchParams({
+				keyword,
+				simple: "3",
+				limit: "50"
+			});
+			result = fetch("/api/actors/search?" + params, { credentials: "same-origin" }).then((res) => res.json()).then((data) => data.results ?? []);
+			result.catch(() => cache$1.delete(keyword));
+			cache$1.set(keyword, result);
+		}
+		return result;
+	};
+	var initActorSearch = () => {
+		const list = byId("selected_actors");
+		const initial = byId("actors_initial");
+		if (!list || !initial || typeof page.addActor !== "function") return;
+		const cell = list.closest("td");
+		for (const el of [
+			initial,
+			byId("actors_list"),
+			byId("actors_suggest"),
+			cell.querySelector(".gb_suggest")
+		]) {
+			const target = el?.closest("p") ?? el;
+			if (target instanceof HTMLElement) target.style.display = "none";
+		}
+		const box = document.createElement("div");
+		box.className = "ene-search";
+		box.innerHTML = `
+    <div class="ene-search-row">
+      <input type="text" placeholder="名前・よみがなで検索して追加（例: 水樹奈々、みずきなな）" autocomplete="off">
+    </div>
+    <ul class="ene-suggest"></ul>
+  `;
+		list.after(box);
+		const added = (id) => !!byId(`actor_${id}`);
+		const toItem = (actor, sub = "") => ({
+			value: actor,
+			title: actor.name,
+			sub,
+			done: added(actor.id)
+		});
+		createSuggest({
+			input: box.querySelector("input"),
+			list: box.querySelector(".ene-suggest"),
+			search: async (keyword) => rankActors(await searchActors(keyword), keyword).slice(0, 30).map((a) => toItem({
+				id: String(a.id),
+				name: a.name
+			}, [a.kana, a.favorite_count ? `♡${a.favorite_count}` : ""].filter(Boolean).join(" · "))),
+			idle: () => ({
+				heading: "最近追加した出演者",
+				items: load("recentActors", []).map((a) => toItem(a))
+			}),
+			choose: (actor) => {
+				addActorIfMissing(actor);
+				save("recentActors", [actor, ...load("recentActors", []).filter((a) => a.id !== actor.id)].slice(0, RECENT_MAX$1));
+			},
+			keepOpen: true,
+			emptyText: "見つかりませんでした"
+		});
 	};
 	var showNotice = (message, kind) => {
 		const box = document.createElement("div");
@@ -531,14 +771,17 @@
 		prefecture: String(p.prefecture ?? ""),
 		address: p.address ?? ""
 	});
-	var searchPlaces = async (keyword, prefecture = "") => {
+	var searchPlaces = async (keyword, prefecture = "", signal) => {
 		const params = new URLSearchParams({
 			keyword,
 			simple: "3",
 			limit: "50"
 		});
 		if (prefecture) params.set("prefecture", prefecture);
-		return (await (await fetch("/api/places/search?" + params, { credentials: "same-origin" })).json()).results ?? [];
+		return (await (await fetch("/api/places/search?" + params, {
+			credentials: "same-origin",
+			signal
+		})).json()).results ?? [];
 	};
 	var initPlacePicker = () => {
 		const select = byId("places_list");
@@ -557,23 +800,22 @@
 			if (target instanceof HTMLElement) target.style.display = "none";
 		}
 		const box = document.createElement("div");
-		box.className = "ene-place";
+		box.className = "ene-search";
 		box.innerHTML = `
     <div class="ene-place-current" style="display:none">
       <span class="ene-place-name"></span><span class="ene-place-sub"></span>
       <input type="button" class="btn btn-small" value="取り消す">
     </div>
-    <div class="ene-place-search">
+    <div class="ene-search-row">
       <select></select>
       <input type="text" placeholder="会場名・住所で検索（例: Zepp、武道館、渋谷）" autocomplete="off">
     </div>
-    <ul class="ene-place-results" style="display:none"></ul>
+    <ul class="ene-suggest"></ul>
   `;
 		cell.prepend(box);
 		const current = box.querySelector(".ene-place-current");
-		const input = box.querySelector(".ene-place-search input");
-		const prefFilter = box.querySelector(".ene-place-search select");
-		const results = box.querySelector(".ene-place-results");
+		const input = box.querySelector(".ene-search-row input");
+		const prefFilter = box.querySelector(".ene-search-row select");
 		prefFilter.append(new Option("全国", ""), ...[...prefNames].map(([value, name]) => new Option(name, value)));
 		let chosen = null;
 		const applyToForm = () => {
@@ -601,87 +843,27 @@
 			set(null);
 			input.focus();
 		});
-		let items = [];
-		let active = -1;
-		const closeResults = () => {
-			results.style.display = "none";
-			items = [];
-			active = -1;
-		};
-		const heading = (text) => Object.assign(document.createElement("li"), {
-			className: "ene-heading",
-			textContent: text
+		const toItem = (place) => ({
+			value: place,
+			title: place.name,
+			sub: placeSub(place),
+			dim: CLOSED_RE.test(place.name)
 		});
-		const showResults = (places, head, emptyText = "") => {
-			items = places.map((place) => {
-				const li = document.createElement("li");
-				if (CLOSED_RE.test(place.name)) li.className = "ene-closed";
-				li.append(place.name, Object.assign(document.createElement("span"), {
-					className: "ene-place-sub",
-					textContent: placeSub(place)
-				}));
-				li.addEventListener("mousedown", (e) => {
-					e.preventDefault();
-					choose(place);
-				});
-				return {
-					li,
-					place
-				};
-			});
-			active = -1;
-			results.replaceChildren(...head ? [heading(head)] : [], ...places.length ? items.map((it) => it.li) : [heading(emptyText)]);
-			results.style.display = "";
-		};
-		const setActive = (index) => {
-			if (!items.length) return;
-			active = (index + items.length) % items.length;
-			items.forEach((it, i) => it.li.classList.toggle("ene-active", i === active));
-			items[active].li.scrollIntoView({ block: "nearest" });
-		};
-		const choose = (place) => {
-			set(place, true);
-			input.value = "";
-			closeResults();
-		};
-		let timer;
-		let seq = 0;
-		const search = async () => {
-			const keyword = input.value.trim();
-			if (!keyword) {
-				const recent = load("recentPlaces", []);
-				if (recent.length) showResults(recent, "最近使った会場");
-				else closeResults();
-				return;
-			}
-			const mySeq = ++seq;
-			try {
-				const places = rankPlaces(await searchPlaces(keyword, prefFilter.value), keyword).slice(0, 30);
-				if (mySeq === seq && document.activeElement === input) showResults(places.map(toPlace), null, "見つかりませんでした");
-			} catch {
-				if (mySeq === seq) showResults([], null, "検索に失敗しました");
-			}
-		};
-		input.addEventListener("input", () => {
-			clearTimeout(timer);
-			timer = setTimeout(search, 300);
+		const suggest = createSuggest({
+			input,
+			list: box.querySelector(".ene-suggest"),
+			search: async (keyword, signal) => rankPlaces(await searchPlaces(keyword, prefFilter.value, signal), keyword).slice(0, 30).map((p) => toItem(toPlace(p))),
+			idle: () => ({
+				heading: "最近使った会場",
+				items: load("recentPlaces", []).map(toItem)
+			}),
+			choose: (place) => set(place, true),
+			emptyText: "見つかりませんでした"
 		});
-		input.addEventListener("focus", search);
-		input.addEventListener("blur", () => setTimeout(closeResults, 100));
 		prefFilter.addEventListener("change", () => {
 			if (!input.value.trim()) return;
 			input.focus();
-			search();
-		});
-		input.addEventListener("keydown", (e) => {
-			if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-				e.preventDefault();
-				setActive(active + (e.key === "ArrowDown" ? 1 : -1));
-			} else if (e.key === "Enter") {
-				e.preventDefault();
-				const item = items[active] ?? (items.length === 1 ? items[0] : null);
-				if (item) choose(item.place);
-			} else if (e.key === "Escape") closeResults();
+			suggest.run();
 		});
 		const initial = findInitialPlace();
 		const loadInitial = async (eventId) => {
@@ -1243,8 +1425,9 @@
 		initConfirmImage();
 	} else if (path === "/events/add") {
 		initMinuteOptions();
-		initActorSorting();
+		initActorList();
 		initActorPresets();
+		initActorSearch();
 		const placePicker = initPlacePicker();
 		initFormSnapshot(placePicker);
 		placePicker?.loadInitial(new URLSearchParams(location.search).get("from_event_id"));
@@ -1252,8 +1435,9 @@
 		initImagePicker();
 	} else if (editId) {
 		initMinuteOptions();
-		initActorSorting();
+		initActorList();
 		initActorPresets();
+		initActorSearch();
 		initPlacePicker()?.loadInitial(editId);
 		const time = initSmartTime();
 		initAnnounce(initDatePicker(), time);
