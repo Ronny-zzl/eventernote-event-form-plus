@@ -21,7 +21,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 ## 约定
 
 - **页面上显示的文字一律用日语**（网站是日本网站），用词跟随网站原有风格（「追加する」「選んでください」等）
-- 代码注释用中文；README 日语为主，末尾附中文说明；更新说明写在 `CHANGELOG.md`（同样日语为主、附中文），发布时也作为 GitHub Release 的说明
+- 代码注释用中文；README 日语为主，末尾附中文说明；更新说明写在 `CHANGELOG.md`（同样日语为主、附中文），发布时也作为 GitHub Release 的说明；**Release 的标题只写版本号**（如 `v0.3.2`），内容看说明
 - 提交信息用英文
 - 每次发布要提高 `package.json` 的 `version` 并重新构建（`@version` 由它生成；Tampermonkey 和 Greasy Fork 靠它判断更新），README 功能列表同步更新
 - 用户**不想修网站本身的零碎 bug**，只关注「填表体验」本身。新功能尽量不改变提交给服务器的数据格式（原控件隐藏但保留，值同步回去）
