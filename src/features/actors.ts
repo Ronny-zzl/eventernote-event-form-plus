@@ -1,4 +1,4 @@
-import { byId, page } from '../lib/page';
+import { byId, decodeEntities, page } from '../lib/page';
 import { load, save, type Actor, type ActorPreset } from '../lib/storage';
 
 const actorId = (li: Element) => li.id.replace(/^actor_/, '');
@@ -23,7 +23,7 @@ const syncActorOrder = () => {
 export const readSelectedActors = (): Actor[] =>
   [...(byId('selected_actors')?.children ?? [])].map((li) => {
     const name = li.querySelector('.ene-name')?.textContent
-      ?? [...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE).map((n) => n.textContent).join('');
+      ?? decodeEntities([...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE).map((n) => n.textContent).join(''));
     return { id: actorId(li), name: name.trim() };
   });
 
@@ -101,7 +101,9 @@ export const initActorList = () => {
     const check = Object.assign(document.createElement('input'), { type: 'checkbox', className: 'ene-check' });
     const name = document.createElement('span');
     name.className = 'ene-name';
-    name.append(...[...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE));
+    const texts = [...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE);
+    name.textContent = decodeEntities(texts.map((n) => n.textContent).join(''));
+    texts.forEach((n) => n.remove());
     const up = control('▲', '上へ', 'ene-move');
     const down = control('▼', '下へ', 'ene-move');
     up.addEventListener('click', () => move([li], -1));

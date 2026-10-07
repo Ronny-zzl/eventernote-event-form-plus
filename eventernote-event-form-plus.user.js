@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.3.1
+// @version            0.3.2
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -83,6 +83,7 @@
 		}
 		return cell;
 	};
+	var decodeEntities = (text) => text.includes("&") ? parseHtml(text).body.textContent ?? text : text;
 	var load = (key, fallback) => _GM_getValue(key, fallback);
 	var save = (key, value) => _GM_setValue(key, value);
 	var actorId = (li) => li.id.replace(/^actor_/, "");
@@ -99,7 +100,7 @@
 		hidden.value = ids.join(",");
 	};
 	var readSelectedActors = () => [...byId("selected_actors")?.children ?? []].map((li) => {
-		const name = li.querySelector(".ene-name")?.textContent ?? [...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE).map((n) => n.textContent).join("");
+		const name = li.querySelector(".ene-name")?.textContent ?? decodeEntities([...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE).map((n) => n.textContent).join(""));
 		return {
 			id: actorId(li),
 			name: name.trim()
@@ -168,7 +169,9 @@
 			});
 			const name = document.createElement("span");
 			name.className = "ene-name";
-			name.append(...[...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE));
+			const texts = [...li.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE);
+			name.textContent = decodeEntities(texts.map((n) => n.textContent).join(""));
+			texts.forEach((n) => n.remove());
 			const up = control("▲", "上へ", "ene-move");
 			const down = control("▼", "下へ", "ene-move");
 			up.addEventListener("click", () => move([li], -1));

@@ -3,7 +3,7 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 当前已发布版本：`0.3.1`（已打 `v0.3.1` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 当前已发布版本：`0.3.2`（已打 `v0.3.2` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 工程结构
 
@@ -35,6 +35,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
   - `addActor(id, name)`：去重用 `$.inArray`（严格比较，字符串和数字 ID 会被当成不同值）
   - `searchPlaces(prefecture, selectedPlaceId)`：只追加 option，不清空 `#places_list`
 - 出演者列表 `#selected_actors`，每个 `li#actor_{id}` = 名字文本节点 + `<a> [削除]`
+- 编辑页内联脚本把出演者名按 HTML 转义后写进 JS 字符串（`addActor(68091,"IBERIs&amp;")`），页面又用 `.text()` 原样显示，出现「IBERIs&amp;」（网站本身的问题，活动 489938）。脚本在加控件时用 `decodeEntities` 解码，读到 / 存下的名字也就正确了
 - 出演者选择原 UI：`#actors_initial`（页面加载时请求 `/api/actors/all`，只是各头文字的人数，实测 4.6 秒）→ `#actors_list`（`/api/actors/search?initial=あ&limit=-1`：6634 人、约 2MB、13 秒）+「追加する」；另有 `#actors_suggest` 关键词搜索（keyup 无防抖，20 件）  - `/api/actors/search?keyword=…&simple=3&limit=50`：匹配名字、平假名读音（kana）和 keyword 字段（团体成员名等），**每次 2〜5 秒**，结果不按相关度排序（搜「水樹奈々」第一个是乐队成员 渡辺豊）；返回 id/name/kana/favorite_count/keyword 等。片假名读音（「カスガ」）不会匹配平假名 kana
 - 时间是 6 个 select：`#open_time_hour/minute`、`#start_time_*`、`#end_time_*`，分钟 5 分钟一档，小时 00–23
 - 会场：`#prefecture_id` → `#places_list`（`name=place_id`）；搜索框选会场时**不会**同步都道府県

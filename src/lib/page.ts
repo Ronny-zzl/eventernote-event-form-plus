@@ -73,3 +73,8 @@ export const insertField = (before: HTMLTableRowElement, label: string) => {
   }
   return cell;
 };
+
+// 解码 HTML 实体（&amp; → &）。编辑页的内联脚本把出演者名按 HTML 转义后写进了 JS 字符串，
+// 页面的 addActor 再原样显示，于是出现「IBERIs&amp;」
+export const decodeEntities = (text: string) =>
+  text.includes('&') ? (parseHtml(text).body.textContent ?? text) : text;

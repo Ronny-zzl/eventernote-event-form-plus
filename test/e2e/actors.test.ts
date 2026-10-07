@@ -50,6 +50,14 @@ describe.skipIf(!loggedIn)('出演者', () => {
     expect(inSync(p)).toBe(true);
   });
 
+  test('ページが HTML エスケープしたまま表示する名前（&amp;）を元に戻す', async () => {
+    // 編集画面のインラインスクリプトは addActor(68091,"IBERIs&amp;") のように渡してくる
+    const { p, addActor } = await withActors();
+    addActor('68091', 'IBERIs&amp;');
+    await p.until(() => p.$('#selected_actors .ene-name'));
+    expect(p.$('#selected_actors .ene-name').textContent).toBe('IBERIs&');
+  });
+
   test('出演者セット：初期セット、グループ名の直後に追加', async () => {
     const { p, addActor } = await withActors();
     const options = p.$$<HTMLOptionElement>('.ene-presets option').map((o) => o.text);
