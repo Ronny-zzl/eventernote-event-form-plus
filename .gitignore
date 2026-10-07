@@ -4,3 +4,4 @@ Thumbs.db
 *.local.html
 cookies.json
 *.local.txt
+dist/

@@ -1,0 +1,66 @@
+/* 出演者排序 */
+#selected_actors { margin-left: 0; list-style: none; }
+#selected_actors li.ene-actor {
+  display: flex; align-items: center; gap: 6px;
+  padding: 3px 6px; margin-bottom: 2px;
+  background: #fff; border: 1px solid #ddd; border-radius: 3px;
+}
+#selected_actors li.ene-dragging { opacity: 0.4; }
+#selected_actors .ene-handle { cursor: grab; color: #999; user-select: none; }
+#selected_actors .ene-name { flex: 1; }
+#selected_actors .ene-move { cursor: pointer; color: #08c; padding: 0 2px; user-select: none; }
+
+/* 出演者セット */
+.ene-presets { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ene-presets select { margin-bottom: 0; }
+
+/* 时间 */
+.ene-time-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+.ene-time-row input.ene-time { width: 70px; margin-bottom: 0; }
+.ene-time-row input.ene-time.ene-invalid { border-color: #b94a48; background: #fdf0f0; }
+.ene-time-row .btn { margin-bottom: 0; }
+.ene-time-badge { font-size: 11px; color: #fff; background: #f89406; border-radius: 3px; padding: 1px 5px; }
+.ene-time-error { font-size: 11px; color: #b94a48; }
+.ene-announce { margin-bottom: 10px; }
+.ene-announce input { width: 95%; margin-bottom: 0; }
+
+/* 会场 */
+.ene-place { position: relative; margin-bottom: 8px; }
+.ene-place-current {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 6px 8px; margin-bottom: 6px; border: 1px solid #ddd; border-radius: 3px; background: #fff;
+}
+.ene-place-current .ene-place-name { font-weight: bold; }
+.ene-place-current .ene-place-sub { color: #888; font-size: 11px; flex: 1; }
+.ene-place-current .btn { margin-bottom: 0; }
+.ene-place-search { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.ene-place-search select { width: auto; margin-bottom: 0; }
+.ene-place-search input { flex: 1; min-width: 200px; margin-bottom: 0; }
+.ene-place-results {
+  position: absolute; left: 0; right: 0; z-index: 1000; margin: 2px 0 0; padding: 0; list-style: none;
+  max-height: 360px; overflow-y: auto; background: #fff; border: 1px solid #ccc; border-radius: 3px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+}
+.ene-place-results li { padding: 5px 8px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+.ene-place-results li.ene-active { background: #eef6fb; }
+.ene-place-results li.ene-closed { opacity: .5; }
+.ene-place-results li.ene-heading { cursor: default; background: #f7f7f7; color: #888; font-size: 11px; }
+.ene-place-results .ene-place-sub { display: block; color: #888; font-size: 11px; }
+
+/* 图片 */
+.ene-drop {
+  border: 2px dashed #bbb; border-radius: 4px; padding: 14px; text-align: center;
+  color: #888; cursor: pointer; background: #fafafa;
+}
+.ene-drop.ene-over { border-color: #08c; background: #eef6fb; color: #08c; }
+.ene-drop img { display: block; max-width: 300px; max-height: 200px; margin: 0 auto 6px; }
+.ene-image-note { margin-top: 4px; font-size: 11px; color: #888; }
+
+/* 提示 */
+.ene-notice {
+  position: fixed; top: 60px; right: 20px; z-index: 10000; max-width: 360px;
+  padding: 10px 14px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+  background: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; font-size: 13px;
+}
+.ene-notice.ene-error { background: #f2dede; color: #a94442; border-color: #ebccd1; }
+.ene-notice .ene-close { float: right; margin-left: 10px; cursor: pointer; }

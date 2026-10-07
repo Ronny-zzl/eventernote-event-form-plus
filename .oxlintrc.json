@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript"],
+  "rules": {
+    "typescript/consistent-type-definitions": ["error", "type"],
+    "func-style": ["error", "expression"],
+    "prefer-arrow-callback": "error"
+  },
+  "ignorePatterns": ["eventernote-event-form-plus.user.js"]
+}

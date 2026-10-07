@@ -3,15 +3,28 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 唯一源码文件：`eventernote-event-form-plus.user.js`（无构建步骤，检查语法用 `node --check`）
-- 当前版本：`0.2.3`（已打 `v0.2.3` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 当前已发布版本：`0.2.3`（已打 `v0.2.3` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 开发中：`0.3.0`（会场搜索框 + TypeScript 工程化），已提交，**尚未推送 / 发布**
+
+## 工程结构
+
+- 源码在 `src/`（TypeScript 7），用 Vite + `vite-plugin-monkey` 打包。`==UserScript==` 头部在 `vite.config.ts` 里配置，版本号取自 `package.json`，`@grant` 自动生成
+- **根目录的 `eventernote-event-form-plus.user.js` 是构建产物，不要手改**。它必须留在这个路径并提交：已安装的用户和 Greasy Fork 都从它的 raw URL 更新。构建先输出到 `dist/`（忽略），再由 `vite.config.ts` 里的小插件复制到根目录
+- **产物不压缩**：Greasy Fork 禁止压缩 / 混淆的代码
+- 包管理器 pnpm。命令：`pnpm build` / `pnpm dev`（开发服务器，Tampermonkey 自动更新）/ `pnpm typecheck` / `pnpm lint`（oxlint）/ `pnpm test`（vitest）
+- CI（`.github/workflows/ci.yml`）：typecheck、lint、test、build，并检查提交的 `.user.js` 和构建结果一致
+- 目录：`src/main.ts`（按页面分发）、`src/style.css`（全部样式，打包时用 GM_addStyle 注入）、`src/lib/`（page = 页面全局变量与小工具、storage = 带类型的 GM 存储、notice、eventPage = 活动页读取缓存）、`src/features/`（actors、time、place、snapshot、thumbnail；纯函数放在 `timeParse.ts`、`placeRank.ts`，供单元测试）
+- GM API 从 `'$'` 导入（vite-plugin-monkey 的别名）。依赖 `'$'` 的模块在 vitest 里无法加载，所以要测试的逻辑写成不依赖它的纯函数模块
+- 代码风格：类型用 `type`，函数用箭头函数（oxlint 的 `consistent-type-definitions`、`func-style` 规则强制）；尽量简洁
+- 换行统一 LF（`.gitattributes`：`* text=auto eol=lf`）
+- 页面级的 jsdom 测试（用保存的页面 HTML + 真实 API）目前只在本地临时脚本里跑过，没有放进仓库：页面 HTML 含登录用户的信息，不适合提交
 
 ## 约定
 
 - **页面上显示的文字一律用日语**（网站是日本网站），用词跟随网站原有风格（「追加する」「選んでください」等）
 - 代码注释用中文；README 日语为主，末尾附中文说明；更新说明写在 `CHANGELOG.md`（同样日语为主、附中文），发布时也作为 GitHub Release 的说明
 - 提交信息用英文
-- 每次发布要提高 `@version`（Tampermonkey 和 Greasy Fork 靠它判断更新），README 功能列表同步更新
+- 每次发布要提高 `package.json` 的 `version` 并重新构建（`@version` 由它生成；Tampermonkey 和 Greasy Fork 靠它判断更新），README 功能列表同步更新
 - 用户**不想修网站本身的零碎 bug**，只关注「填表体验」本身。新功能尽量不改变提交给服务器的数据格式（原控件隐藏但保留，值同步回去）
 
 ## 网站结构（调查结果）
