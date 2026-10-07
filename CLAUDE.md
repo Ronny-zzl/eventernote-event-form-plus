@@ -3,8 +3,7 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 当前已发布版本：`0.2.3`（已打 `v0.2.3` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
-- 开发中：`0.3.0`（会场搜索框、日期选择器、告知文读取日期、出演者搜索与多选、默认セット + TypeScript 工程化），已全部提交，**尚未推送 / 发布**
+- 当前已发布版本：`0.3.0`（已打 `v0.3.0` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 工程结构
 
