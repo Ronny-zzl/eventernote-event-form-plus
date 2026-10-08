@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'vitest';
-import { loggedIn, openPage, sleep, type Page } from './harness.ts';
+import { loggedIn, mousedown, openPage, searchIn, sleep, type Page } from './harness.ts';
 
 const opened: Page[] = [];
 afterEach(() => opened.splice(0).forEach((p) => p.close()));
@@ -25,6 +25,21 @@ describe.skipIf(!loggedIn)('送信前チェック・下書き・確認画面か�
     p.byId('selected_actors').closest('td')!.querySelector<HTMLInputElement>('.ene-search input')!.value = '春日';
     p.fire(p.byId('event_form'), 'submit');
     expect(p.dialogs.at(-1)).toContain('「春日」が残っています');
+  });
+
+  test('送信前チェック：検索して追加した後の検索語は「残っています」としない', async () => {
+    const p = await open('/events/add', { confirm: false });
+    nameInput(p).value = 'テスト（登録しません）';
+    const input = p.byId('selected_actors').closest('td')!.querySelector<HTMLInputElement>('.ene-search input')!;
+    mousedown(p, (await searchIn(p, input, '前橋'))[0]);
+    p.fire(p.byId('event_form'), 'submit');
+    expect(p.dialogs.at(-1)).not.toContain('残っています');
+
+    // 検索語を変えたら（まだ追加していないので）また知らせる
+    input.value = '前橋ウ';
+    p.fire(input, 'input');
+    p.fire(p.byId('event_form'), 'submit');
+    expect(p.dialogs.at(-1)).toContain('「前橋ウ」が残っています');
   });
 
   test('下書き：自動保存 → 次に開いたとき復元 / 破棄、確認画面で登録すると消える', async () => {

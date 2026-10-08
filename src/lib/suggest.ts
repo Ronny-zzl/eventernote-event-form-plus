@@ -37,6 +37,7 @@ export const createSuggest = <T>({ input, list, search, idle, choose, keepOpen, 
   const pick = (entry: (typeof items)[number]) => {
     if (entry.item.done) return;
     choose(entry.item.value);
+    input.dataset.picked = '1'; // 用这个搜索词选过了（提交前检查据此不再当作「残留的文字」）
     if (!keepOpen) {
       input.value = '';
       close();
@@ -92,7 +93,10 @@ export const createSuggest = <T>({ input, list, search, idle, choose, keepOpen, 
     }
   };
 
-  input.addEventListener('input', run);
+  input.addEventListener('input', () => {
+    delete input.dataset.picked;
+    run();
+  });
   input.addEventListener('focus', run);
   input.addEventListener('blur', () => {
     controller?.abort();

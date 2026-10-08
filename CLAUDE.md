@@ -3,7 +3,7 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 当前已发布版本：`0.3.2`（已打 `v0.3.2` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 当前已发布版本：`0.3.3`（已打 `v0.3.3` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 工程结构
 
@@ -85,7 +85,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 8. **開催日**（`features/date.ts`）：年 / 月 / 日三个下拉框隐藏，换成原生 `<input type="date">` + 星期显示；可选范围取自原年份下拉框（1980–2027），清空或超范围时恢复原值（原下拉框没有空选项）。下拉框的值不补零（`1`～`12`）
 9. **告知文から入力**（`features/announce.ts`）：独立的一行，放在「開催日」行上方；粘贴告知文后同时填入開催日（`parseDate`）和開場・開演・終演（`parseAnnouncement`）。往时间框里粘贴带标签的文字也走这里。日期：带年份 > 带星期 > 其他；没写年份时按星期在今年 / 明年 / 去年里找，没有星期则取最近的将来（30 天内的过去算今年）
 10. **出演者搜索**（`features/actorSearch.ts`）：头文字 / 出演者下拉框 / 原搜索框隐藏，换成搜索框（在已选列表下方、セット上方），用页面的 `addActor` 加入；结果按 `rankActors`（名字或读音的一致度，同档按收藏人数）排序；显示「検索中…」，结果按关键词缓存（不中止请求，让结果进缓存）；选中后列表不关闭、标「追加済み」，可连续添加；最近追加的 20 人存在 `recentActors`
-11. **提交前检查**（`features/submitCheck.ts`，登录页和编辑页）：活动名空、没有出演者 / 会场、出演者或会场搜索框里留着没选中的文字时，用 confirm 列出问题，取消则聚焦第一个问题；确定仍提交（服务器的必填要求未确认）。capture 阶段注册在时间检查之后
+11. **提交前检查**（`features/submitCheck.ts`，登录页和编辑页）：活动名空、没有出演者 / 会场、出演者或会场搜索框里留着没选中的文字时，用 confirm 列出问题，取消则聚焦第一个问题；确定仍提交（服务器的必填要求未确认）。capture 阶段注册在时间检查之后。出演者搜索选中后会保留搜索词，所以 suggest 选中时给输入框设 `data-picked`，输入变化时清除；有这个标记就不当作残留
 12. **草稿自动保存**（`features/draft.ts`，仅登录页）：每 2 秒取快照（复用 `takeSnapshot`），有变化且非空表单才存到 `formDraft`；下次打开登录页显示「前回の入力内容が残っています」+ 復元する / 破棄する（14 天内；从确认页返回、`from_event_id` 时不显示）；开始填新内容后提示消失、旧草稿被覆盖；确认页点「登録する」时清除。缩略图不保存
    - **坑**：`initFormSnapshot` 恢复后会把 `ene_restore` 从 URL 去掉，之后再检查参数就判断不出「从确认页返回」。现在统一用脚本加载时算好的 `isReturning`（这个问题曾导致从确认页返回时缩略图被清空，0.1.0 起就存在，已修）
 

@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.3.2
+// @version            0.3.3
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -359,6 +359,7 @@
 		const pick = (entry) => {
 			if (entry.item.done) return;
 			choose(entry.item.value);
+			input.dataset.picked = "1";
 			if (!keepOpen) {
 				input.value = "";
 				close();
@@ -415,7 +416,10 @@
 				if (!mine.signal.aborted) show([], void 0, "検索に失敗しました");
 			}
 		};
-		input.addEventListener("input", run);
+		input.addEventListener("input", () => {
+			delete input.dataset.picked;
+			run();
+		});
 		input.addEventListener("focus", run);
 		input.addEventListener("blur", () => {
 			controller?.abort();
@@ -1063,7 +1067,7 @@
 			const name = form.elements.namedItem("event_name");
 			if (!name.value.trim()) problems.push(["イベント名が入力されていません", name]);
 			const actorSearch = searchInput("selected_actors");
-			if (actorSearch?.value.trim()) problems.push([`出演者の検索欄に「${actorSearch.value.trim()}」が残っています（まだ追加されていません）`, actorSearch]);
+			if (actorSearch?.value.trim() && !actorSearch.dataset.picked) problems.push([`出演者の検索欄に「${actorSearch.value.trim()}」が残っています（まだ追加されていません）`, actorSearch]);
 			else if (!byId("actor_ids")?.value) problems.push(["出演者が選択されていません", actorSearch]);
 			const placeSearch = searchInput("places_list");
 			if (placeSearch?.value.trim()) problems.push([`会場の検索欄に「${placeSearch.value.trim()}」が残っています（まだ選択されていません）`, placeSearch]);

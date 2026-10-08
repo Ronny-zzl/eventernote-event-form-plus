@@ -16,7 +16,8 @@ export const initSubmitCheck = () => {
     if (!name.value.trim()) problems.push(['イベント名が入力されていません', name]);
 
     const actorSearch = searchInput('selected_actors');
-    if (actorSearch?.value.trim()) {
+    // 出演者搜索选中后会保留搜索词以便连续添加，用这个词选过的就不算残留
+    if (actorSearch?.value.trim() && !actorSearch.dataset.picked) {
       problems.push([`出演者の検索欄に「${actorSearch.value.trim()}」が残っています（まだ追加されていません）`, actorSearch]);
     } else if (!byId<HTMLInputElement>('actor_ids')?.value) {
       problems.push(['出演者が選択されていません', actorSearch]);
