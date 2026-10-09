@@ -1,5 +1,5 @@
 import { showNotice } from '../lib/notice';
-import { findInitialPlace, insertField, parseHtml, sleep } from '../lib/page';
+import { findInitialPlace, insertField, isSmartphone, parseHtml, sleep } from '../lib/page';
 import { load, save, type ImageData } from '../lib/storage';
 import { isReturning } from './snapshot';
 
@@ -57,7 +57,9 @@ const createImageDrop = (onImage: (image: ImageData) => void, onRemove: () => vo
   const picker = wrap.querySelector('input')!;
 
   const clear = () => {
-    drop.textContent = 'ここに画像をドラッグ＆ドロップ / Ctrl+V で貼り付け / クリックしてファイルを選択';
+    drop.textContent = isSmartphone()
+      ? 'タップして画像を選択'
+      : 'ここに画像をドラッグ＆ドロップ / Ctrl+V で貼り付け / クリックしてファイルを選択';
   };
   const show = (dataUrl: string) => {
     const remove = Object.assign(document.createElement('input'), { type: 'button', className: 'btn btn-small', value: '画像を取り消す' });
@@ -130,22 +132,45 @@ export const initImagePicker = () => {
   if (draft) picker.show(draft.dataUrl);
 };
 
+// 手机版编辑页没有图片栏，表单也不是 multipart。提交地址（edit/complete）和电脑版相同，
+// 所以补上 thumbnail_image 栏位和当前图片，并把表单改成 multipart
+const addMissingImageField = (eventId: string) => {
+  const form = document.querySelector<HTMLFormElement>('#event_form');
+  const submitRow = form?.querySelector('input[type="submit"]')?.closest('tr');
+  if (!form || !submitRow) return null;
+  form.enctype = 'multipart/form-data';
+  const input = Object.assign(document.createElement('input'), { type: 'file', name: 'thumbnail_image', accept: 'image/*' });
+  // 没有图片时 S3 返回 403，加载失败就去掉
+  const current = Object.assign(document.createElement('img'), { src: `${S3_EVENT_IMAGE}${eventId}_s.jpg?t=${Date.now()}` });
+  current.addEventListener('error', () => current.remove());
+  insertField(submitRow, 'サムネイル画像').append(current, input);
+  return input;
+};
+
 // 编辑页：选中的图片直接放进原生的 thumbnail_image 字段，随「編集完了」一起提交
-export const initEditImagePicker = () => {
-  const input = document.querySelector<HTMLInputElement>('#event_form input[type="file"][name="thumbnail_image"]');
+export const initEditImagePicker = (eventId: string) => {
+  const input = document.querySelector<HTMLInputElement>('#event_form input[type="file"][name="thumbnail_image"]')
+    ?? addMissingImageField(eventId);
   if (!input) return;
   input.style.display = 'none';
   const current = input.parentElement?.querySelector('img');
   if (current) {
-    current.before(Object.assign(document.createElement('p'), { className: 'ene-image-note', textContent: '現在の画像' }));
-    current.style.display = 'block';
-    current.style.marginBottom = '10px';
+    const label = Object.assign(document.createElement('p'), { className: 'ene-image-note', textContent: '現在の画像' });
+    current.before(label);
+    current.addEventListener('error', () => label.remove());
+    Object.assign(current.style, { display: 'block', marginBottom: '10px', maxWidth: '100%' });
   }
   const picker = createImageDrop(
     (image) => {
-      const transfer = new DataTransfer();
-      transfer.items.add(new File([dataUrlToBlob(image.dataUrl)], image.name, { type: image.type }));
-      input.files = transfer.files;
+      try {
+        const transfer = new DataTransfer();
+        transfer.items.add(new File([dataUrlToBlob(image.dataUrl)], image.name, { type: image.type }));
+        input.files = transfer.files;
+      } catch {
+        // 浏览器不支持用脚本放入文件时，改用原生的文件选择栏
+        input.style.display = '';
+        showNotice('この端末では画像を自動で設定できません。下のファイル選択欄から画像を選んでください。', 'error');
+      }
     },
     () => { input.value = ''; },
   );
@@ -173,17 +198,22 @@ export const initConfirmImage = () => {
 
 // ---- 登录完成后：找到新活动并通过编辑页上传图片 ----
 
-const candidateEventIds = () => {
+const EVENT_LINK = /^(?:https?:\/\/www\.eventernote\.com)?\/events\/(\d+)\/?$/;
+
+// 新活动的 ID 候选。活动页看 URL；完成页找活动链接：电脑版在 .page 里，手机版的结构不同，
+// 所以不看结构，先取文字里带活动名的链接，再按页面顺序取其他的。后面会核对活动名和会场，多试几个也安全
+const candidateEventIds = (eventName: string) => {
   const ids = new Set<string>();
   const m = location.pathname.match(/^\/events\/(\d+)\/?$/);
   if (m) ids.add(m[1]);
   if (location.pathname.startsWith('/events/add/complete')) {
-    for (const a of document.querySelectorAll('.page a[href]')) {
-      const lm = a.getAttribute('href')!.match(/^(?:https?:\/\/www\.eventernote\.com)?\/events\/(\d+)\/?$/);
-      if (lm) ids.add(lm[1]);
-    }
+    const links = [...document.querySelectorAll('a[href]')]
+      .map((a) => ({ text: a.textContent ?? '', id: a.getAttribute('href')!.match(EVENT_LINK)?.[1] }))
+      .filter((link): link is { text: string; id: string } => !!link.id);
+    links.filter((link) => link.text.includes(eventName.trim())).forEach((link) => ids.add(link.id));
+    links.forEach((link) => ids.add(link.id));
   }
-  return [...ids];
+  return [...ids].slice(0, 5);
 };
 
 const fetchEditForm = async (eventId: string) => {
@@ -242,7 +272,7 @@ export const processPendingUpload = async () => {
   }
   if (pending.uploadingAt && Date.now() - pending.uploadingAt < UPLOAD_LOCK_MS) return; // 其他标签页正在处理
 
-  for (const id of candidateEventIds()) {
+  for (const id of candidateEventIds(pending.eventName)) {
     const edit = await fetchEditForm(id);
     if (!edit) continue;
     const { form, placeId } = edit;

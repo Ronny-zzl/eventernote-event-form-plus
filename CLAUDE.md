@@ -3,7 +3,7 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 当前已发布版本：`0.3.3`（已打 `v0.3.3` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 当前已发布版本：`0.3.4`（已打 `v0.3.4` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 工程结构
 
@@ -50,7 +50,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - 表单项目是两行：`<tr><th>标题</th></tr><tr><td>内容</td></tr>`（电脑版是一行 `<td>标题</td><td>内容</td>`）。插入项目用 `insertField`，定位项目开头用 `fieldStart`（`src/lib/page.ts`）
 - 活动页没有 `.gb_events_info_table`，是 `<h2 class="gb_subtitle">開場/開演/終演時間</h2>` + 内容、`<h2 class="gb_subtitle">開催場所</h2>` + `<p class="t"><a href="/places/{id}">`；`eventInfoCell` 两种都支持
 - 按钮是网站自己的 `gb_btn_add_s` / `gb_btn_add`（蓝底 #007aff）。脚本给 `<html>` 加 `ene-sp` 类，在其下给 `.btn` 定义描边样式
-- 手机版编辑页**没有图片上传栏**（`thumbnail_image`）
+- 手机版编辑页**没有图片上传栏**（`thumbnail_image`），表单也不是 multipart，但提交地址和电脑版相同。脚本补上「サムネイル画像」项目（当前图片取 S3 的 `{id}_s.jpg`）并把表单改成 multipart（`addMissingImageField`）。服务器是否接受需要真机实际提交确认
 - 用户用 iPhone 的 Tampermonkey for Safari 实测 0.3.1 测试版没有问题（2026-10-07）
 
 ### 确认页 `/events/add/confirm`
@@ -78,7 +78,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 2. **出演者セット**：把已选出演者存为组合（`GM_setValue('actorPresets')`），从没保存过时默认显示示例セット「前橋ウィッチーズ」（`defaultPresets`，删光后存的是 `[]`，不会再出现），一键添加；列表里已有セット第一项（团体名）时，新成员插在它（及紧随其后的已有成员）后面，否则追加到末尾
    - 1、2 在登录页和编辑页都启用（编辑页从 0.2.2 起；已有出演者由内联脚本 `addActor(数字ID, 名字)` 加入，结构与登录页相同）
 3. **确认页「戻って修正する」**：登录页提交时存快照（`formSnapshot`），跳回 `/events/add?ene_restore=1` 后恢复全部字段
-4. **登录页缩略图**：拖入 / Ctrl+V / 选文件（`createImageDrop` 组件）→ `draftImage` → 确认页提交时转为 `pendingUpload`（30 分钟有效）→ 完成后在完成页链接或活动页 URL 找到新活动 ID，**核对活动名和会场**；有链接时先轮询 S3 等网站自动生成的图片出现（最多 60 秒），再用编辑页原样提交 + `thumbnail_image`，最后用 `Last-Modified` 确认已被替换。0.2.1 起；494918 实测：登录 13:03:54 → 等待后 13:04:00 上传 → 没有再被覆盖
+4. **登录页缩略图**：拖入 / Ctrl+V / 选文件（`createImageDrop` 组件）→ `draftImage` → 确认页提交时转为 `pendingUpload`（30 分钟有效）→ 完成后在完成页链接或活动页 URL 找到新活动 ID（完成页不依赖结构：先取文字含活动名的活动链接，再按页面顺序取其他的，最多 5 个；手机版完成页没有 `.page`，之前因此什么都不做），**核对活动名和会场**；有链接时先轮询 S3 等网站自动生成的图片出现（最多 60 秒），再用编辑页原样提交 + `thumbnail_image`，最后用 `Last-Modified` 确认已被替换。0.2.1 起；494918 实测：登录 13:03:54 → 等待后 13:04:00 上传 → 没有再被覆盖
 5. **编辑页图片框**：同一组件，选中的图片用 `DataTransfer` 塞进原生 `thumbnail_image`
 6. **时间输入**：见下方「时间输入改进」一节
 7. **会场搜索框**（`initPlacePicker`）：都道府県 / 会场下拉框 / 原搜索框隐藏，换成一个搜索框（300ms 防抖、都道府県筛选、名字匹配优先、闭馆的排最后变灰、↑↓Enter）；`#places_list` 只保留选中的一项，用 MutationObserver 防止编辑页大列表到达后覆盖选择；编辑页 / `from_event_id` 从活动页「開催場所」读会场名立即显示；最近使った会場存在 `GM_setValue('recentPlaces')`（10 个）。活动页通过 `fetchEventDoc()` 只请求一次（时间分钟恢复也用它）

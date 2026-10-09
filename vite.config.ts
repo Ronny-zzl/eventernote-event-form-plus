@@ -26,7 +26,8 @@ export default defineConfig(({ mode }) => {
         // 不依赖网络的单元测试（CI 跑这一组）
         { test: { name: 'unit', include: ['test/*.test.ts'] } },
         // 用真实页面和 API 的测试：需要 pnpm site login，先 vite build
-        { test: { name: 'e2e', include: ['test/e2e/*.test.ts'], testTimeout: 90_000, hookTimeout: 90_000, fileParallelism: false } },
+        // 依赖真实网站：偶尔会有 502 等临时错误，失败时重试
+        { test: { name: 'e2e', include: ['test/e2e/*.test.ts'], testTimeout: 90_000, hookTimeout: 90_000, fileParallelism: false, retry: 2 } },
       ],
     },
     // 局域网内的手机访问测试版（pnpm preview:serve）

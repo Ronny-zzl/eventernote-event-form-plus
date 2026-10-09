@@ -21,7 +21,14 @@ export const MOBILE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 19_0 like Mac OS X)
 const pages = new Map<string, Promise<string>>();
 export const fetchHtml = (path: string, mobile = false) => {
   const key = (mobile ? 'sp:' : '') + path;
-  if (!pages.has(key)) pages.set(key, siteFetch(path, { headers: mobile ? { 'User-Agent': MOBILE_UA } : {} }).then((res) => res.text()));
+  if (!pages.has(key)) pages.set(key, siteFetch(path, { headers: mobile ? { 'User-Agent': MOBILE_UA } : {} }).then((res) => {
+    // 被重定向（未登录等）或服务器出错时，在这里说清楚，而不是让后面的断言莫名失败
+    if (res.status !== 200) {
+      pages.delete(key); // 让重试时重新请求
+      throw new Error(`${path} → ${res.status} ${res.headers.get('location') ?? ''}`);
+    }
+    return res.text();
+  }));
   return pages.get(key)!;
 };
 

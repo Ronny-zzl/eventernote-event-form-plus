@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.3.3
+// @version            0.3.4
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -1138,7 +1138,7 @@
 		const drop = wrap.querySelector(".ene-drop");
 		const picker = wrap.querySelector("input");
 		const clear = () => {
-			drop.textContent = "ここに画像をドラッグ＆ドロップ / Ctrl+V で貼り付け / クリックしてファイルを選択";
+			drop.textContent = isSmartphone() ? "タップして画像を選択" : "ここに画像をドラッグ＆ドロップ / Ctrl+V で貼り付け / クリックしてファイルを選択";
 		};
 		const show = (dataUrl) => {
 			const remove = Object.assign(document.createElement("input"), {
@@ -1212,23 +1212,48 @@
 		const draft = load("draftImage", null);
 		if (draft) picker.show(draft.dataUrl);
 	};
-	var initEditImagePicker = () => {
-		const input = document.querySelector("#event_form input[type=\"file\"][name=\"thumbnail_image\"]");
+	var addMissingImageField = (eventId) => {
+		const form = document.querySelector("#event_form");
+		const submitRow = form?.querySelector("input[type=\"submit\"]")?.closest("tr");
+		if (!form || !submitRow) return null;
+		form.enctype = "multipart/form-data";
+		const input = Object.assign(document.createElement("input"), {
+			type: "file",
+			name: "thumbnail_image",
+			accept: "image/*"
+		});
+		const current = Object.assign(document.createElement("img"), { src: `${S3_EVENT_IMAGE}${eventId}_s.jpg?t=${Date.now()}` });
+		current.addEventListener("error", () => current.remove());
+		insertField(submitRow, "サムネイル画像").append(current, input);
+		return input;
+	};
+	var initEditImagePicker = (eventId) => {
+		const input = document.querySelector("#event_form input[type=\"file\"][name=\"thumbnail_image\"]") ?? addMissingImageField(eventId);
 		if (!input) return;
 		input.style.display = "none";
 		const current = input.parentElement?.querySelector("img");
 		if (current) {
-			current.before(Object.assign(document.createElement("p"), {
+			const label = Object.assign(document.createElement("p"), {
 				className: "ene-image-note",
 				textContent: "現在の画像"
-			}));
-			current.style.display = "block";
-			current.style.marginBottom = "10px";
+			});
+			current.before(label);
+			current.addEventListener("error", () => label.remove());
+			Object.assign(current.style, {
+				display: "block",
+				marginBottom: "10px",
+				maxWidth: "100%"
+			});
 		}
 		const picker = createImageDrop((image) => {
-			const transfer = new DataTransfer();
-			transfer.items.add(new File([dataUrlToBlob(image.dataUrl)], image.name, { type: image.type }));
-			input.files = transfer.files;
+			try {
+				const transfer = new DataTransfer();
+				transfer.items.add(new File([dataUrlToBlob(image.dataUrl)], image.name, { type: image.type }));
+				input.files = transfer.files;
+			} catch {
+				input.style.display = "";
+				showNotice("この端末では画像を自動で設定できません。下のファイル選択欄から画像を選んでください。", "error");
+			}
 		}, () => {
 			input.value = "";
 		});
@@ -1255,15 +1280,20 @@
 			});
 		});
 	};
-	var candidateEventIds = () => {
+	var EVENT_LINK = /^(?:https?:\/\/www\.eventernote\.com)?\/events\/(\d+)\/?$/;
+	var candidateEventIds = (eventName) => {
 		const ids = new Set();
 		const m = location.pathname.match(/^\/events\/(\d+)\/?$/);
 		if (m) ids.add(m[1]);
-		if (location.pathname.startsWith("/events/add/complete")) for (const a of document.querySelectorAll(".page a[href]")) {
-			const lm = a.getAttribute("href").match(/^(?:https?:\/\/www\.eventernote\.com)?\/events\/(\d+)\/?$/);
-			if (lm) ids.add(lm[1]);
+		if (location.pathname.startsWith("/events/add/complete")) {
+			const links = [...document.querySelectorAll("a[href]")].map((a) => ({
+				text: a.textContent ?? "",
+				id: a.getAttribute("href").match(EVENT_LINK)?.[1]
+			})).filter((link) => !!link.id);
+			links.filter((link) => link.text.includes(eventName.trim())).forEach((link) => ids.add(link.id));
+			links.forEach((link) => ids.add(link.id));
 		}
-		return [...ids];
+		return [...ids].slice(0, 5);
 	};
 	var fetchEditForm = async (eventId) => {
 		const res = await fetch(`/events/${eventId}/edit`, { credentials: "same-origin" });
@@ -1320,7 +1350,7 @@
 			return;
 		}
 		if (pending.uploadingAt && Date.now() - pending.uploadingAt < UPLOAD_LOCK_MS) return;
-		for (const id of candidateEventIds()) {
+		for (const id of candidateEventIds(pending.eventName)) {
 			const edit = await fetchEditForm(id);
 			if (!edit) continue;
 			const { form, placeId } = edit;
@@ -1552,6 +1582,6 @@
 		initAnnounce(initDatePicker(), time);
 		initSubmitCheck();
 		restoreEditMinutes(editId).then(() => time?.refresh());
-		initEditImagePicker();
+		initEditImagePicker(editId);
 	} else processPendingUpload();
 })();

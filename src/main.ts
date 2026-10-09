@@ -50,7 +50,7 @@ if (path === '/events/add/confirm') {
   initAnnounce(initDatePicker(), time);
   initSubmitCheck();
   restoreEditMinutes(editId).then(() => time?.refresh());
-  initEditImagePicker();
+  initEditImagePicker(editId);
 } else {
   processPendingUpload();
 }

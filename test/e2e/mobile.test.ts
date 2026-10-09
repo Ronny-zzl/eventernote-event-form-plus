@@ -20,6 +20,21 @@ describe.skipIf(!loggedIn)('スマートフォン版のページ', () => {
     expect(announceRow.nextElementSibling!.textContent!.trim()).toBe('開催日');
   });
 
+  test('編集画面：画像欄がないので追加し、フォームを multipart にする', async () => {
+    const p = (page = await openPage(`/events/${EDIT_EVENT_ID}/edit`, { mobile: true }));
+    const form = p.byId<HTMLFormElement>('event_form');
+    expect(form.enctype).toBe('multipart/form-data');
+    expect(p.$$('input[name="thumbnail_image"]')).toHaveLength(1);
+    expect(headings(p).slice(-1)).toEqual(['サムネイル画像']); // 「編集完了」の直前
+    expect(p.$('#event_form .ene-drop')).not.toBeNull();
+  });
+
+  test('パソコン版の編集画面には画像欄を追加しない（元からある）', async () => {
+    const p = (page = await openPage(`/events/${EDIT_EVENT_ID}/edit`));
+    expect(p.$$('input[name="thumbnail_image"]')).toHaveLength(1);
+    expect(p.$$('#event_form .ene-drop')).toHaveLength(1);
+  });
+
   test('編集画面：スマートフォン版のイベントページから会場名と分を読み取る', async () => {
     const path = `/events/${EDIT_EVENT_ID}/edit`;
     const edit = (await fetchHtml(path, true)).replace(/(id="open_time_minute"[\s\S]*?<\/select>)/, (s) => s.replace(/ selected="selected"/g, ''));
