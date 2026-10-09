@@ -4,12 +4,12 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.3.4
+// @version            0.4.0
 // @author             Ronny-zzl
-// @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
-// @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
-// @description:zh-CN  改善 Eventernote 活动登录和编辑页面：会场搜索、时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图
-// @description:en     Improves the Eventernote event add/edit forms: venue search, smarter time input, reorder performers, performer sets, back button on the confirm page, thumbnail images
+// @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
+// @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
+// @description:zh-CN  改善 Eventernote 活动登录和编辑页面：会场搜索、批量添加出演者、时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图
+// @description:en     Improves the Eventernote event add/edit forms: venue search, bulk-add performers, smarter time input, reorder performers, performer sets, back button on the confirm page, thumbnail images
 // @license            MIT
 // @homepageURL        https://github.com/Ronny-zzl/eventernote-event-form-plus
 // @supportURL         https://github.com/Ronny-zzl/eventernote-event-form-plus/issues
@@ -32,7 +32,7 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-presets select{margin-bottom:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input{flex:1;min-width:200px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}.ene-sp input.btn{color:#007aff;-webkit-appearance:none;background:#fff;border:1px solid #007aff;border-radius:0;height:30px;margin:2px 0;padding:0 10px;font-size:14px}.ene-sp .ene-time-row input.ene-time{width:80px}.ene-sp .ene-drop img{max-width:100%}.ene-sp .ene-notice{max-width:none;left:10px;right:10px}");
+	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:0;display:flex}.ene-presets select{flex:200px;width:auto;min-width:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input[type=text]{flex:1;min-width:160px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}.ene-sp input.btn{color:#007aff;-webkit-appearance:none;background:#fff;border:1px solid #007aff;border-radius:0;height:30px;margin:2px 0;padding:0 10px;font-size:14px}.ene-sp .ene-time-row input.ene-time{width:80px}.ene-sp .ene-drop img{max-width:100%}.ene-sp .ene-notice{max-width:none;left:10px;right:10px}.ene-modal{z-index:10001;background:#00000073;justify-content:center;align-items:center;padding:16px;display:none;position:fixed;inset:0}.ene-modal.ene-open{display:flex}.ene-modal-box{background:#fff;border-radius:6px;flex-direction:column;width:100%;max-width:720px;max-height:100%;font-size:13px;display:flex;box-shadow:0 6px 24px #0000004d}.ene-modal-head{border-bottom:1px solid #ddd;padding:10px 14px;font-size:15px;font-weight:700}.ene-modal-close{float:right;cursor:pointer;color:#888;font-size:20px;line-height:1}.ene-modal-body{flex:1;padding:10px 14px;overflow-y:auto}.ene-modal-body textarea{box-sizing:border-box;width:100%;margin-bottom:6px}.ene-modal-foot{border-top:1px solid #ddd;justify-content:flex-end;gap:8px;padding:10px 14px;display:flex}.ene-modal-foot .btn{margin-bottom:0}.ene-bulk-bar{flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;display:flex}.ene-bulk-bar .btn{margin-bottom:0}.ene-bulk-bar label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-bulk-bar label input{margin:0}.ene-bulk-summary{color:#666;flex:1;font-size:12px}.ene-bulk-list{margin:0;padding:0;list-style:none}.ene-bulk-row[hidden]{display:none}.ene-bulk-row{border-bottom:1px solid #f0f0f0;align-items:flex-start;gap:8px;padding:6px 4px;display:flex}.ene-bulk-row>input{margin:3px 0 0}.ene-bulk-main{flex:1;min-width:0}.ene-bulk-name{font-weight:700}.ene-bulk-result{color:#555}.ene-bulk-result .ene-suggest-sub{color:#888;margin-left:8px;font-size:11px}.ene-bulk-result select{max-width:100%;margin:2px 0 0}.ene-bulk-result .btn{margin:0 0 0 4px}.ene-bulk-badge{color:#666;background:#eee;border-radius:3px;flex:none;padding:1px 6px;font-size:11px}.ene-bulk-row[data-status=exact] .ene-bulk-badge{color:#3c763d;background:#dff0d8}.ene-bulk-row[data-status=multiple] .ene-bulk-badge,.ene-bulk-row[data-status=candidates] .ene-bulk-badge{color:#8a6d3b;background:#fcf8e3}.ene-bulk-row[data-status=none] .ene-bulk-badge,.ene-bulk-row[data-status=error] .ene-bulk-badge{color:#a94442;background:#f2dede}.ene-bulk-row[data-status=added]{opacity:.6}.ene-sp .ene-modal{padding:0}.ene-sp .ene-modal-box{border-radius:0;height:100%}.ene-bulk-research{gap:4px;margin-top:4px;display:flex}.ene-bulk-research input[type=text]{flex:1;min-width:0;margin:0}.ene-bulk-research .btn{margin:0}input.ene-ctl[type],select.ene-ctl{box-sizing:border-box;vertical-align:middle;height:30px;margin:0}.ene-sp input.ene-ctl[type],.ene-sp select.ene-ctl{height:36px;margin:0;font-size:14px}.ene-sp input.ene-ctl[type=text],.ene-sp select.ene-ctl{background:#fff;border:1px solid #aaa;padding:0 6px}#selected_actors+.ene-search{margin-top:6px}");
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
 	var page = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
@@ -127,9 +127,9 @@
 		tools.innerHTML = `
     <label><input type="checkbox"> <span></span></label>
     <span>
-      <input type="button" class="btn btn-small" value="▲" title="選択した出演者を上へ">
-      <input type="button" class="btn btn-small" value="▼" title="選択した出演者を下へ">
-      <input type="button" class="btn btn-small" value="削除">
+      <input type="button" class="btn ene-ctl" value="▲" title="選択した出演者を上へ">
+      <input type="button" class="btn ene-ctl" value="▼" title="選択した出演者を下へ">
+      <input type="button" class="btn ene-ctl" value="削除" title="選択した出演者を削除">
     </span>
   `;
 		list.before(tools);
@@ -296,10 +296,10 @@
 		const box = document.createElement("p");
 		box.className = "ene-presets";
 		box.innerHTML = `
-    <select></select>
-    <input type="button" class="btn" value="セットを追加する">
-    <input type="button" class="btn" value="選択中の出演者をセットに保存">
-    <input type="button" class="btn" value="セットを削除">
+    <select class="ene-ctl"></select>
+    <input type="button" class="btn ene-ctl" value="追加" title="選んだセットの出演者を追加します">
+    <input type="button" class="btn ene-ctl" value="現在の出演者を保存" title="今リストにいる出演者をセットとして保存します">
+    <input type="button" class="btn ene-ctl" value="削除" title="選んだセットを削除します">
   `;
 		list.after(box);
 		const select = box.querySelector("select");
@@ -342,6 +342,80 @@
 			render();
 		});
 		render();
+	};
+	var showNotice = (message, kind) => {
+		const box = document.createElement("div");
+		box.className = kind === "error" ? "ene-notice ene-error" : "ene-notice";
+		const close = document.createElement("span");
+		close.className = "ene-close";
+		close.textContent = "×";
+		close.addEventListener("click", () => box.remove());
+		box.append(close, message);
+		document.body.append(box);
+		return box;
+	};
+	var normalize$1 = (s) => s.normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 96));
+	var rankActors = (actors, keyword) => {
+		const kw = normalize$1(keyword);
+		const match = (text = "") => {
+			const t = normalize$1(text);
+			return t === kw ? 0 : t.startsWith(kw) ? 1 : t.includes(kw) ? 2 : 3;
+		};
+		return actors.map((a, i) => ({
+			a,
+			s: Math.min(match(a.name), match(a.kana)),
+			i
+		})).sort((x, y) => x.s - y.s || (y.a.favorite_count ?? 0) - (x.a.favorite_count ?? 0) || x.i - y.i).map((x) => x.a);
+	};
+	var SLASH = /／|\s+\/\s*|\s*\/\s+/;
+	var SEPARATOR = new RegExp(String.raw`\r?\n|${SLASH.source}`);
+	var SEPARATOR_WITH_COMMA = new RegExp(String.raw`${SEPARATOR.source}|[、，,]`);
+	var HEADING = /^[<＜〈《].*[>＞〉》]$/;
+	var BULLET = /^[・●■◆◇○*\-－]\s*/;
+	var AND_MORE = /^(and\s*more|ほか|他|etc\.?)[!！.。…]*$/i;
+	var splitNames = (text) => {
+		const names = text.split(SLASH.test(text) ? SEPARATOR : SEPARATOR_WITH_COMMA).map((s) => s.trim().replace(BULLET, "").trim()).filter((s) => s && !HEADING.test(s) && !AND_MORE.test(s));
+		return [...new Set(names)];
+	};
+	var normalize = (s) => s.normalize("NFKC").toLowerCase().replace(/[︀-️​-‍]/g, "").replace(/\s+/g, "").replace(/[‘’`´′]/g, "'").replace(/[“”″]/g, "\"").replace(/[★☆]/g, "☆").replace(/[〜~～]/g, "~").replace(/[♡♥❤]/g, "♡").replace(/♯/g, "#");
+	var withoutParens = (s) => {
+		let t = s.normalize("NFKC");
+		for (let prev = ""; prev !== t;) [prev, t] = [t, t.replace(/\([^()]*\)|【[^【】]*】/g, "")];
+		return t.trim();
+	};
+	var fallbackQueries = (name) => {
+		const base = name.normalize("NFKC").trim();
+		const longestWord = base.split(/[^\p{L}\p{N}]+/u).sort((a, b) => b.length - a.length)[0] ?? "";
+		const queries = [
+			withoutParens(base),
+			base.replace(/'/g, "’"),
+			base.replace(/[‘’]/g, "'"),
+			longestWord
+		];
+		return [...new Set(queries.map((q) => q.trim()))].filter((q) => q.length >= 2 && q !== name.trim());
+	};
+	var byFavorite = (a, b) => (b.favorite_count ?? 0) - (a.favorite_count ?? 0);
+	var matchActor = (input, results) => {
+		const full = normalize(input);
+		const short = normalize(withoutParens(input));
+		let exact = results.filter((a) => normalize(a.name) === full);
+		if (!exact.length) exact = results.filter((a) => [normalize(a.name), normalize(withoutParens(a.name))].some((v) => v && (v === full || v === short)));
+		if (exact.length === 1) return {
+			status: "exact",
+			candidates: exact
+		};
+		if (exact.length > 1) return {
+			status: "multiple",
+			candidates: exact.sort(byFavorite)
+		};
+		if (results.length) return {
+			status: "candidates",
+			candidates: rankActors(results, input).slice(0, 5)
+		};
+		return {
+			status: "none",
+			candidates: []
+		};
 	};
 	var createSuggest = ({ input, list, search, idle, choose, keepOpen, emptyText }) => {
 		let items = [];
@@ -438,22 +512,10 @@
 		close();
 		return { run };
 	};
-	var normalize = (s) => s.normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 96));
-	var rankActors = (actors, keyword) => {
-		const kw = normalize(keyword);
-		const match = (text = "") => {
-			const t = normalize(text);
-			return t === kw ? 0 : t.startsWith(kw) ? 1 : t.includes(kw) ? 2 : 3;
-		};
-		return actors.map((a, i) => ({
-			a,
-			s: Math.min(match(a.name), match(a.kana)),
-			i
-		})).sort((x, y) => x.s - y.s || (y.a.favorite_count ?? 0) - (x.a.favorite_count ?? 0) || x.i - y.i).map((x) => x.a);
-	};
 	var RECENT_MAX$1 = 20;
 	var cache$1 = new Map();
-	var searchActors = (keyword) => {
+	var searchActors = (keyword, fresh = false) => {
+		if (fresh) cache$1.delete(keyword);
 		let result = cache$1.get(keyword);
 		if (!result) {
 			const params = new URLSearchParams({
@@ -485,7 +547,7 @@
 		box.className = "ene-search";
 		box.innerHTML = `
     <div class="ene-search-row">
-      <input type="text" placeholder="名前・よみがなで検索して追加（例: 水樹奈々、みずきなな）" autocomplete="off">
+      <input type="text" class="ene-ctl" placeholder="名前・よみがなで検索して追加（例: 水樹奈々、みずきなな）" autocomplete="off">
     </div>
     <ul class="ene-suggest"></ul>
   `;
@@ -516,16 +578,223 @@
 			emptyText: "見つかりませんでした"
 		});
 	};
-	var showNotice = (message, kind) => {
-		const box = document.createElement("div");
-		box.className = kind === "error" ? "ene-notice ene-error" : "ene-notice";
-		const close = document.createElement("span");
-		close.className = "ene-close";
-		close.textContent = "×";
-		close.addEventListener("click", () => box.remove());
-		box.append(close, message);
-		document.body.append(box);
-		return box;
+	var CONCURRENCY = 4;
+	var BADGES = {
+		pending: "検索中",
+		exact: "一致",
+		multiple: "同名あり",
+		candidates: "候補のみ",
+		none: "見つかりません",
+		error: "失敗",
+		added: "追加済み"
+	};
+	var NEEDS_REVIEW = [
+		"multiple",
+		"candidates",
+		"none",
+		"error"
+	];
+	var actorSub = (a) => [a.kana, a.favorite_count ? `♡${a.favorite_count}` : ""].filter(Boolean).join(" · ");
+	var isAdded = (a) => !!byId(`actor_${a.id}`);
+	var el = (tag, props = {}) => Object.assign(document.createElement(tag), props);
+	var searchWithRetry = async (keyword, fresh = false) => {
+		try {
+			return await searchActors(keyword, fresh);
+		} catch {
+			await sleep(1500);
+			return searchActors(keyword);
+		}
+	};
+	var searchWithFallback = async (name) => {
+		for (const keyword of [name, ...fallbackQueries(name)]) {
+			const results = await searchWithRetry(keyword);
+			if (results.length) return results;
+		}
+		return [];
+	};
+	var initActorBulk = () => {
+		const row = document.querySelector("#selected_actors ~ .ene-search .ene-search-row");
+		if (!row || typeof page.addActor !== "function") return;
+		const modal = el("div", { className: "ene-modal" });
+		modal.innerHTML = `
+    <div class="ene-modal-box" role="dialog" aria-modal="true" aria-label="出演者をまとめて追加">
+      <div class="ene-modal-head">出演者をまとめて追加<span class="ene-modal-close" title="閉じる">×</span></div>
+      <div class="ene-modal-body">
+        <textarea rows="5" placeholder="出演者の名簿を貼り付けてください（「 / 」や改行で区切られたもの）"></textarea>
+        <div class="ene-bulk-bar">
+          <input type="button" class="btn btn-small" value="検索する">
+          <span class="ene-bulk-summary"></span>
+          <label><input type="checkbox"> 要確認のみ表示</label>
+        </div>
+        <ul class="ene-bulk-list"></ul>
+      </div>
+      <div class="ene-modal-foot">
+        <input type="button" class="btn btn-small" value="閉じる">
+        <input type="button" class="btn btn-small btn-primary" disabled>
+      </div>
+    </div>
+  `;
+		document.body.append(modal);
+		const textarea = modal.querySelector("textarea");
+		const [searchBtn, filter, closeBtn, addBtn] = modal.querySelectorAll(".ene-bulk-bar input, .ene-modal-foot input");
+		const list = modal.querySelector(".ene-bulk-list");
+		const summary = modal.querySelector(".ene-bulk-summary");
+		let rows = [];
+		let run = 0;
+		const open = () => {
+			modal.classList.add("ene-open");
+			if (!rows.length) textarea.focus();
+		};
+		const close = () => modal.classList.remove("ene-open");
+		const updateSummary = () => {
+			const count = (statuses) => rows.filter((r) => statuses.includes(r.status)).length;
+			const pending = count(["pending"]);
+			summary.textContent = rows.length ? `${rows.length}名${pending ? `（検索中 ${rows.length - pending} / ${rows.length}）` : ""}：一致 ${count(["exact"])}・要確認 ${count([
+				"multiple",
+				"candidates",
+				"error"
+			])}・見つからない ${count(["none"])}・追加済み ${count(["added"])}` : "";
+			const checked = rows.filter((r) => r.check.checked && r.chosen).length;
+			addBtn.value = `チェックした ${checked} 名を追加`;
+			addBtn.disabled = !checked;
+		};
+		const render = (r) => {
+			r.li.dataset.status = r.status;
+			r.li.hidden = filter.checked && !NEEDS_REVIEW.includes(r.status);
+			const badge = r.li.querySelector(".ene-bulk-badge");
+			badge.textContent = BADGES[r.status];
+			const result = r.li.querySelector(".ene-bulk-result");
+			result.replaceChildren();
+			r.check.disabled = !r.chosen || r.status === "added";
+			if (r.status === "pending") result.append("検索中…");
+			else if (r.status === "error") result.append("検索に失敗しました");
+			else if (r.status === "none") result.append("見つかりませんでした ", el("a", {
+				href: "/actors/add",
+				target: "_blank",
+				textContent: "→登録する"
+			}));
+			else if (r.status === "exact" || r.status === "added") result.append(r.chosen.name, el("span", {
+				className: "ene-suggest-sub",
+				textContent: actorSub(r.chosen)
+			}));
+			else {
+				const select = el("select");
+				select.append(new Option("選んでください", ""), ...r.candidates.map((a, i) => new Option(`${a.name}${actorSub(a) ? `（${actorSub(a)}）` : ""}${isAdded(a) ? "［追加済み］" : ""}`, String(i), false, a === r.chosen)));
+				select.addEventListener("change", () => {
+					r.chosen = r.candidates[Number(select.value)] ?? null;
+					r.check.checked = !!r.chosen && !isAdded(r.chosen);
+					r.check.disabled = !r.chosen;
+					updateSummary();
+				});
+				result.append(select);
+			}
+			if (NEEDS_REVIEW.includes(r.status)) {
+				const box = el("div", { className: "ene-bulk-research" });
+				const input = el("input", {
+					type: "text",
+					value: r.keyword
+				});
+				const button = el("input", {
+					type: "button",
+					className: "btn btn-small",
+					value: "再検索"
+				});
+				const go = () => input.value.trim() && lookup(r, run, input.value.trim());
+				button.addEventListener("click", go);
+				input.addEventListener("keydown", (e) => {
+					if (e.key !== "Enter") return;
+					e.preventDefault();
+					go();
+				});
+				box.append(input, button);
+				result.append(box);
+			}
+			updateSummary();
+		};
+		const lookup = async (r, myRun, keyword) => {
+			r.status = "pending";
+			if (keyword) r.keyword = keyword;
+			render(r);
+			try {
+				const results = keyword ? await searchWithRetry(keyword, true) : await searchWithFallback(r.name);
+				if (myRun !== run) return;
+				const match = matchActor(r.name, results);
+				r.candidates = keyword && match.status === "candidates" ? rankActors(results, keyword).slice(0, 5) : match.candidates;
+				const only = match.status === "candidates" && r.candidates.length === 1;
+				r.chosen = match.status === "exact" || only ? r.candidates[0] : null;
+				r.status = match.status === "exact" && isAdded(r.chosen) ? "added" : match.status;
+				r.check.checked = !!r.chosen && r.status !== "added" && !isAdded(r.chosen);
+			} catch {
+				if (myRun !== run) return;
+				r.status = "error";
+			}
+			render(r);
+		};
+		const search = async () => {
+			const names = splitNames(textarea.value);
+			if (!names.length) return;
+			const myRun = ++run;
+			rows = names.map((name) => {
+				const li = el("li", { className: "ene-bulk-row" });
+				const check = el("input", { type: "checkbox" });
+				check.addEventListener("change", updateSummary);
+				li.append(check, el("div", { className: "ene-bulk-main" }), el("span", { className: "ene-bulk-badge" }));
+				li.querySelector(".ene-bulk-main").append(el("div", {
+					className: "ene-bulk-name",
+					textContent: name
+				}), el("div", { className: "ene-bulk-result" }));
+				return {
+					name,
+					keyword: name,
+					status: "pending",
+					candidates: [],
+					chosen: null,
+					li,
+					check
+				};
+			});
+			list.replaceChildren(...rows.map((r) => r.li));
+			rows.forEach(render);
+			let next = 0;
+			const worker = async () => {
+				while (next < rows.length && myRun === run) await lookup(rows[next++], myRun);
+			};
+			await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+		};
+		const addChecked = () => {
+			const targets = rows.filter((r) => r.check.checked && r.chosen && r.status !== "added");
+			for (const r of targets) {
+				addActorIfMissing({
+					id: String(r.chosen.id),
+					name: r.chosen.name
+				});
+				r.status = "added";
+				r.check.checked = false;
+				render(r);
+			}
+			close();
+			showNotice(`${targets.length}名を追加しました`);
+		};
+		searchBtn.addEventListener("click", search);
+		filter.addEventListener("change", () => rows.forEach(render));
+		addBtn.addEventListener("click", addChecked);
+		closeBtn.addEventListener("click", close);
+		modal.querySelector(".ene-modal-close").addEventListener("click", close);
+		modal.addEventListener("click", (e) => {
+			if (e.target === modal) close();
+		});
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && modal.classList.contains("ene-open")) close();
+		});
+		const openBtn = el("input", {
+			type: "button",
+			className: "btn ene-ctl",
+			value: "まとめて追加",
+			title: "名簿を貼り付けて、まとめて検索・追加します"
+		});
+		openBtn.addEventListener("click", open);
+		row.append(openBtn);
+		updateSummary();
 	};
 	var WEEKDAYS$1 = "日月火水木金土";
 	var DAY_MS = 864e5;
@@ -615,7 +884,7 @@
 	};
 	var LABEL_ANY_RE = /開場|入場開始|入場|開演|(?<!販売|発売|受付|抽選|予約|応募|配信)(?:開始|終了)|終演|スタート|(?<![a-z])(?:open|start|end|close)(?![a-z])/i;
 	var TOKEN_RE = new RegExp([`(${LABEL_ANY_RE.source})`, String.raw`(?<!\d)(?:(午前|午後|am|pm)\s*)?(\d{1,2})\s*(?::\s*(\d{2})|時(?!間)\s*(?:(\d{1,2})分?|(半))?)(?:\s*(am|pm)(?![a-z]))?`].join("|"), "gi");
-	var GAP_RE = /^(?:[\s/・|,、.:;()[\]【】〈〉<>《》「」『』〜~=_*-]|[→⇒▶▷►★☆◆◇■□●○]|時間|時刻|予定|は)*$/;
+	var GAP_RE = /^(?:[\s/・|,、.:;()[\]【】〈〉<>《》「」『』〜~=_*-]|[→⇒▶▷►★☆◆◇■□●○]|時間|時刻|予定|頃|ごろ|は)*$/;
 	var parseAnnouncement = (text) => {
 		const s = text.normalize("NFKC");
 		const tokens = [];
@@ -646,7 +915,7 @@
 				const times = [];
 				while (j < tokens.length && tokens[j].time && adjacent(tokens[j - 1], tokens[j])) times.push(tokens[j++]);
 				labels.forEach((l, k) => {
-					if (times[k] && !found[l.label]) found[l.label] = times[k].time;
+					if (times[k] && !found[l.label]) found[l.label] = times[k];
 				});
 				i = Math.max(j, i + labels.length);
 			}
@@ -657,7 +926,7 @@
 			for (let i = 0; i + 1 < tokens.length; i++) {
 				const [t, l] = [tokens[i], tokens[i + 1]];
 				if (t.time && l.label && adjacent(t, l) && !found[l.label]) {
-					found[l.label] = t.time;
+					found[l.label] = t;
 					i++;
 				}
 			}
@@ -665,7 +934,14 @@
 		};
 		const a = labelFirst();
 		const b = timeFirst();
-		return Object.keys(b).length > Object.keys(a).length ? b : a;
+		const [main, extra] = Object.keys(b).length > Object.keys(a).length ? [b, a] : [a, b];
+		const used = new Set(Object.values(main));
+		const found = {};
+		for (const k of TIME_KEYS) {
+			const token = main[k] ?? (extra[k] && !used.has(extra[k]) ? extra[k] : void 0);
+			if (token) found[k] = token.time;
+		}
+		return found;
 	};
 	var initAnnounce = (date, time) => {
 		const dateRow = byId("date_year")?.closest("tr");
@@ -1560,6 +1836,7 @@
 		initActorList();
 		initActorPresets();
 		initActorSearch();
+		initActorBulk();
 		const placePicker = initPlacePicker();
 		initFormSnapshot(placePicker);
 		placePicker?.loadInitial(new URLSearchParams(location.search).get("from_event_id"));
@@ -1577,6 +1854,7 @@
 		initActorList();
 		initActorPresets();
 		initActorSearch();
+		initActorBulk();
 		initPlacePicker()?.loadInitial(editId);
 		const time = initSmartTime();
 		initAnnounce(initDatePicker(), time);

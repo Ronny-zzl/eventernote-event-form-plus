@@ -3,7 +3,7 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 当前已发布版本：`0.3.4`（已打 `v0.3.4` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 当前已发布版本：`0.4.0`（已打 `v0.4.0` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 工程结构
 
@@ -12,8 +12,9 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - **产物不压缩**：Greasy Fork 禁止压缩 / 混淆的代码
 - 包管理器 pnpm。命令：`pnpm build` / `pnpm dev`（开发服务器，Tampermonkey 自动更新）/ `pnpm typecheck`（src 和 scripts、e2e 分两个 tsconfig）/ `pnpm lint`（oxlint）/ `pnpm test` / `pnpm test:e2e` / `pnpm site …`（见下）
 - CI（`.github/workflows/ci.yml`）：typecheck、lint、test、build，并检查提交的 `.user.js` 和构建结果一致
-- 目录：`src/main.ts`（按页面分发）、`src/style.css`（全部样式，打包时用 GM_addStyle 注入）、`src/lib/`（page = 页面全局变量与小工具、storage = 带类型的 GM 存储、notice、eventPage = 活动页读取缓存、suggest = 会场和出演者共用的输入即搜索候选列表）、`src/features/`（actors、actorSearch、announce、date、time、place、snapshot、thumbnail；纯函数放在 `timeParse.ts`、`dateParse.ts`、`placeRank.ts`、`actorRank.ts`，供单元测试）
+- 目录：`src/main.ts`（按页面分发）、`src/style.css`（全部样式，打包时用 GM_addStyle 注入）、`src/lib/`（page = 页面全局变量与小工具、storage = 带类型的 GM 存储、notice、eventPage = 活动页读取缓存、suggest = 会场和出演者共用的输入即搜索候选列表）、`src/features/`（actors、actorSearch、actorBulk、announce、date、time、place、snapshot、thumbnail；纯函数放在 `timeParse.ts`、`dateParse.ts`、`placeRank.ts`、`actorRank.ts`、`actorMatch.ts`，供单元测试）
 - GM API 从 `'$'` 导入（vite-plugin-monkey 的别名）。依赖 `'$'` 的模块在 vitest 里无法加载，所以要测试的逻辑写成不依赖它的纯函数模块
+- 同一行里的输入框、下拉框、按钮用 `ene-ctl` 类统一高度（电脑版 30px，手机版 36px；选择器要写成 `input.ene-ctl[type]`，否则会输给 Bootstrap 的 `input[type="text"] { height: 20px }`）；`.ene-search-row` 里只有文字输入框伸展（`input[type="text"]`），否则按钮也会被拉伸
 - 代码风格：类型用 `type`，函数用箭头函数（oxlint 的 `consistent-type-definitions`、`func-style` 规则强制）；尽量简洁
 - 换行统一 LF（`.gitattributes`：`* text=auto eol=lf`）
 - 测试分两组：`pnpm test`（vitest 的 unit 项目，纯函数，CI 跑）和 `pnpm test:e2e`（e2e 项目，真实页面 + API，需要登录，见「调试网站的方法」）。页面 HTML 含登录用户的信息，只在运行时获取，不提交
@@ -88,6 +89,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 11. **提交前检查**（`features/submitCheck.ts`，登录页和编辑页）：活动名空、没有出演者 / 会场、出演者或会场搜索框里留着没选中的文字时，用 confirm 列出问题，取消则聚焦第一个问题；确定仍提交（服务器的必填要求未确认）。capture 阶段注册在时间检查之后。出演者搜索选中后会保留搜索词，所以 suggest 选中时给输入框设 `data-picked`，输入变化时清除；有这个标记就不当作残留
 12. **草稿自动保存**（`features/draft.ts`，仅登录页）：每 2 秒取快照（复用 `takeSnapshot`），有变化且非空表单才存到 `formDraft`；下次打开登录页显示「前回の入力内容が残っています」+ 復元する / 破棄する（14 天内；从确认页返回、`from_event_id` 时不显示）；开始填新内容后提示消失、旧草稿被覆盖；确认页点「登録する」时清除。缩略图不保存
    - **坑**：`initFormSnapshot` 恢复后会把 `ene_restore` 从 URL 去掉，之后再检查参数就判断不出「从确认页返回」。现在统一用脚本加载时算好的 `isReturning`（这个问题曾导致从确认页返回时缩略图被清空，0.1.0 起就存在，已修）
+13. **出演者まとめて追加**（`features/actorBulk.ts` + 纯函数 `actorMatch.ts`）：出演者搜索框旁的按钮打开 modal，粘贴名单 → `splitNames` 拆分（换行、全角「／」、至少一边有空格的「/」；名单里没有这些「/」时才按「、」「，」拆，因为名字可能带「、」如「遥か、彼方。」；「LilyS/ash」「マジカル・パンチライン」不拆；去掉＜出演者＞标题、and more）→ 4 并发搜索（失败等 1.5 秒重试一次）→ `matchActor` 判断：名字（忽略全半角、大小写、空格、引号、☆★、〜~、♡♥）完全一致且一人 = 一致（默认勾选）；多人同名 = 同名あり、只有候选 = 候補のみ（都由用户在下拉框里选，不默认选）；括号连同一致的优先，再比去掉括号的写法。原文搜不到时按 `fallbackQueries` 换写法再搜（去括号、换引号、最长的词；「I’mew（あいみゅう）」「ROSARIO+CROSS」等）；统一写法时还忽略变体选择符 U+FE0E（「STARRY×NIGHT↗︎」）、♯ 与 #、【读音】（「Re:♡【りらいく】」）。只有一个候选时自动选中但仍标为要确认（「Lって何のLですか？」vs「LってなんのLですか？」这种汉字和假名的差别无法统一）。要确认的行有单项搜索框，重搜不使用缓存（`searchActors(keyword, true)`），登记新出演者回来后可以搜到。`.ene-bulk-row` 是 `display:flex`，要加 `[hidden] { display: none }` 才能隐藏。确认后按名单顺序 `addActorIfMissing`。用户决定：不做「保存为セット」，用 modal 以便手机也能操作
 
 `@match` 是 `https://www.eventernote.com/events/*`，入口在文件末尾按 pathname 分发。
 
@@ -103,7 +105,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - `initMinuteOptions()`：分钟下拉框补全为 00–59（登录页、编辑页）
 - **坑**：编辑页 HTML 由服务器渲染 select，没有 `29` 这个选项，所以分钟没有被选中（为空）。`restoreEditMinutes()` 会从活动页 `.gb_events_info_table` 的「時間」一栏读回实际值
 - `initSmartTime()`：3 个文本框代替 6 个下拉框（select 收进隐藏 span，值同步）。`parseTimeInput` 识别 `1830`、`18:30`、全角、`18時半`、`午後6時半`、`6:30pm`；`25:30` → `01:30`。「翌日」标记按「早于前一个时间」推断（不单独保存）
-- 告知文读取（界面已移到「告知文から入力」一行，见功能 9）：`parseAnnouncement` 同时支持标签在前（`開場/開演 17:30/18:30`）和时间在前（`17:30開場`），取配对数多的一种；排除「販売開始」「受付終了」等
+- 告知文读取（界面已移到「告知文から入力」一行，见功能 9）：`parseAnnouncement` 同时支持标签在前（`開場/開演 17:30/18:30`）和时间在前（`17:30開場`），以配对数多的一种为准，另一种只补缺的项目且不能用主写法已用过的时间（混用：「開場 / 開演：10:45 / 11:30（20:30頃終演予定）」）；分隔允许「頃」「ごろ」；排除「販売開始」「受付終了」等
 - 快捷按钮：開場 = 開演 −30/−60 分，終演 = 開演 +2h/+3h；无法识别的输入会在 capture 阶段阻止提交
 - 页面自带的提交检查只比较小时，用 `return;` 而不是 `return false`：跨午夜时会弹出「開演時間を終演時間より後に…」但仍会提交（网站本身的问题，不修）
 - 已用 jsdom 对保存的登录页 / 编辑页 HTML 测试过；用户已在真实页面试用（反馈过 `OPEN/START…18:20/18:50` 读不出：「…」经 NFKC 变成 `...`，已在 `GAP_RE` 里加入 `.` 和常见装饰符号）

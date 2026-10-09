@@ -12,7 +12,9 @@ const RECENT_MAX = 20;
 const cache = new Map<string, Promise<ApiActor[]>>();
 
 // 不传 signal：即使输入已经变了也让请求完成，结果留在缓存里（删字改回来时立即显示）
-const searchActors = (keyword: string) => {
+// fresh：不用缓存（如登记了新出演者后重新搜索）
+export const searchActors = (keyword: string, fresh = false) => {
+  if (fresh) cache.delete(keyword);
   let result = cache.get(keyword);
   if (!result) {
     const params = new URLSearchParams({ keyword, simple: '3', limit: '50' });
@@ -41,7 +43,7 @@ export const initActorSearch = () => {
   box.className = 'ene-search';
   box.innerHTML = `
     <div class="ene-search-row">
-      <input type="text" placeholder="名前・よみがなで検索して追加（例: 水樹奈々、みずきなな）" autocomplete="off">
+      <input type="text" class="ene-ctl" placeholder="名前・よみがなで検索して追加（例: 水樹奈々、みずきなな）" autocomplete="off">
     </div>
     <ul class="ene-suggest"></ul>
   `;

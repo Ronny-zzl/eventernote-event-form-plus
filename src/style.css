@@ -17,8 +17,8 @@
 .ene-actor-tools .btn { margin-bottom: 0; }
 
 /* 出演者セット */
-.ene-presets { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.ene-presets select { margin-bottom: 0; }
+.ene-presets { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0 0 8px; padding: 0; }
+.ene-presets select { flex: 1 1 200px; width: auto; min-width: 0; }
 
 /* 时间 */
 .ene-time-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
@@ -32,7 +32,7 @@
 .ene-search { position: relative; margin-bottom: 8px; }
 .ene-search-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .ene-search-row select { width: auto; margin-bottom: 0; }
-.ene-search-row input { flex: 1; min-width: 200px; margin-bottom: 0; }
+.ene-search-row input[type="text"] { flex: 1; min-width: 160px; margin-bottom: 0; }
 .ene-suggest {
   position: absolute; left: 0; right: 0; z-index: 1000; margin: 2px 0 0; padding: 0; list-style: none;
   max-height: 360px; overflow-y: auto; background: #fff; border: 1px solid #ccc; border-radius: 3px;
@@ -97,3 +97,54 @@
 .ene-sp .ene-time-row input.ene-time { width: 80px; }
 .ene-sp .ene-drop img { max-width: 100%; }
 .ene-sp .ene-notice { left: 10px; right: 10px; max-width: none; }
+
+/* 出演者まとめて追加（モーダル） */
+.ene-modal {
+  display: none; position: fixed; inset: 0; z-index: 10001;
+  background: rgba(0, 0, 0, .45); align-items: center; justify-content: center; padding: 16px;
+}
+.ene-modal.ene-open { display: flex; }
+.ene-modal-box {
+  display: flex; flex-direction: column; width: 100%; max-width: 720px; max-height: 100%;
+  background: #fff; border-radius: 6px; box-shadow: 0 6px 24px rgba(0, 0, 0, .3); font-size: 13px;
+}
+.ene-modal-head { padding: 10px 14px; border-bottom: 1px solid #ddd; font-weight: bold; font-size: 15px; }
+.ene-modal-close { float: right; cursor: pointer; color: #888; font-size: 20px; line-height: 1; }
+.ene-modal-body { padding: 10px 14px; overflow-y: auto; flex: 1; }
+.ene-modal-body textarea { width: 100%; box-sizing: border-box; margin-bottom: 6px; }
+.ene-modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px; border-top: 1px solid #ddd; }
+.ene-modal-foot .btn { margin-bottom: 0; }
+.ene-bulk-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.ene-bulk-bar .btn { margin-bottom: 0; }
+.ene-bulk-bar label { display: inline-flex; align-items: center; gap: 4px; margin: 0; }
+.ene-bulk-bar label input { margin: 0; }
+.ene-bulk-summary { color: #666; font-size: 12px; flex: 1; }
+.ene-bulk-list { list-style: none; margin: 0; padding: 0; }
+.ene-bulk-row[hidden] { display: none; } /* 「要確認のみ表示」：下面的 display:flex 会盖过 hidden 属性 */
+.ene-bulk-row { display: flex; align-items: flex-start; gap: 8px; padding: 6px 4px; border-bottom: 1px solid #f0f0f0; }
+.ene-bulk-row > input { margin: 3px 0 0; }
+.ene-bulk-main { flex: 1; min-width: 0; }
+.ene-bulk-name { font-weight: bold; }
+.ene-bulk-result { color: #555; }
+.ene-bulk-result .ene-suggest-sub { margin-left: 8px; color: #888; font-size: 11px; }
+.ene-bulk-result select { max-width: 100%; margin: 2px 0 0; }
+.ene-bulk-result .btn { margin: 0 0 0 4px; }
+.ene-bulk-badge { flex: none; font-size: 11px; padding: 1px 6px; border-radius: 3px; background: #eee; color: #666; }
+.ene-bulk-row[data-status="exact"] .ene-bulk-badge { background: #dff0d8; color: #3c763d; }
+.ene-bulk-row[data-status="multiple"] .ene-bulk-badge,
+.ene-bulk-row[data-status="candidates"] .ene-bulk-badge { background: #fcf8e3; color: #8a6d3b; }
+.ene-bulk-row[data-status="none"] .ene-bulk-badge,
+.ene-bulk-row[data-status="error"] .ene-bulk-badge { background: #f2dede; color: #a94442; }
+.ene-bulk-row[data-status="added"] { opacity: .6; }
+.ene-sp .ene-modal { padding: 0; }
+.ene-sp .ene-modal-box { height: 100%; border-radius: 0; }
+.ene-bulk-research { display: flex; gap: 4px; margin-top: 4px; }
+.ene-bulk-research input[type="text"] { flex: 1; min-width: 0; margin: 0; }
+.ene-bulk-research .btn { margin: 0; }
+
+/* 出演者欄など：输入框、下拉框、按钮统一高度（电脑版 30px，手机版 36px 方便点按） */
+/* 选择器写成 input.ene-ctl[type]：要比 Bootstrap 的 input[type="text"] { height: 20px } 优先 */
+input.ene-ctl[type], select.ene-ctl { height: 30px; margin: 0; box-sizing: border-box; vertical-align: middle; }
+.ene-sp input.ene-ctl[type], .ene-sp select.ene-ctl { height: 36px; margin: 0; font-size: 14px; }
+.ene-sp input.ene-ctl[type="text"], .ene-sp select.ene-ctl { padding: 0 6px; border: 1px solid #aaa; background: #fff; }
+#selected_actors + .ene-search { margin-top: 6px; }

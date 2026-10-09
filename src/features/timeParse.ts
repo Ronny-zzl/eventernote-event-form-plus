@@ -50,11 +50,12 @@ const TOKEN_RE = new RegExp([
   // 时间必须带「:」或「時」，避免把日期等数字当成时间；「3時間」之类排除
   String.raw`(?<!\d)(?:(午前|午後|am|pm)\s*)?(\d{1,2})\s*(?::\s*(\d{2})|時(?!間)\s*(?:(\d{1,2})分?|(半))?)(?:\s*(am|pm)(?![a-z]))?`,
 ].join('|'), 'gi');
-// 标签和时间之间允许的分隔：符号、「…」（NFKC 后是 ...）、箭头和装饰符号等
-const GAP_RE = /^(?:[\s/・|,、.:;()[\]【】〈〉<>《》「」『』〜~=_*-]|[→⇒▶▷►★☆◆◇■□●○]|時間|時刻|予定|は)*$/;
+// 标签和时间之间允许的分隔：符号、「…」（NFKC 后是 ...）、箭头和装饰符号，以及「頃」（「20:30頃終演予定」）等
+const GAP_RE = /^(?:[\s/・|,、.:;()[\]【】〈〉<>《》「」『』〜~=_*-]|[→⇒▶▷►★☆◆◇■□●○]|時間|時刻|予定|頃|ごろ|は)*$/;
 
 type Token = { start: number; end: number; label?: TimeKey; time?: Time };
 type Found = Partial<Record<TimeKey, Time>>;
+type Pairs = Partial<Record<TimeKey, Token>>; // 配到的时间 token（合并时据此判断是否已用过）
 
 export const parseAnnouncement = (text: string): Found => {
   const s = text.normalize('NFKC');
@@ -74,7 +75,7 @@ export const parseAnnouncement = (text: string): Found => {
 
   // 写法一：标签在前。连续的标签 + 紧随的连续时间按顺序配对
   const labelFirst = () => {
-    const found: Found = {};
+    const found: Pairs = {};
     for (let i = 0; i < tokens.length;) {
       if (!tokens[i].label) { i++; continue; }
       const labels = [tokens[i]];
@@ -83,7 +84,7 @@ export const parseAnnouncement = (text: string): Found => {
       const times: Token[] = [];
       while (j < tokens.length && tokens[j].time && adjacent(tokens[j - 1], tokens[j])) times.push(tokens[j++]);
       labels.forEach((l, k) => {
-        if (times[k] && !found[l.label!]) found[l.label!] = times[k].time;
+        if (times[k] && !found[l.label!]) found[l.label!] = times[k];
       });
       i = Math.max(j, i + labels.length);
     }
@@ -92,19 +93,28 @@ export const parseAnnouncement = (text: string): Found => {
 
   // 写法二：时间在前（「17:30開場」）
   const timeFirst = () => {
-    const found: Found = {};
+    const found: Pairs = {};
     for (let i = 0; i + 1 < tokens.length; i++) {
       const [t, l] = [tokens[i], tokens[i + 1]];
       if (t.time && l.label && adjacent(t, l) && !found[l.label]) {
-        found[l.label] = t.time;
+        found[l.label] = t;
         i++;
       }
     }
     return found;
   };
 
-  // 取配对数多的一种
+  // 以配对数多的写法为准，另一种写法只补上缺的项目、且不能用主写法已用过的时间
+  // （两种写法混用：「開場 / 開演：10:45 / 11:30（20:30頃終演予定）」；
+  //  不能把「開演 18:30 終演時間未定」的 18:30 再配给終演）
   const a = labelFirst();
   const b = timeFirst();
-  return Object.keys(b).length > Object.keys(a).length ? b : a;
+  const [main, extra] = Object.keys(b).length > Object.keys(a).length ? [b, a] : [a, b];
+  const used = new Set(Object.values(main));
+  const found: Found = {};
+  for (const k of TIME_KEYS) {
+    const token = main[k] ?? (extra[k] && !used.has(extra[k]) ? extra[k] : undefined);
+    if (token) found[k] = token.time;
+  }
+  return found;
 };

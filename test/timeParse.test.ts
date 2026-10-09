@@ -50,3 +50,16 @@ describe('parseAnnouncement', () => {
     expect(announce('開演 18:00（約3時間）')).toEqual({ start: '18:00' });
   });
 });
+
+describe('parseAnnouncement：書き方の混在', () => {
+  test('ラベルが前と時間が前の書き方が混ざっていても全部読む', () => {
+    expect(announce('2026年11月3日(火祝)開催 開場 / 開演：10:45 / 11:30 （20:30頃終演予定）'))
+      .toEqual({ open: '10:45', start: '11:30', end: '20:30' });
+    expect(announce('開場18:00 開演18:30 終演ごろ 21:00')).toEqual({ open: '18:00', start: '18:30', end: '21:00' });
+  });
+
+  test('すでに使った時間を別のラベルに割り当てない', () => {
+    expect(announce('開演 18:30 終演時間未定')).toEqual({ start: '18:30' });
+    expect(announce('18:00開場／19:00開演')).toEqual({ open: '18:00', start: '19:00' });
+  });
+});

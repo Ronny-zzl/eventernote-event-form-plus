@@ -38,10 +38,10 @@ export default defineConfig(({ mode }) => {
         userscript: {
           name: preview ? Object.fromEntries(Object.entries(names).map(([k, v]) => [k, `${v}（テスト版）`])) : names,
           description: {
-            '': 'イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加',
-            ja: 'イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加',
-            'zh-CN': '改善 Eventernote 活动登录和编辑页面：会场搜索、时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图',
-            en: 'Improves the Eventernote event add/edit forms: venue search, smarter time input, reorder performers, performer sets, back button on the confirm page, thumbnail images',
+            '': 'イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加',
+            ja: 'イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加',
+            'zh-CN': '改善 Eventernote 活动登录和编辑页面：会场搜索、批量添加出演者、时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图',
+            en: 'Improves the Eventernote event add/edit forms: venue search, bulk-add performers, smarter time input, reorder performers, performer sets, back button on the confirm page, thumbnail images',
           },
           namespace: preview ? `${repo}#preview` : repo,
           version: preview ? `${version}.${stamp}` : version,

@@ -1,5 +1,6 @@
 import './style.css';
 import { initActorPresets, initActorList } from './features/actors';
+import { initActorBulk } from './features/actorBulk';
 import { initActorSearch } from './features/actorSearch';
 import { initAnnounce } from './features/announce';
 import { initDatePicker } from './features/date';
@@ -27,6 +28,7 @@ if (path === '/events/add/confirm') {
   initActorList();
   initActorPresets();
   initActorSearch();
+  initActorBulk();
   const placePicker = initPlacePicker();
   initFormSnapshot(placePicker);
   // ?from_event_id=… 复制登录时页面会预先指定会场
@@ -45,6 +47,7 @@ if (path === '/events/add/confirm') {
   initActorList();
   initActorPresets();
   initActorSearch();
+  initActorBulk();
   initPlacePicker()?.loadInitial(editId);
   const time = initSmartTime();
   initAnnounce(initDatePicker(), time);

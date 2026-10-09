@@ -54,9 +54,9 @@ export const initActorList = () => {
   tools.innerHTML = `
     <label><input type="checkbox"> <span></span></label>
     <span>
-      <input type="button" class="btn btn-small" value="▲" title="選択した出演者を上へ">
-      <input type="button" class="btn btn-small" value="▼" title="選択した出演者を下へ">
-      <input type="button" class="btn btn-small" value="削除">
+      <input type="button" class="btn ene-ctl" value="▲" title="選択した出演者を上へ">
+      <input type="button" class="btn ene-ctl" value="▼" title="選択した出演者を下へ">
+      <input type="button" class="btn ene-ctl" value="削除" title="選択した出演者を削除">
     </span>
   `;
   list.before(tools);
@@ -233,10 +233,10 @@ export const initActorPresets = () => {
   const box = document.createElement('p');
   box.className = 'ene-presets';
   box.innerHTML = `
-    <select></select>
-    <input type="button" class="btn" value="セットを追加する">
-    <input type="button" class="btn" value="選択中の出演者をセットに保存">
-    <input type="button" class="btn" value="セットを削除">
+    <select class="ene-ctl"></select>
+    <input type="button" class="btn ene-ctl" value="追加" title="選んだセットの出演者を追加します">
+    <input type="button" class="btn ene-ctl" value="現在の出演者を保存" title="今リストにいる出演者をセットとして保存します">
+    <input type="button" class="btn ene-ctl" value="削除" title="選んだセットを削除します">
   `;
   list.after(box);
   const select = box.querySelector('select')!;
