@@ -30,6 +30,7 @@ type Store = {
   draftImage: ImageData | null;
   pendingUpload: PendingUpload | null;
   formDraft: (FormSnapshot & { savedAt: number }) | null;
+  imageVersions: Record<string, number>; // 活动 ID → 图片更新时间（用来绕过浏览器缓存）
 };
 
 export const load = <K extends keyof Store>(key: K, fallback: Store[K]): Store[K] =>

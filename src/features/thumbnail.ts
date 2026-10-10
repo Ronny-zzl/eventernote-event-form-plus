@@ -1,6 +1,7 @@
 import { showNotice } from '../lib/notice';
 import { findInitialPlace, insertField, isSmartphone, parseHtml, sleep } from '../lib/page';
 import { load, save, type ImageData } from '../lib/storage';
+import { markImageUpdated } from './imageCache';
 import { isReturning } from './snapshot';
 
 // 登录页没有图片字段（确认页靠隐藏字段转交数据，文件无法带过去），只有编辑页能上传 thumbnail_image。流程：
@@ -179,6 +180,10 @@ export const initEditImagePicker = (eventId: string) => {
     textContent: '新しい画像は「編集完了」を押すと保存されます。',
   }));
   input.after(picker.element);
+  // 选了新图片提交时记下，之后打开活动页能立刻看到新图（绕过浏览器缓存）
+  input.form?.addEventListener('submit', () => {
+    if (input.files?.length) markImageUpdated(eventId);
+  });
 };
 
 // 确认页：显示待上传的图片，点「登録する」时登记上传任务
@@ -315,6 +320,7 @@ export const processPendingUpload = async () => {
       uploaded = lm !== null && (siteImageAt === null || lm > siteImageAt);
       if (!uploaded) await sleep(2000);
     }
+    markImageUpdated(id); // 发送后就记下（即使没能确认反映，之后打开页面时也会去取新图）
     if (!uploaded) {
       showNotice('画像を送信しましたが、反映を確認できませんでした。しばらくしてからイベントページを確認してください。', 'error');
     } else if (siteImageAt === null && hasLink) {

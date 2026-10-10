@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.4.0
+// @version            0.4.1
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -1175,6 +1175,26 @@
 	var initDraftClear = () => {
 		document.querySelector("form[action=\"/events/add/complete\"]")?.addEventListener("submit", () => save("formDraft", null));
 	};
+	var KEEP_MS = 2592e6;
+	var EVENT_IMAGE = /\/images\/events\/(\d+)(?:_s)?\.jpg/;
+	var markImageUpdated = (eventId) => {
+		const now = Date.now();
+		save("imageVersions", {
+			...Object.fromEntries(Object.entries(load("imageVersions", {})).filter(([, t]) => now - t < KEEP_MS)),
+			[eventId]: now
+		});
+	};
+	var refreshEventImages = () => {
+		const versions = load("imageVersions", {});
+		if (!Object.keys(versions).length) return;
+		for (const img of document.querySelectorAll("img[src*=\"/images/events/\"]")) {
+			const url = new URL(img.src, location.href);
+			const version = versions[url.pathname.match(EVENT_IMAGE)?.[1] ?? ""];
+			if (!version || url.searchParams.get("v") === String(version)) continue;
+			url.searchParams.set("v", String(version));
+			img.src = url.href;
+		}
+	};
 	var cache = new Map();
 	var fetchEventDoc = (eventId) => {
 		let doc = cache.get(eventId);
@@ -1538,6 +1558,9 @@
 			textContent: "新しい画像は「編集完了」を押すと保存されます。"
 		}));
 		input.after(picker.element);
+		input.form?.addEventListener("submit", () => {
+			if (input.files?.length) markImageUpdated(eventId);
+		});
 	};
 	var initConfirmImage = () => {
 		const form = document.querySelector("form[action=\"/events/add/complete\"]");
@@ -1667,6 +1690,7 @@
 				uploaded = lm !== null && (siteImageAt === null || lm > siteImageAt);
 				if (!uploaded) await sleep(2e3);
 			}
+			markImageUpdated(id);
 			if (!uploaded) showNotice("画像を送信しましたが、反映を確認できませんでした。しばらくしてからイベントページを確認してください。", "error");
 			else if (siteImageAt === null && hasLink) showNotice("サムネイル画像をアップロードしましたが、サイトの自動生成画像に置き換えられる可能性があります。しばらくしてからイベントページを確認してください。", "error");
 			else {
@@ -1825,6 +1849,7 @@
 		};
 	};
 	document.documentElement.classList.toggle("ene-sp", isSmartphone());
+	refreshEventImages();
 	var path = location.pathname.replace(/\/$/, "");
 	var editId = path.match(/^\/events\/(\d+)\/edit$/)?.[1];
 	if (path === "/events/add/confirm") {

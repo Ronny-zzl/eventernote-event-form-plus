@@ -5,6 +5,7 @@ import { initActorSearch } from './features/actorSearch';
 import { initAnnounce } from './features/announce';
 import { initDatePicker } from './features/date';
 import { initDraft, initDraftClear } from './features/draft';
+import { refreshEventImages } from './features/imageCache';
 import { initPlacePicker } from './features/place';
 import { initConfirmBackButton, initFormSnapshot } from './features/snapshot';
 import { initSubmitCheck } from './features/submitCheck';
@@ -14,6 +15,9 @@ import { isSmartphone } from './lib/page';
 
 // 手机版页面没有 Bootstrap，按钮等用 .ene-sp 下的样式
 document.documentElement.classList.toggle('ene-sp', isSmartphone());
+
+// 通过脚本更新过图片的活动：给图片地址加版本号，避免显示浏览器缓存里的旧图
+refreshEventImages();
 
 const path = location.pathname.replace(/\/$/, '');
 const editId = path.match(/^\/events\/(\d+)\/edit$/)?.[1];
