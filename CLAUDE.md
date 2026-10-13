@@ -51,7 +51,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - 表单项目是两行：`<tr><th>标题</th></tr><tr><td>内容</td></tr>`（电脑版是一行 `<td>标题</td><td>内容</td>`）。插入项目用 `insertField`，定位项目开头用 `fieldStart`（`src/lib/page.ts`）
 - 活动页没有 `.gb_events_info_table`，是 `<h2 class="gb_subtitle">開場/開演/終演時間</h2>` + 内容、`<h2 class="gb_subtitle">開催場所</h2>` + `<p class="t"><a href="/places/{id}">`；`eventInfoCell` 两种都支持
 - 按钮是网站自己的 `gb_btn_add_s` / `gb_btn_add`（蓝底 #007aff）。脚本给 `<html>` 加 `ene-sp` 类，在其下给 `.btn` 定义描边样式
-- 手机版编辑页**没有图片上传栏**（`thumbnail_image`），表单也不是 multipart，但提交地址和电脑版相同。脚本补上「サムネイル画像」项目（当前图片取 S3 的 `{id}_s.jpg`）并把表单改成 multipart（`addMissingImageField`）。服务器是否接受需要真机实际提交确认
+- 手机版编辑页**没有图片上传栏**（`thumbnail_image`），表单也不是 multipart，但提交地址和电脑版相同。脚本补上「サムネイル画像」项目（当前图片取 S3 的 `{id}_s.jpg`）并把表单改成 multipart（`addMissingImageField`）。**服务器接受**（2026-10-13 经用户同意在 API 层面实测：iPhone UA 打开手机版编辑页，在 jsdom 里跑用户脚本后以 multipart 提交到活动 494322 的 `edit/complete` → 302 回活动页，S3 的 `{id}.jpg` / `{id}_s.jpg` 换成新图，PNG 720×720 被转存为 JPEG 700×700，其他字段不变）
 - 用户用 iPhone 的 Tampermonkey for Safari 实测 0.3.1 测试版没有问题（2026-10-07）
 
 ### 确认页 `/events/add/confirm`
