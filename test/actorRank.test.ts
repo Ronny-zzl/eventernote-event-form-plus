@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { rankActors, type ApiActor } from '../src/features/actorRank';
+import { mergeMissingNames, rankActors, type ApiActor } from '../src/features/actorRank';
 
 const actor = (name: string, kana: string, favorite_count = 0): ApiActor => ({ id: name, name, kana, favorite_count });
 const names = (actors: ApiActor[], keyword: string) => rankActors(actors, keyword).map((a) => a.name);
@@ -18,4 +18,17 @@ test('よみがな（ひらがな・カタカナ）でも一致度を判定', ()
 test('同じ一致度ならお気に入り数の多い順', () => {
   const actors = [actor('春日はな', 'かすがはな', 3), actor('春日萌花', 'かすがもえか', 120), actor('春日レイ', 'かすがれい', 40)];
   expect(names(actors, '春日')).toEqual(['春日萌花', '春日レイ', '春日はな']);
+});
+
+test('前 50 件に入らなかった「名前に検索語を含む人」を補う', () => {
+  const first = [actor('Versailles', 'う゛ぇるさいゆ', 500), actor('VILLAINS HOUSE', 'う゛ぃらんず', 30)];
+  const all = [...first, actor('Ill(ex.twinpale)', '', 12), actor('ほかの人', '', 1)];
+  // 「ほかの人」は読みや関連キーワードで当たっただけ（名前に Ill を含まない）なので補わない
+  expect(mergeMissingNames(first, all, 'Ill').map((a) => a.name)).toEqual(['Versailles', 'VILLAINS HOUSE', 'Ill(ex.twinpale)']);
+  expect(rankActors(mergeMissingNames(first, all, 'Ill'), 'Ill')[0].name).toBe('Ill(ex.twinpale)');
+});
+
+test('括弧の補足を除くと一致する名前は完全一致と同じ扱い', () => {
+  const actors = [actor('illumination STARS', '', 900), actor('ILLIT', '', 500), actor('Ill(ex.twinpale)', '', 12)];
+  expect(names(actors, 'Ill')[0]).toBe('Ill(ex.twinpale)');
 });

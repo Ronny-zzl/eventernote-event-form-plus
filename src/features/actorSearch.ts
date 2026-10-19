@@ -2,7 +2,7 @@ import { byId, page } from '../lib/page';
 import { load, save, type Actor } from '../lib/storage';
 import { createSuggest } from '../lib/suggest';
 import { addActorIfMissing } from './actors';
-import { rankActors, type ApiActor } from './actorRank';
+import { mergeMissingNames, rankActors, type ApiActor } from './actorRank';
 
 // 原 UI 的「頭文字 → 该头文字全部出演者的下拉框」：「あ」就有 6000 多人（约 2MB，十几秒），几乎无法使用。
 // 改成一个搜索框（/api/actors/search?keyword=…），选中的人用页面自己的 addActor 加入，提交格式不变。
@@ -10,6 +10,22 @@ import { rankActors, type ApiActor } from './actorRank';
 
 const RECENT_MAX = 20;
 const cache = new Map<string, Promise<ApiActor[]>>();
+const FIRST_LIMIT = 50;
+
+type SearchResponse = { info?: { total?: number }; results?: ApiActor[] };
+const fetchActors = (keyword: string, simple: string, limit: number): Promise<SearchResponse> =>
+  fetch('/api/actors/search?' + new URLSearchParams({ keyword, simple, limit: String(limit) }), { credentials: 'same-origin' })
+    .then((res) => res.json());
+
+// 先取前 50 条完整信息（含读音）。总数更多时（如「Ill」有 300 多条），接口的顺序不按相关度，
+// 名字最一致的人可能不在前 50 条里：再用轻量的 simple=1 取最多 1000 条名字，把名字包含这个词的人补上
+const fetchWithMissingNames = async (keyword: string) => {
+  const first = await fetchActors(keyword, '3', FIRST_LIMIT);
+  const results = first.results ?? [];
+  if ((first.info?.total ?? 0) <= results.length) return results;
+  const all = await fetchActors(keyword, '1', 1000);
+  return mergeMissingNames(results, all.results ?? [], keyword);
+};
 
 // 不传 signal：即使输入已经变了也让请求完成，结果留在缓存里（删字改回来时立即显示）
 // fresh：不用缓存（如登记了新出演者后重新搜索）
@@ -17,10 +33,7 @@ export const searchActors = (keyword: string, fresh = false) => {
   if (fresh) cache.delete(keyword);
   let result = cache.get(keyword);
   if (!result) {
-    const params = new URLSearchParams({ keyword, simple: '3', limit: '50' });
-    result = fetch('/api/actors/search?' + params, { credentials: 'same-origin' })
-      .then((res) => res.json())
-      .then((data) => (data.results ?? []) as ApiActor[]);
+    result = fetchWithMissingNames(keyword);
     result.catch(() => cache.delete(keyword));
     cache.set(keyword, result);
   }

@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.4.1
+// @version            0.4.2
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -355,17 +355,23 @@
 		return box;
 	};
 	var normalize$1 = (s) => s.normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 96));
+	var withoutParens$1 = (t) => t.replace(/\([^()]*\)|【[^【】]*】/g, "").trim();
 	var rankActors = (actors, keyword) => {
 		const kw = normalize$1(keyword);
 		const match = (text = "") => {
 			const t = normalize$1(text);
-			return t === kw ? 0 : t.startsWith(kw) ? 1 : t.includes(kw) ? 2 : 3;
+			return t === kw || withoutParens$1(t) === kw ? 0 : t.startsWith(kw) ? 1 : t.includes(kw) ? 2 : 3;
 		};
 		return actors.map((a, i) => ({
 			a,
 			s: Math.min(match(a.name), match(a.kana)),
 			i
 		})).sort((x, y) => x.s - y.s || (y.a.favorite_count ?? 0) - (x.a.favorite_count ?? 0) || x.i - y.i).map((x) => x.a);
+	};
+	var nameContains = (name, keyword) => normalize$1(name).includes(normalize$1(keyword));
+	var mergeMissingNames = (first, all, keyword) => {
+		const have = new Set(first.map((a) => String(a.id)));
+		return [...first, ...all.filter((a) => !have.has(String(a.id)) && nameContains(a.name, keyword))];
 	};
 	var SLASH = /／|\s+\/\s*|\s*\/\s+/;
 	var SEPARATOR = new RegExp(String.raw`\r?\n|${SLASH.source}`);
@@ -514,16 +520,23 @@
 	};
 	var RECENT_MAX$1 = 20;
 	var cache$1 = new Map();
+	var FIRST_LIMIT = 50;
+	var fetchActors = (keyword, simple, limit) => fetch("/api/actors/search?" + new URLSearchParams({
+		keyword,
+		simple,
+		limit: String(limit)
+	}), { credentials: "same-origin" }).then((res) => res.json());
+	var fetchWithMissingNames = async (keyword) => {
+		const first = await fetchActors(keyword, "3", FIRST_LIMIT);
+		const results = first.results ?? [];
+		if ((first.info?.total ?? 0) <= results.length) return results;
+		return mergeMissingNames(results, (await fetchActors(keyword, "1", 1e3)).results ?? [], keyword);
+	};
 	var searchActors = (keyword, fresh = false) => {
 		if (fresh) cache$1.delete(keyword);
 		let result = cache$1.get(keyword);
 		if (!result) {
-			const params = new URLSearchParams({
-				keyword,
-				simple: "3",
-				limit: "50"
-			});
-			result = fetch("/api/actors/search?" + params, { credentials: "same-origin" }).then((res) => res.json()).then((data) => data.results ?? []);
+			result = fetchWithMissingNames(keyword);
 			result.catch(() => cache$1.delete(keyword));
 			cache$1.set(keyword, result);
 		}
