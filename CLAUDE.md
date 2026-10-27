@@ -3,7 +3,7 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 当前已发布版本：`0.4.2`（已打 `v0.4.2` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 当前已发布版本：`0.4.3`（已打 `v0.4.3` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 工程结构
 
@@ -65,11 +65,24 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - `place_id` 下拉框在 HTML 里是空的，由内联脚本 `searchPlaces(都道府県, 会场ID)` 填充——用 fetch+DOMParser 重建表单时**必须从脚本里解析会场 ID**，否则会清空会场
 
 ### 图片
-- S3：`https://eventernote.s3.amazonaws.com/images/events/{id}.jpg`（原图，例 1200×620）和 `{id}_s.jpg`（高 300，用于列表 / OGP）；无图时用 `no_image.png`
+- S3：`https://eventernote.s3.amazonaws.com/images/events/{id}.jpg`（原图，例 1200×620）和 `{id}_s.jpg`（300×300 以内，用于列表 / OGP）；无图时用 `no_image.png`
 - S3 的活动图片**没有 Cache-Control / Expires**，浏览器按启发式缓存（iOS Safari 尤其久），而图片地址上传后不变 → 上传后仍显示旧图。`features/imageCache.ts`：通过脚本上传（编辑页带图提交、登录后自动上传）时把 `imageVersions[活动ID] = 时间` 存起来（30 天），所有页面开头 `refreshEventImages()` 给这些活动的 `img` 地址加 `?v=时间`。只对本机、本脚本上传的有效
 - S3 允许跨域 GET（`Access-Control-Allow-Origin: *`），可读 `Last-Modified`；不存在的图片返回 **403**（不是 404）
 - **新活动登录后，网站会在后台根据「関連リンク」自动生成图片**（OGP 图或网页截图，x.com 链接会得到坏掉的截图），约 5 秒后写入 S3，覆盖在此之前上传的图片（活动 494909：12:32:51 登录，12:32:52 脚本上传，12:32:56 被覆盖）。编辑页手动上传不会触发重新生成（494891 已确认）。**没有链接时不会生成**（494912：登录后约 100 秒 S3 仍是 403），但活动页照样引用 `{id}.jpg`，显示为坏图（网站本身的行为）
+- **图片生成机制（2026-10-27 调查；用 494909 实测，经用户同意）**——每次保存（登录 / 编辑）时：
+  - **带图片上传**：缩到 700×700 以内（`_s` 300×300 以内），不会再重新生成。**长边不超过 700 的图服务器返回 500**（701×701、800×300、300×800 可以；700×700、699×699、300×300 的 PNG 不行），失败时数据不变
+  - **不带图片、有「関連リンク」**：约 5 秒后按**第一个**链接重新生成并覆盖现有的图，不管链接改没改（S3 的 Last-Modified 总是等于最后一次编辑的时间；494891 手动上传的图被别人后来的编辑改成了坏截图）。链接有 og:image 时把它按原尺寸转成 JPEG 保存（tiget 的传单等）；没有或取不到时是 1000×1000 的网页截图（x.com、taiyotsukiyo.com、ticketdive 等）。旧 LivePocket（`t.livepocket.jp`）2026-10-21 关闭，链接会生成关闭通知的截图
+  - **不带图片、没有链接**：现有的图不变
+  - 所以长边正好 700 的图几乎都是用户上传的
+  - 脚本对策（`features/imageRules.ts`）：选图时长边不超过 700 就用 canvas 放大到 701；编辑页不选新图、有链接时，把 S3 上现在的图（放大后）作为 thumbnail_image 一起提交，防止被重新生成（用户决定：没选图就是不想改图，自动生成的大图因此缩到 700 也可以接受；曾做过「現在の画像を残す」勾选框，被否决）
+  - 用 Node 的 FormData 发送空 Blob 作为 file 栏时 500（浏览器的空 file 栏没问题，原因未查）
 - 编辑历史 API：`GET /api/events/history?event_history_id=…`（活动页里 `showHistory(id)` 的 id）
+
+### 出演者条目（2026-10-27 调查）
+- `/actors/{id}/edit` → POST `/actors/{id}/edit/complete`：只有 名前 / よみがな / 検索キーワード（逗号分隔，搜索 API 的 keyword 字段）/ 性別。没有合并、删除功能；问い合わせ（Google 表单）可以申请删除，但运营方实际上几乎不删（ID 没有空缺，`31246【重複】…` 留了多年）
+- 改名惯例：同一条目改成「新名(旧名)」，旧名、旧名读音、「改名」放进検索キーワード
+- 重复条目惯例：活动全部移到要保留的条目后，把空条目改成「【重複】」、よみがな「ををを」或「ん」（排到最后）、キーワード「{ID}と重複しています」。收藏不能转移
+- 74073（高橋玲乃(月宮れの)）的 69 场活动已全部换成 94956（夜凪織乃），用一次性脚本 `.local/tmp/move-actor.ts`（2026-10-27，经用户同意提交 edit/complete）
 
 ### 已有数据的时间惯例
 - 抽查 2026-07〜10 的 11143 条时间，全部是 5 分钟一档，没有 24 点以后的值
@@ -82,7 +95,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
    - 1、2 在登录页和编辑页都启用（编辑页从 0.2.2 起；已有出演者由内联脚本 `addActor(数字ID, 名字)` 加入，结构与登录页相同）
 3. **确认页「戻って修正する」**：登录页提交时存快照（`formSnapshot`），跳回 `/events/add?ene_restore=1` 后恢复全部字段
 4. **登录页缩略图**：拖入 / Ctrl+V / 选文件（`createImageDrop` 组件）→ `draftImage` → 确认页提交时转为 `pendingUpload`（30 分钟有效）→ 完成后在完成页链接或活动页 URL 找到新活动 ID（完成页不依赖结构：先取文字含活动名的活动链接，再按页面顺序取其他的，最多 5 个；手机版完成页没有 `.page`，之前因此什么都不做），**核对活动名和会场**；有链接时先轮询 S3 等网站自动生成的图片出现（最多 60 秒），再用编辑页原样提交 + `thumbnail_image`，最后用 `Last-Modified` 确认已被替换。0.2.1 起；494918 实测：登录 13:03:54 → 等待后 13:04:00 上传 → 没有再被覆盖
-5. **编辑页图片框**：同一组件，选中的图片用 `DataTransfer` 塞进原生 `thumbnail_image`
+5. **编辑页图片框**：同一组件，选中的图片用 `DataTransfer` 塞进原生 `thumbnail_image`；不选新图时自动把现在的图一起重新上传，防止网站按链接重新生成（见「图片」一节）
 6. **时间输入**：见下方「时间输入改进」一节
 7. **会场搜索框**（`initPlacePicker`）：都道府県 / 会场下拉框 / 原搜索框隐藏，换成一个搜索框（300ms 防抖、都道府県筛选、名字匹配优先、闭馆的排最后变灰、↑↓Enter）；`#places_list` 只保留选中的一项，用 MutationObserver 防止编辑页大列表到达后覆盖选择；编辑页 / `from_event_id` 从活动页「開催場所」读会场名立即显示；最近使った会場存在 `GM_setValue('recentPlaces')`（10 个）。活动页通过 `fetchEventDoc()` 只请求一次（时间分钟恢复也用它）
 8. **開催日**（`features/date.ts`）：年 / 月 / 日三个下拉框隐藏，换成原生 `<input type="date">` + 星期显示；可选范围取自原年份下拉框（1980–2027），清空或超范围时恢复原值（原下拉框没有空选项）。下拉框的值不补零（`1`～`12`）

@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.4.2
+// @version            0.4.3
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -1390,6 +1390,18 @@
 			target?.focus();
 		}, true);
 	};
+	var uploadSize = (width, height) => {
+		const long = Math.max(width, height);
+		if (long > 700) return null;
+		const scale = 701 / long;
+		return width >= height ? {
+			width: 701,
+			height: Math.max(1, Math.round(height * scale))
+		} : {
+			width: Math.max(1, Math.round(width * scale)),
+			height: 701
+		};
+	};
 	var PENDING_TTL_MS = 18e5;
 	var SERVER_IMAGE_TYPES = [
 		"image/jpeg",
@@ -1409,23 +1421,25 @@
 		img.onerror = () => reject(new Error("画像を読み込めませんでした"));
 		img.src = src;
 	});
-	var normalizeImage = async (file) => {
+	var normalizeImage = async (file, fileName = "") => {
 		const dataUrl = await readAsDataUrl(file);
-		const name = file.name || "thumbnail";
-		if (SERVER_IMAGE_TYPES.includes(file.type)) return {
+		const name = fileName || "thumbnail";
+		const img = await loadImage(dataUrl);
+		const size = uploadSize(img.naturalWidth, img.naturalHeight);
+		if (!size && SERVER_IMAGE_TYPES.includes(file.type)) return {
 			dataUrl,
 			name,
 			type: file.type
 		};
-		const img = await loadImage(dataUrl);
-		const canvas = Object.assign(document.createElement("canvas"), {
+		const canvas = Object.assign(document.createElement("canvas"), size ?? {
 			width: img.naturalWidth,
 			height: img.naturalHeight
 		});
 		const ctx = canvas.getContext("2d");
 		ctx.fillStyle = "#fff";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
-		ctx.drawImage(img, 0, 0);
+		ctx.imageSmoothingQuality = "high";
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 		return {
 			dataUrl: canvas.toDataURL("image/jpeg", .92),
 			name: name.replace(/\.[^.]*$/, "") + ".jpg",
@@ -1465,7 +1479,7 @@
 		const accept = async (file) => {
 			if (!file) return;
 			try {
-				const image = await normalizeImage(file);
+				const image = await normalizeImage(file, file.name);
 				onImage(image);
 				show(image.dataUrl);
 			} catch (err) {
@@ -1536,6 +1550,38 @@
 		insertField(submitRow, "サムネイル画像").append(current, input);
 		return input;
 	};
+	var setInputFile = (input, image) => {
+		const transfer = new DataTransfer();
+		transfer.items.add(new File([dataUrlToBlob(image.dataUrl)], image.name, { type: image.type }));
+		input.files = transfer.files;
+	};
+	var keepCurrentImage = (eventId, input) => {
+		const form = input.form;
+		const link = form?.elements.namedItem("link");
+		if (!form || !link || typeof DataTransfer !== "function") return;
+		const current = (async () => {
+			const res = await fetch(`${S3_EVENT_IMAGE}${eventId}.jpg?t=${Date.now()}`, { cache: "no-store" });
+			return res.ok ? normalizeImage(await res.blob(), `${eventId}.jpg`) : null;
+		})().catch(() => null);
+		let loaded;
+		current.then((image) => {
+			loaded = image;
+		});
+		const fill = (image) => {
+			try {
+				if (image) setInputFile(input, image);
+			} catch {}
+		};
+		form.addEventListener("submit", (e) => {
+			if (e.defaultPrevented || input.files?.length || !link.value.trim()) return;
+			if (loaded !== void 0) return fill(loaded);
+			e.preventDefault();
+			current.then((image) => {
+				fill(image);
+				HTMLFormElement.prototype.submit.call(form);
+			});
+		});
+	};
 	var initEditImagePicker = (eventId) => {
 		const input = document.querySelector("#event_form input[type=\"file\"][name=\"thumbnail_image\"]") ?? addMissingImageField(eventId);
 		if (!input) return;
@@ -1554,11 +1600,10 @@
 				maxWidth: "100%"
 			});
 		}
+		keepCurrentImage(eventId, input);
 		const picker = createImageDrop((image) => {
 			try {
-				const transfer = new DataTransfer();
-				transfer.items.add(new File([dataUrlToBlob(image.dataUrl)], image.name, { type: image.type }));
-				input.files = transfer.files;
+				setInputFile(input, image);
 			} catch {
 				input.style.display = "";
 				showNotice("この端末では画像を自動で設定できません。下のファイル選択欄から画像を選んでください。", "error");
@@ -1568,7 +1613,7 @@
 		});
 		picker.element.append(Object.assign(document.createElement("p"), {
 			className: "ene-image-note",
-			textContent: "新しい画像は「編集完了」を押すと保存されます。"
+			textContent: "新しい画像は「編集完了」を押すと保存されます。選ばなければ現在の画像のままです。"
 		}));
 		input.after(picker.element);
 		input.form?.addEventListener("submit", () => {

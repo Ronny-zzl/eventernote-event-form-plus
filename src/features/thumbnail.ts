@@ -2,6 +2,7 @@ import { showNotice } from '../lib/notice';
 import { findInitialPlace, insertField, isSmartphone, parseHtml, sleep } from '../lib/page';
 import { load, save, type ImageData } from '../lib/storage';
 import { markImageUpdated } from './imageCache';
+import { uploadSize } from './imageRules';
 import { isReturning } from './snapshot';
 
 // 登录页没有图片字段（确认页靠隐藏字段转交数据，文件无法带过去），只有编辑页能上传 thumbnail_image。流程：
@@ -25,17 +26,20 @@ const loadImage = (src: string) => new Promise<HTMLImageElement>((resolve, rejec
   img.src = src;
 });
 
-// 服务器端支持的格式原样保存，其他格式（如 WebP）先转成 JPEG
-const normalizeImage = async (file: File): Promise<ImageData> => {
+// 服务器端支持的格式、尺寸也没问题时原样保存；其他格式（如 WebP）或长边不超过 700 的图
+// （服务器会返回 500，见 imageRules.ts）用 canvas 转成 JPEG，后者同时放大到长边 701
+const normalizeImage = async (file: Blob, fileName = ''): Promise<ImageData> => {
   const dataUrl = await readAsDataUrl(file);
-  const name = file.name || 'thumbnail';
-  if (SERVER_IMAGE_TYPES.includes(file.type)) return { dataUrl, name, type: file.type };
+  const name = fileName || 'thumbnail';
   const img = await loadImage(dataUrl);
-  const canvas = Object.assign(document.createElement('canvas'), { width: img.naturalWidth, height: img.naturalHeight });
+  const size = uploadSize(img.naturalWidth, img.naturalHeight);
+  if (!size && SERVER_IMAGE_TYPES.includes(file.type)) return { dataUrl, name, type: file.type };
+  const canvas = Object.assign(document.createElement('canvas'), size ?? { width: img.naturalWidth, height: img.naturalHeight });
   const ctx = canvas.getContext('2d')!;
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, 0, 0);
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   return { dataUrl: canvas.toDataURL('image/jpeg', 0.92), name: name.replace(/\.[^.]*$/, '') + '.jpg', type: 'image/jpeg' };
 };
 
@@ -74,7 +78,7 @@ const createImageDrop = (onImage: (image: ImageData) => void, onRemove: () => vo
   const accept = async (file?: File) => {
     if (!file) return;
     try {
-      const image = await normalizeImage(file);
+      const image = await normalizeImage(file, file.name);
       onImage(image);
       show(image.dataUrl);
     } catch (err) {
@@ -148,6 +152,45 @@ const addMissingImageField = (eventId: string) => {
   return input;
 };
 
+const setInputFile = (input: HTMLInputElement, image: ImageData) => {
+  const transfer = new DataTransfer();
+  transfer.items.add(new File([dataUrlToBlob(image.dataUrl)], image.name, { type: image.type }));
+  input.files = transfer.files;
+};
+
+// 不选新图片保存时，只要有「関連リンク」网站就会按链接重新生成图片、覆盖现在的图（imageRules.ts）。
+// 没选新图就是不想改图，所以这时把现在的图一起重新上传（会缩到 700 以内）。没有链接时不会重新生成，不必上传
+const keepCurrentImage = (eventId: string, input: HTMLInputElement) => {
+  const form = input.form;
+  const link = form?.elements.namedItem('link') as HTMLTextAreaElement | null;
+  if (!form || !link || typeof DataTransfer !== 'function') return;
+  // S3 允许跨域 GET；没有图片时返回 403 → null
+  const current = (async () => {
+    const res = await fetch(`${S3_EVENT_IMAGE}${eventId}.jpg?t=${Date.now()}`, { cache: 'no-store' });
+    return res.ok ? normalizeImage(await res.blob(), `${eventId}.jpg`) : null;
+  })().catch(() => null);
+  let loaded: ImageData | null | undefined; // undefined：还在取
+  current.then((image) => { loaded = image; });
+  const fill = (image: ImageData | null) => {
+    try {
+      if (image) setInputFile(input, image);
+    } catch {
+      // 放不进文件时只能让网站重新生成
+    }
+  };
+
+  form.addEventListener('submit', (e) => {
+    if (e.defaultPrevented || input.files?.length || !link.value.trim()) return;
+    if (loaded !== undefined) return fill(loaded);
+    // 刚打开页面就提交、现在的图还没取到：等取到再提交
+    e.preventDefault();
+    current.then((image) => {
+      fill(image);
+      HTMLFormElement.prototype.submit.call(form);
+    });
+  });
+};
+
 // 编辑页：选中的图片直接放进原生的 thumbnail_image 字段，随「編集完了」一起提交
 export const initEditImagePicker = (eventId: string) => {
   const input = document.querySelector<HTMLInputElement>('#event_form input[type="file"][name="thumbnail_image"]')
@@ -161,12 +204,11 @@ export const initEditImagePicker = (eventId: string) => {
     current.addEventListener('error', () => label.remove());
     Object.assign(current.style, { display: 'block', marginBottom: '10px', maxWidth: '100%' });
   }
+  keepCurrentImage(eventId, input);
   const picker = createImageDrop(
     (image) => {
       try {
-        const transfer = new DataTransfer();
-        transfer.items.add(new File([dataUrlToBlob(image.dataUrl)], image.name, { type: image.type }));
-        input.files = transfer.files;
+        setInputFile(input, image);
       } catch {
         // 浏览器不支持用脚本放入文件时，改用原生的文件选择栏
         input.style.display = '';
@@ -177,7 +219,7 @@ export const initEditImagePicker = (eventId: string) => {
   );
   picker.element.append(Object.assign(document.createElement('p'), {
     className: 'ene-image-note',
-    textContent: '新しい画像は「編集完了」を押すと保存されます。',
+    textContent: '新しい画像は「編集完了」を押すと保存されます。選ばなければ現在の画像のままです。',
   }));
   input.after(picker.element);
   // 选了新图片提交时记下，之后打开活动页能立刻看到新图（绕过浏览器缓存）
