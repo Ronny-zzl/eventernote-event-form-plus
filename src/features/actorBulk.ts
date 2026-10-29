@@ -1,9 +1,9 @@
 import { showNotice } from '../lib/notice';
 import { byId, page, sleep } from '../lib/page';
 import { addActorIfMissing } from './actors';
-import { fallbackQueries, matchActor, splitNames, type MatchStatus } from './actorMatch';
+import { matchActor, splitNames, type MatchStatus } from './actorMatch';
 import { rankActors, type ApiActor } from './actorRank';
-import { searchActors } from './actorSearch';
+import { searchActors, searchWithFallback } from './actorSearch';
 
 // 「まとめて追加」：粘贴出演者名单，逐个搜索并自动匹配，确认后一次性加入。
 // 名字完全一致且只有一人的默认勾选；同名多人 / 只有候选的由用户在下拉框里选
@@ -38,15 +38,6 @@ const searchWithRetry = async (keyword: string, fresh = false) => {
     await sleep(1500);
     return searchActors(keyword);
   }
-};
-
-// 原文搜不到时换几种写法再搜（括号、引号、符号常让搜索落空）
-const searchWithFallback = async (name: string) => {
-  for (const keyword of [name, ...fallbackQueries(name)]) {
-    const results = await searchWithRetry(keyword);
-    if (results.length) return results;
-  }
-  return [];
 };
 
 export const initActorBulk = () => {
@@ -153,7 +144,7 @@ export const initActorBulk = () => {
     if (keyword) r.keyword = keyword;
     render(r);
     try {
-      const results = keyword ? await searchWithRetry(keyword, true) : await searchWithFallback(r.name);
+      const results = keyword ? await searchWithRetry(keyword, true) : (await searchWithFallback(r.name, searchWithRetry)).results;
       if (myRun !== run) return;
       const match = matchActor(r.name, results);
       // 手动换的词：候选按这个词的相关度排

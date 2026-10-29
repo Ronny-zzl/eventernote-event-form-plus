@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.5.0
+// @version            0.5.1
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -383,16 +383,22 @@
 		const names = text.split(SLASH.test(text) ? SEPARATOR : SEPARATOR_WITH_COMMA).map((s) => s.trim().replace(BULLET, "").trim()).filter((s) => s && !HEADING$1.test(s) && !AND_MORE.test(s));
 		return [...new Set(names)];
 	};
-	var normalize = (s) => s.normalize("NFKC").toLowerCase().replace(/[︀-️​-‍]/g, "").replace(/\s+/g, "").replace(/[‘’`´′]/g, "'").replace(/[“”″]/g, "\"").replace(/[★☆]/g, "☆").replace(/[〜~～]/g, "~").replace(/[♡♥❤]/g, "♡").replace(/♯/g, "#");
+	var STARS = /[★☆⭐🌟✩✪✫✬✭✮✯✰]/gu;
+	var HEARTS = /[♡♥❤💕💖💗]/gu;
+	var VARIATION = /[︀-️]/g;
+	var normalize = (s) => s.normalize("NFKC").toLowerCase().replace(/[︀-️​-‍]/g, "").replace(/\s+/g, "").replace(/[‘’`´′]/g, "'").replace(/[“”″]/g, "\"").replace(STARS, "☆").replace(/[〜~～]/g, "~").replace(HEARTS, "♡").replace(/♯/g, "#");
 	var withoutParens = (s) => {
 		let t = s.normalize("NFKC");
 		for (let prev = ""; prev !== t;) [prev, t] = [t, t.replace(/\([^()]*\)|【[^【】]*】/g, "")];
 		return t.trim();
 	};
 	var fallbackQueries = (name) => {
-		const base = name.normalize("NFKC").trim();
+		const base = name.normalize("NFKC").replace(VARIATION, "").trim();
 		const longestWord = base.split(/[^\p{L}\p{N}]+/u).sort((a, b) => b.length - a.length)[0] ?? "";
 		const queries = [
+			base,
+			base.replace(STARS, "☆").replace(HEARTS, "♡"),
+			base.replace(STARS, "★").replace(HEARTS, "♥"),
 			withoutParens(base),
 			base.replace(/'/g, "’"),
 			base.replace(/[‘’]/g, "'"),
@@ -542,6 +548,19 @@
 		}
 		return result;
 	};
+	var searchWithFallback = async (name, search = searchActors) => {
+		for (const keyword of [name, ...fallbackQueries(name)]) {
+			const results = await search(keyword);
+			if (results.length) return {
+				keyword,
+				results
+			};
+		}
+		return {
+			keyword: name,
+			results: []
+		};
+	};
 	var initActorSearch = () => {
 		const list = byId("selected_actors");
 		const initial = byId("actors_initial");
@@ -575,10 +594,13 @@
 		createSuggest({
 			input: box.querySelector("input"),
 			list: box.querySelector(".ene-suggest"),
-			search: async (keyword) => rankActors(await searchActors(keyword), keyword).slice(0, 30).map((a) => toItem({
-				id: String(a.id),
-				name: a.name
-			}, [a.kana, a.favorite_count ? `♡${a.favorite_count}` : ""].filter(Boolean).join(" · "))),
+			search: async (input) => {
+				const { keyword, results } = await searchWithFallback(input);
+				return rankActors(results, keyword).slice(0, 30).map((a) => toItem({
+					id: String(a.id),
+					name: a.name
+				}, [a.kana, a.favorite_count ? `♡${a.favorite_count}` : ""].filter(Boolean).join(" · ")));
+			},
 			idle: () => ({
 				heading: "最近追加した出演者",
 				items: load("recentActors", []).map((a) => toItem(a))
@@ -617,13 +639,6 @@
 			await sleep(1500);
 			return searchActors(keyword);
 		}
-	};
-	var searchWithFallback = async (name) => {
-		for (const keyword of [name, ...fallbackQueries(name)]) {
-			const results = await searchWithRetry(keyword);
-			if (results.length) return results;
-		}
-		return [];
 	};
 	var initActorBulk = () => {
 		const row = document.querySelector("#selected_actors ~ .ene-search .ene-search-row");
@@ -729,7 +744,7 @@
 			if (keyword) r.keyword = keyword;
 			render(r);
 			try {
-				const results = keyword ? await searchWithRetry(keyword, true) : await searchWithFallback(r.name);
+				const results = keyword ? await searchWithRetry(keyword, true) : (await searchWithFallback(r.name, searchWithRetry)).results;
 				if (myRun !== run) return;
 				const match = matchActor(r.name, results);
 				r.candidates = keyword && match.status === "candidates" ? rankActors(results, keyword).slice(0, 5) : match.candidates;

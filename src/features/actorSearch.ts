@@ -2,6 +2,7 @@ import { byId, page } from '../lib/page';
 import { load, save, type Actor } from '../lib/storage';
 import { createSuggest } from '../lib/suggest';
 import { addActorIfMissing } from './actors';
+import { fallbackQueries } from './actorMatch';
 import { mergeMissingNames, rankActors, type ApiActor } from './actorRank';
 
 // 原 UI 的「頭文字 → 该头文字全部出演者的下拉框」：「あ」就有 6000 多人（约 2MB，十几秒），几乎无法使用。
@@ -40,6 +41,15 @@ export const searchActors = (keyword: string, fresh = false) => {
   return result;
 };
 
+// 原文搜不到时换几种写法再搜（星的字符、括号、引号常让搜索落空），返回搜到结果的词（排序用它）
+export const searchWithFallback = async (name: string, search: (keyword: string) => Promise<ApiActor[]> = searchActors) => {
+  for (const keyword of [name, ...fallbackQueries(name)]) {
+    const results = await search(keyword);
+    if (results.length) return { keyword, results };
+  }
+  return { keyword: name, results: [] };
+};
+
 export const initActorSearch = () => {
   const list = byId('selected_actors');
   const initial = byId('actors_initial');
@@ -68,9 +78,11 @@ export const initActorSearch = () => {
   createSuggest({
     input: box.querySelector('input')!,
     list: box.querySelector('.ene-suggest')!,
-    search: async (keyword) =>
-      rankActors(await searchActors(keyword), keyword).slice(0, 30).map((a) =>
-        toItem({ id: String(a.id), name: a.name }, [a.kana, a.favorite_count ? `♡${a.favorite_count}` : ''].filter(Boolean).join(' · '))),
+    search: async (input) => {
+      const { keyword, results } = await searchWithFallback(input);
+      return rankActors(results, keyword).slice(0, 30).map((a) =>
+        toItem({ id: String(a.id), name: a.name }, [a.kana, a.favorite_count ? `♡${a.favorite_count}` : ''].filter(Boolean).join(' · ')));
+    },
     idle: () => ({ heading: '最近追加した出演者', items: load('recentActors', []).map((a) => toItem(a)) }),
     choose: (actor) => {
       addActorIfMissing(actor);

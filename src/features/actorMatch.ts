@@ -18,7 +18,12 @@ export const splitNames = (text: string) => {
 };
 
 // ---- 判断是否一致 ----
-// 全角/半角、大小写、空格、引号、☆★、〜~、♡♥、♯# 的差别都忽略；
+// 星、心形有很多种字符（⭐︎ = U+2B50 + U+FE0E，和网站常用的 ☆ 不是同一个字），API 只做字符串包含匹配
+const STARS = /[★☆⭐🌟✩✪✫✬✭✮✯✰]/gu;
+const HEARTS = /[♡♥❤💕💖💗]/gu;
+const VARIATION = /[︀-️]/g;
+
+// 全角/半角、大小写、空格、引号、星、〜~、心形、♯# 的差别都忽略；
 // 去掉看不见的变体选择符（「↗︎」= ↗ + U+FE0E）
 const normalize = (s: string) =>
   s.normalize('NFKC').toLowerCase()
@@ -26,9 +31,9 @@ const normalize = (s: string) =>
     .replace(/\s+/g, '')
     .replace(/[‘’`´′]/g, "'")
     .replace(/[“”″]/g, '"')
-    .replace(/[★☆]/g, '☆')
+    .replace(STARS, '☆')
     .replace(/[〜~～]/g, '~')
-    .replace(/[♡♥❤]/g, '♡')
+    .replace(HEARTS, '♡')
     .replace(/♯/g, '#');
 
 // 去掉括号里的补充（「I’mew（あいみゅう）」「愛乙女★DOLL(愛乙女☆DOLL(チームL))」「Re:♡【りらいく】」）。
@@ -39,11 +44,15 @@ const withoutParens = (s: string) => {
   return t.trim();
 };
 
-// 用原文搜不到时依次换的写法：去掉括号、换引号、只用最长的一个词（「ROSARIO+CROSS」→「ROSARIO」）
+// 用原文搜不到时依次换的写法：星和心形换成网站常用的字（「NOVA⭐︎CHAN」→「NOVA☆CHAN」）、去掉括号、换引号、
+// 只用最长的一个词（「ROSARIO+CROSS」→「ROSARIO」）
 export const fallbackQueries = (name: string) => {
-  const base = name.normalize('NFKC').trim();
+  const base = name.normalize('NFKC').replace(VARIATION, '').trim();
   const longestWord = base.split(/[^\p{L}\p{N}]+/u).sort((a, b) => b.length - a.length)[0] ?? '';
-  const queries = [withoutParens(base), base.replace(/'/g, '’'), base.replace(/[‘’]/g, "'"), longestWord];
+  const queries = [
+    base, base.replace(STARS, '☆').replace(HEARTS, '♡'), base.replace(STARS, '★').replace(HEARTS, '♥'),
+    withoutParens(base), base.replace(/'/g, '’'), base.replace(/[‘’]/g, "'"), longestWord,
+  ];
   return [...new Set(queries.map((q) => q.trim()))].filter((q) => q.length >= 2 && q !== name.trim());
 };
 

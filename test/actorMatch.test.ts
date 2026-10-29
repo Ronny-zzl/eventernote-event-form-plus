@@ -29,6 +29,7 @@ describe('matchActor', () => {
   test('完全一致（全角半角・大文字小文字・記号の違いは無視）', () => {
     expect(status('I’mew（あいみゅう）', ["I'mew(あいみゅう)", 'Imew'])).toEqual(['exact', ["I'mew(あいみゅう)"]]);
     expect(status('Gran☆Ciel', ['Gran★Ciel', 'Gran'])).toEqual(['exact', ['Gran★Ciel']]);
+    expect(status('NOVA⭐︎CHAN', ['NOVA☆CHAN'])).toEqual(['exact', ['NOVA☆CHAN']]);
     expect(status('きゅ〜くる', ['きゅ~くる'])).toEqual(['exact', ['きゅ~くる']]);
     expect(status('STAiNY', ['stainy'])).toEqual(['exact', ['stainy']]);
   });
@@ -66,6 +67,9 @@ describe('fallbackQueries（原文で見つからなかったときの検索語�
     ['kimikara（きみから)', 'kimikara'],
     ["MyDearDarlin'", 'MyDearDarlin’'],
     ['ROSARIO+CROSS', 'ROSARIO'],
+    ['NOVA⭐︎CHAN', 'NOVA☆CHAN'],
+    ['NOVA⭐︎CHAN', 'NOVA★CHAN'],
+    ['ハート❤️ガール', 'ハート♡ガール'],
   ])('%s → %s を含む', (name, query) => expect(fallbackQueries(name)).toContain(query));
 
   test('原文と同じ語や 1 文字の語は含めない', () => {

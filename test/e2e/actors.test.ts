@@ -90,4 +90,11 @@ describe.skipIf(!loggedIn)('出演者', () => {
     await p.until(() => p.$('#selected_actors ~ .ene-search .ene-heading')?.textContent === '最近追加した出演者');
     expect((store.recentActors as unknown[]).length).toBe(2);
   });
+
+  test('検索：見つからなければ星などの字を換えて再検索（⭐︎ → ☆）', async () => {
+    const { p } = await withActors({});
+    const input = p.$<HTMLInputElement>('#selected_actors ~ .ene-search input');
+    const results = await searchIn(p, input, 'NOVA⭐︎CHAN');
+    expect(results[0].firstChild!.textContent).toBe('N0VA☆CHAN');
+  });
 });
