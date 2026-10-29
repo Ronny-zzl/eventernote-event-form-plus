@@ -4,12 +4,12 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.4.3
+// @version            0.5.0
 // @author             Ronny-zzl
-// @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
-// @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
-// @description:zh-CN  改善 Eventernote 活动登录和编辑页面：会场搜索、批量添加出演者、时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图
-// @description:en     Improves the Eventernote event add/edit forms: venue search, bulk-add performers, smarter time input, reorder performers, performer sets, back button on the confirm page, thumbnail images
+// @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
+// @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
+// @description:zh-CN  改善 Eventernote 活动登录和编辑页面：会场搜索、批量添加出演者、重复登录提醒、时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图
+// @description:en     Improves the Eventernote event add/edit forms: venue search, bulk-add performers, duplicate warnings, smarter time input, reorder performers, performer sets, back button on the confirm page, thumbnail images
 // @license            MIT
 // @homepageURL        https://github.com/Ronny-zzl/eventernote-event-form-plus
 // @supportURL         https://github.com/Ronny-zzl/eventernote-event-form-plus/issues
@@ -32,7 +32,7 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:0;display:flex}.ene-presets select{flex:200px;width:auto;min-width:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input[type=text]{flex:1;min-width:160px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}.ene-sp input.btn{color:#007aff;-webkit-appearance:none;background:#fff;border:1px solid #007aff;border-radius:0;height:30px;margin:2px 0;padding:0 10px;font-size:14px}.ene-sp .ene-time-row input.ene-time{width:80px}.ene-sp .ene-drop img{max-width:100%}.ene-sp .ene-notice{max-width:none;left:10px;right:10px}.ene-modal{z-index:10001;background:#00000073;justify-content:center;align-items:center;padding:16px;display:none;position:fixed;inset:0}.ene-modal.ene-open{display:flex}.ene-modal-box{background:#fff;border-radius:6px;flex-direction:column;width:100%;max-width:720px;max-height:100%;font-size:13px;display:flex;box-shadow:0 6px 24px #0000004d}.ene-modal-head{border-bottom:1px solid #ddd;padding:10px 14px;font-size:15px;font-weight:700}.ene-modal-close{float:right;cursor:pointer;color:#888;font-size:20px;line-height:1}.ene-modal-body{flex:1;padding:10px 14px;overflow-y:auto}.ene-modal-body textarea{box-sizing:border-box;width:100%;margin-bottom:6px}.ene-modal-foot{border-top:1px solid #ddd;justify-content:flex-end;gap:8px;padding:10px 14px;display:flex}.ene-modal-foot .btn{margin-bottom:0}.ene-bulk-bar{flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;display:flex}.ene-bulk-bar .btn{margin-bottom:0}.ene-bulk-bar label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-bulk-bar label input{margin:0}.ene-bulk-summary{color:#666;flex:1;font-size:12px}.ene-bulk-list{margin:0;padding:0;list-style:none}.ene-bulk-row[hidden]{display:none}.ene-bulk-row{border-bottom:1px solid #f0f0f0;align-items:flex-start;gap:8px;padding:6px 4px;display:flex}.ene-bulk-row>input{margin:3px 0 0}.ene-bulk-main{flex:1;min-width:0}.ene-bulk-name{font-weight:700}.ene-bulk-result{color:#555}.ene-bulk-result .ene-suggest-sub{color:#888;margin-left:8px;font-size:11px}.ene-bulk-result select{max-width:100%;margin:2px 0 0}.ene-bulk-result .btn{margin:0 0 0 4px}.ene-bulk-badge{color:#666;background:#eee;border-radius:3px;flex:none;padding:1px 6px;font-size:11px}.ene-bulk-row[data-status=exact] .ene-bulk-badge{color:#3c763d;background:#dff0d8}.ene-bulk-row[data-status=multiple] .ene-bulk-badge,.ene-bulk-row[data-status=candidates] .ene-bulk-badge{color:#8a6d3b;background:#fcf8e3}.ene-bulk-row[data-status=none] .ene-bulk-badge,.ene-bulk-row[data-status=error] .ene-bulk-badge{color:#a94442;background:#f2dede}.ene-bulk-row[data-status=added]{opacity:.6}.ene-sp .ene-modal{padding:0}.ene-sp .ene-modal-box{border-radius:0;height:100%}.ene-bulk-research{gap:4px;margin-top:4px;display:flex}.ene-bulk-research input[type=text]{flex:1;min-width:0;margin:0}.ene-bulk-research .btn{margin:0}input.ene-ctl[type],select.ene-ctl{box-sizing:border-box;vertical-align:middle;height:30px;margin:0}.ene-sp input.ene-ctl[type],.ene-sp select.ene-ctl{height:36px;margin:0;font-size:14px}.ene-sp input.ene-ctl[type=text],.ene-sp select.ene-ctl{background:#fff;border:1px solid #aaa;padding:0 6px}#selected_actors+.ene-search{margin-top:6px}");
+	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:0;display:flex}.ene-presets select{flex:200px;width:auto;min-width:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input[type=text]{flex:1;min-width:160px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-announce-result{flex-wrap:wrap;align-items:center;gap:4px 16px;margin:6px 0 0;display:flex}.ene-announce-result[hidden]{display:none}.ene-announce-result .btn{margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}.ene-duplicate{color:#8a6d3b;background:#fcf8e3;border:1px solid #fbeed5;border-radius:4px;margin:8px 0;padding:8px 12px}.ene-duplicate[hidden]{display:none}.ene-duplicate ul{margin:4px 0 0 20px;padding:0}.ene-sp input.btn{color:#007aff;-webkit-appearance:none;background:#fff;border:1px solid #007aff;border-radius:0;height:30px;margin:2px 0;padding:0 10px;font-size:14px}.ene-sp .ene-time-row input.ene-time{width:80px}.ene-sp .ene-drop img{max-width:100%}.ene-sp .ene-notice{max-width:none;left:10px;right:10px}.ene-modal{z-index:10001;background:#00000073;justify-content:center;align-items:center;padding:16px;display:none;position:fixed;inset:0}.ene-modal.ene-open{display:flex}.ene-modal-box{background:#fff;border-radius:6px;flex-direction:column;width:100%;max-width:720px;max-height:100%;font-size:13px;display:flex;box-shadow:0 6px 24px #0000004d}.ene-modal-head{border-bottom:1px solid #ddd;padding:10px 14px;font-size:15px;font-weight:700}.ene-modal-close{float:right;cursor:pointer;color:#888;font-size:20px;line-height:1}.ene-modal-body{flex:1;padding:10px 14px;overflow-y:auto}.ene-modal-body textarea{box-sizing:border-box;width:100%;margin-bottom:6px}.ene-modal-foot{border-top:1px solid #ddd;justify-content:flex-end;gap:8px;padding:10px 14px;display:flex}.ene-modal-foot .btn{margin-bottom:0}.ene-bulk-bar{flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;display:flex}.ene-bulk-bar .btn{margin-bottom:0}.ene-bulk-bar label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-bulk-bar label input{margin:0}.ene-bulk-summary{color:#666;flex:1;font-size:12px}.ene-bulk-list{margin:0;padding:0;list-style:none}.ene-bulk-row[hidden]{display:none}.ene-bulk-row{border-bottom:1px solid #f0f0f0;align-items:flex-start;gap:8px;padding:6px 4px;display:flex}.ene-bulk-row>input{margin:3px 0 0}.ene-bulk-main{flex:1;min-width:0}.ene-bulk-name{font-weight:700}.ene-bulk-result{color:#555}.ene-bulk-result .ene-suggest-sub{color:#888;margin-left:8px;font-size:11px}.ene-bulk-result select{max-width:100%;margin:2px 0 0}.ene-bulk-result .btn{margin:0 0 0 4px}.ene-bulk-badge{color:#666;background:#eee;border-radius:3px;flex:none;padding:1px 6px;font-size:11px}.ene-bulk-row[data-status=exact] .ene-bulk-badge{color:#3c763d;background:#dff0d8}.ene-bulk-row[data-status=multiple] .ene-bulk-badge,.ene-bulk-row[data-status=candidates] .ene-bulk-badge{color:#8a6d3b;background:#fcf8e3}.ene-bulk-row[data-status=none] .ene-bulk-badge,.ene-bulk-row[data-status=error] .ene-bulk-badge{color:#a94442;background:#f2dede}.ene-bulk-row[data-status=added]{opacity:.6}.ene-sp .ene-modal{padding:0}.ene-sp .ene-modal-box{border-radius:0;height:100%}.ene-bulk-research{gap:4px;margin-top:4px;display:flex}.ene-bulk-research input[type=text]{flex:1;min-width:0;margin:0}.ene-bulk-research .btn{margin:0}input.ene-ctl[type],select.ene-ctl{box-sizing:border-box;vertical-align:middle;height:30px;margin:0}.ene-sp input.ene-ctl[type],.ene-sp select.ene-ctl{height:36px;margin:0;font-size:14px}.ene-sp input.ene-ctl[type=text],.ene-sp select.ene-ctl{background:#fff;border:1px solid #aaa;padding:0 6px}#selected_actors+.ene-search{margin-top:6px}");
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
 	var page = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
@@ -376,11 +376,11 @@
 	var SLASH = /／|\s+\/\s*|\s*\/\s+/;
 	var SEPARATOR = new RegExp(String.raw`\r?\n|${SLASH.source}`);
 	var SEPARATOR_WITH_COMMA = new RegExp(String.raw`${SEPARATOR.source}|[、，,]`);
-	var HEADING = /^[<＜〈《].*[>＞〉》]$/;
+	var HEADING$1 = /^[<＜〈《].*[>＞〉》]$/;
 	var BULLET = /^[・●■◆◇○*\-－]\s*/;
 	var AND_MORE = /^(and\s*more|ほか|他|etc\.?)[!！.。…]*$/i;
 	var splitNames = (text) => {
-		const names = text.split(SLASH.test(text) ? SEPARATOR : SEPARATOR_WITH_COMMA).map((s) => s.trim().replace(BULLET, "").trim()).filter((s) => s && !HEADING.test(s) && !AND_MORE.test(s));
+		const names = text.split(SLASH.test(text) ? SEPARATOR : SEPARATOR_WITH_COMMA).map((s) => s.trim().replace(BULLET, "").trim()).filter((s) => s && !HEADING$1.test(s) && !AND_MORE.test(s));
 		return [...new Set(names)];
 	};
 	var normalize = (s) => s.normalize("NFKC").toLowerCase().replace(/[︀-️​-‍]/g, "").replace(/\s+/g, "").replace(/[‘’`´′]/g, "'").replace(/[“”″]/g, "\"").replace(/[★☆]/g, "☆").replace(/[〜~～]/g, "~").replace(/[♡♥❤]/g, "♡").replace(/♯/g, "#");
@@ -519,7 +519,7 @@
 		return { run };
 	};
 	var RECENT_MAX$1 = 20;
-	var cache$1 = new Map();
+	var cache$2 = new Map();
 	var FIRST_LIMIT = 50;
 	var fetchActors = (keyword, simple, limit) => fetch("/api/actors/search?" + new URLSearchParams({
 		keyword,
@@ -533,12 +533,12 @@
 		return mergeMissingNames(results, (await fetchActors(keyword, "1", 1e3)).results ?? [], keyword);
 	};
 	var searchActors = (keyword, fresh = false) => {
-		if (fresh) cache$1.delete(keyword);
-		let result = cache$1.get(keyword);
+		if (fresh) cache$2.delete(keyword);
+		let result = cache$2.get(keyword);
 		if (!result) {
 			result = fetchWithMissingNames(keyword);
-			result.catch(() => cache$1.delete(keyword));
-			cache$1.set(keyword, result);
+			result.catch(() => cache$2.delete(keyword));
+			cache$2.set(keyword, result);
 		}
 		return result;
 	};
@@ -808,7 +808,76 @@
 		openBtn.addEventListener("click", open);
 		row.append(openBtn);
 		updateSummary();
+		return { openWith: (text) => {
+			textarea.value = text;
+			open();
+			search();
+		} };
 	};
+	var OPEN = "【\\[［〈《<＜(（■□◆◇●○◎▼▽▶▷★☆・*＊-";
+	var CLOSE = "】\\]］〉》>＞)）";
+	var labelRe = (labels) => new RegExp(String.raw`^[\s${OPEN}]*(?:${labels})(?:[${CLOSE}]+\s*[:：]?|\s*[:：｜|]|\s+|$)\s*(.*)$`, "i");
+	var VENUE = labelRe("会場|会場名|開催会場|開催場所|場所|venue|place|location");
+	var ACTORS = labelRe("出演者?|出演アーティスト|出演キャスト|出演予定|キャスト|cast|ゲスト|guest|line\\s*up|ラインナップ|mc|performers?|artists?");
+	var OTHER = labelRe("日時|日程|日付|開催日|開場|開演|時間|会場|場所|料金|チケット|ticket|前売|当日|一般|先行|販売|主催|企画|協力|問い?合わ?せ|お問合せ|配信|特典|注意|注意事項|備考|詳細|入場|入場順|整理番号|タイムテーブル|物販|グッズ|url|https?");
+	var HEADING = new RegExp(String.raw`^\s*[【■□◆◇●◎▼▽《<＜\[［]`);
+	var SHORT_LABEL = /^[^:：]{1,12}[:：]/;
+	var ROLE_LABEL = /mc|ゲスト|guest|o\.?a|オープニング|act|役|出演|cast|vo|gt|ba|dr|key|聞き手|司会/i;
+	var MAX_ACTOR_LINES = 60;
+	var MAX_NAME_LINE = 60;
+	var lines$1 = (text) => text.split(/\r?\n/).map((l) => l.trim());
+	var findVenue = (text) => {
+		const ls = lines$1(text);
+		for (let i = 0; i < ls.length; i++) {
+			const m = ls[i].match(VENUE);
+			if (!m) continue;
+			const value = m[1].trim() || ls.slice(i + 1).find(Boolean) || "";
+			if (value) return value;
+		}
+		return null;
+	};
+	var AREA = String.raw`(?:[^\s\d]{1,4}(?:都|道|府|県|市)|東京|大阪|名古屋|福岡|札幌|横浜|神戸|仙台|広島|京都|千葉|埼玉|愛知|神奈川|北海道)`;
+	var AREA_PREFIX = new RegExp(String.raw`^(?:[\[【(（][^\]】)）]{1,4}[\]】)）]\s*|${AREA}\s*(?:[|｜・･]\s*|\s+))`);
+	var venueQueries = (venue) => {
+		const base = venue.normalize("NFKC").replace(/https?:\/\/[^\s()]*/g, "").replace(/\(\s*\)|\(\s*$/g, "").replace(/^(?:会場|場所)\s*[:：]\s*/, "").replace(/^[@＠]\s*/, "").replace(AREA_PREFIX, "").trim();
+		const noParens = base.replace(/[(（「『][^()（）「」『』]*[)）」』]/g, "").trim();
+		const noSuffix = noParens.replace(/\s*(?:B?\d+F|\d+階|特設|イベントスペース|メインステージ|大ホール|小ホール|メインアリーナ).*$/i, "").trim();
+		const firstWord = noSuffix.split(/[\s/|｜、,]+/)[0] ?? "";
+		return [...new Set([
+			base,
+			noParens,
+			noSuffix,
+			firstWord
+		])].filter((q) => q.length >= 2);
+	};
+	var splitMany = (line, sep) => {
+		const parts = line.split(sep);
+		return parts.length >= 3 && parts.every((p) => p.trim().length >= 2) ? parts : [line];
+	};
+	var cleanActorBlock = (block) => block.split("\n").filter((l) => !/\d{1,2}月\d{1,2}日|\d{1,2}\/\d{1,2}\s*[(（]|公演$|50音順|五十音順|もっと見る|^[(（]\s*※/.test(l)).flatMap((l) => splitMany(l, /(?<!\s)\/(?!\s)/)).flatMap((l) => l.split(/　+|\s{2,}/)).flatMap((l) => splitMany(l, /[・･]/)).map((name) => name.replace(/^.*[:：│|｜]\s*/, "").replace(/\s*[@＠][\w.]+/g, "").replace(/(^|[、，,／/・\s])[#＃]/g, "$1").replace(/\s*[(（]第\d+部[)）]/g, "").replace(/(さん|様)(?=\s*[(（]|$)/, "").trim()).filter(Boolean).join("\n");
+	var findActorBlock = (text) => {
+		const ls = lines$1(text);
+		for (let i = 0; i < ls.length; i++) {
+			const m = ls[i].match(ACTORS);
+			if (!m) continue;
+			const block = m[1].trim() ? [m[1].trim()] : [];
+			for (const l of ls.slice(i + 1, i + 1 + MAX_ACTOR_LINES)) {
+				if (!l) {
+					if (block.length) break;
+					continue;
+				}
+				if (!block.length && ACTORS.test(l) && !l.match(ACTORS)[1]) continue;
+				if (OTHER.test(l) || HEADING.test(l) || /^[※＊*]/.test(l) || l.length > MAX_NAME_LINE) break;
+				if (/^(?:[#＃]\S+\s*){2,}$/.test(l)) break;
+				const short = l.match(SHORT_LABEL);
+				if (short && !ROLE_LABEL.test(short[0])) break;
+				block.push(l);
+			}
+			if (block.length) return cleanActorBlock(block.join("\n"));
+		}
+		return null;
+	};
+	var findHashtags = (text) => [...new Set([...text.matchAll(/(?:^|[\s　(（「『])[#＃]([^\s#＃.,、。!！?？()（）「」『』【】]+)/g)].map((m) => m[1]))].filter((tag) => !/^\d+$/.test(tag));
 	var WEEKDAYS$1 = "日月火水木金土";
 	var DAY_MS = 864e5;
 	var DATE_RE = new RegExp(String.raw`(?<!\d)(?:(\d{4})\s*[年/.-]\s*(\d{1,2})\s*[月/.-]\s*(\d{1,2})\s*日?|(\d{1,2})\s*(?:月\s*(\d{1,2})\s*日|/\s*(\d{1,2})))(?![\d:])` + String.raw`(?:\s*\(\s*([${WEEKDAYS$1}])[^)]{0,4}\)|\s*([${WEEKDAYS$1}])曜)?`, "g");
@@ -956,9 +1025,19 @@
 		}
 		return found;
 	};
-	var initAnnounce = (date, time) => {
+	var initAnnounce = ({ date, time, place, actorBulk }) => {
 		const dateRow = byId("date_year")?.closest("tr");
 		if (!dateRow || !date && !time) return;
+		const cell = insertField(fieldStart(dateRow), "告知文から入力");
+		cell.innerHTML = `
+    <input type="text" class="ene-announce" autocomplete="off"
+      placeholder="例: 2026年12月19日(土) 開場 17:30 / 開演 18:30　告知文をここに貼り付け">
+    <p class="s">開催日・時間・ハッシュタグを入力し、会場と出演者の候補を表示します</p>
+    <p class="ene-announce-result" hidden></p>
+  `;
+		const input = cell.querySelector("input");
+		const result = cell.querySelector(".ene-announce-result");
+		const hashtag = document.querySelector("#event_form input[name=\"hashtag\"]");
 		const fill = (text) => {
 			const read = [];
 			const d = date && parseDate(text);
@@ -970,24 +1049,45 @@
 				time.setTime(k, t);
 				read.push(`${TIME_LABELS[k]} ${formatTime(t)}`);
 			}
+			const tags = findHashtags(text);
+			if (tags.length && hashtag && !hashtag.value.trim()) {
+				hashtag.value = tags.join(" #");
+				read.push(`#${tags.join(" #")}`);
+			}
+			result.replaceChildren();
+			const block = findActorBlock(text);
+			const names = block ? splitNames(block) : [];
+			if (block && names.length && actorBulk) {
+				const button = Object.assign(document.createElement("input"), {
+					type: "button",
+					className: "btn btn-small",
+					value: "確認して追加"
+				});
+				button.addEventListener("click", () => actorBulk.openWith(block));
+				const span = document.createElement("span");
+				span.append(`出演者 ${names.length} 名を読み取りました `, button);
+				result.append(span);
+			}
+			const venue = findVenue(text);
+			if (venue && place) place.suggestFrom(venueQueries(venue)).then((q) => {
+				if (!q) return;
+				result.append(Object.assign(document.createElement("span"), { textContent: `会場「${q}」の候補を表示しました` }));
+				result.hidden = false;
+			});
+			result.hidden = !result.childElementCount;
 			if (read.length) showNotice("読み取りました：" + read.join(" / "));
-			else showNotice("告知文から日付・時間を読み取れませんでした", "error");
+			else if (result.hidden && !venue) showNotice("告知文から読み取れる項目がありませんでした", "error");
 		};
-		const cell = insertField(fieldStart(dateRow), "告知文から入力");
-		cell.innerHTML = `
-    <input type="text" class="ene-announce" autocomplete="off"
-      placeholder="例: 2026年12月19日(土) 開場 17:30 / 開演 18:30　告知文をここに貼り付け">
-    <p class="s">開催日と開場・開演・終演の時間を自動で入力します</p>
-  `;
-		const input = cell.querySelector("input");
+		let pasted = "";
 		input.addEventListener("paste", (e) => {
 			const text = e.clipboardData?.getData("text");
 			if (!text) return;
 			e.preventDefault();
+			pasted = text;
 			input.value = text.replace(/\s+/g, " ").trim();
 			fill(text);
 		});
-		onEnter(input, () => fill(input.value));
+		onEnter(input, () => fill(input.value === pasted.replace(/\s+/g, " ").trim() ? pasted : input.value));
 		for (const el of document.querySelectorAll("input.ene-time")) el.addEventListener("paste", (e) => {
 			const text = e.clipboardData?.getData("text");
 			if (!text || !LABEL_ANY_RE.test(text.normalize("NFKC"))) return;
@@ -1135,7 +1235,7 @@
 		});
 		submit.before(back);
 	};
-	var INTERVAL_MS = 2e3;
+	var INTERVAL_MS$1 = 2e3;
 	var TTL_MS = 12096e5;
 	var savedAtText = (t) => {
 		const d = new Date(t);
@@ -1183,10 +1283,226 @@
 				...snapshot,
 				savedAt: Date.now()
 			});
-		}, INTERVAL_MS);
+		}, INTERVAL_MS$1);
 	};
 	var initDraftClear = () => {
 		document.querySelector("form[action=\"/events/add/complete\"]")?.addEventListener("submit", () => save("formDraft", null));
+	};
+	var findDuplicates = (events, q) => {
+		if (!q.start || !q.placeId || !q.actorIds.length) return [];
+		return events.flatMap((e) => {
+			if (String(e.id) === q.selfId || String(e.place_id) !== q.placeId || e.start_time !== q.start) return [];
+			const shared = (e.actors ?? []).filter((a) => q.actorIds.includes(String(a.id)));
+			if (!shared.length) return [];
+			return [{
+				id: e.id,
+				name: e.event_name,
+				start: e.start_time,
+				sharedActors: shared.map((a) => a.name),
+				canceled: !!e.cancel_flag,
+				postponed: !!e.postpone_flag
+			}];
+		});
+	};
+	var INTERVAL_MS = 1e3;
+	var SHOWN_ACTORS = 3;
+	var cache$1 = new Map();
+	var fetchEvents = (date, placeId) => {
+		const key = `${date}|${placeId}`;
+		let result = cache$1.get(key);
+		if (!result) {
+			const params = new URLSearchParams({
+				event_date: date,
+				place_id: placeId,
+				limit: "1000"
+			});
+			result = fetch("/api/events/search?" + params, { credentials: "same-origin" }).then((res) => res.json()).then((json) => json.results ?? []).catch(() => []);
+			cache$1.set(key, result);
+		}
+		return result;
+	};
+	var readForm = (selfId) => {
+		const val = (id) => byId(id)?.value ?? "";
+		const [y, m, d, hour, minute] = [
+			"date_year",
+			"date_month",
+			"date_day",
+			"start_time_hour",
+			"start_time_minute"
+		].map(val);
+		const query = {
+			selfId,
+			actorIds: val("actor_ids").split(",").filter(Boolean),
+			placeId: val("places_list"),
+			start: hour && minute ? `${pad2(Number(hour))}:${pad2(Number(minute))}` : ""
+		};
+		return {
+			date: y && m && d ? `${y}-${pad2(Number(m))}-${pad2(Number(d))}` : "",
+			query
+		};
+	};
+	var describe = (dup) => {
+		const names = dup.sharedActors.slice(0, SHOWN_ACTORS).join("、");
+		const rest = dup.sharedActors.length - SHOWN_ACTORS;
+		const flags = [dup.canceled && "中止", dup.postponed && "延期"].filter(Boolean).map((f) => `【${f}】`).join("");
+		return {
+			title: `『${dup.name}』`,
+			detail: `${flags} ${dup.start}（共通の出演者：${names}${rest > 0 ? ` ほか ${rest} 名` : ""}）`
+		};
+	};
+	var latest = [];
+	var duplicateProblems = () => latest.map((dup) => {
+		const { title, detail } = describe(dup);
+		return `重複の可能性：${title}${detail}`;
+	});
+	var initDuplicateCheck = (selfId) => {
+		const list = byId("selected_actors");
+		if (!list || !byId("places_list") || !byId("date_year")) return;
+		const box = document.createElement("div");
+		box.className = "ene-duplicate";
+		box.hidden = true;
+		list.closest("td").append(box);
+		const render = (dups) => {
+			latest = dups;
+			box.hidden = !dups.length;
+			box.replaceChildren("重複の可能性があるイベントがあります。登録済みでないか確認してください。");
+			const ul = document.createElement("ul");
+			for (const dup of dups) {
+				const { title, detail } = describe(dup);
+				const a = Object.assign(document.createElement("a"), {
+					href: `/events/${dup.id}`,
+					target: "_blank",
+					rel: "noopener",
+					textContent: title
+				});
+				const li = document.createElement("li");
+				li.append(a, detail);
+				ul.append(li);
+			}
+			box.append(ul);
+		};
+		let lastKey = "";
+		let seq = 0;
+		const check = async () => {
+			const { date, query } = readForm(selfId);
+			const key = JSON.stringify([date, query]);
+			if (key === lastKey) return;
+			lastKey = key;
+			const run = ++seq;
+			if (!date || !query.start || !query.placeId || !query.actorIds.length) return render([]);
+			const events = await fetchEvents(date, query.placeId);
+			if (run === seq) render(findDuplicates(events, query));
+		};
+		check();
+		setInterval(check, INTERVAL_MS);
+	};
+	var cache = new Map();
+	var fetchEventDoc = (eventId) => {
+		let doc = cache.get(eventId);
+		if (!doc) {
+			doc = fetch(`/events/${eventId}`, { credentials: "same-origin" }).then((res) => res.ok ? res.text() : null).then((html) => html ? parseHtml(html) : null).catch(() => null);
+			cache.set(eventId, doc);
+		}
+		return doc;
+	};
+	var eventInfoCell = async (eventId, ...labels) => {
+		const doc = await fetchEventDoc(eventId);
+		const head = doc && [...doc.querySelectorAll(".gb_events_info_table td, h2.gb_subtitle")].find((el) => labels.includes(el.textContent?.trim() ?? ""));
+		return head ? head.nextElementSibling : null;
+	};
+	var TIME_NAMES = {
+		open: "開場",
+		start: "開演",
+		end: "終演"
+	};
+	var SHOWN_NAMES = 5;
+	var orNone = (s) => s || "なし";
+	var names = (actors) => actors.slice(0, SHOWN_NAMES).map((a) => a.name).join("、") + (actors.length > SHOWN_NAMES ? ` ほか ${actors.length - SHOWN_NAMES} 名` : "");
+	var lines = (s) => s.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+	var describeChanges = (before, after) => {
+		const changes = [];
+		const same = (a, b) => a.trim() === b.trim();
+		if (!same(before.eventName, after.eventName)) changes.push(`イベント名：${before.eventName} → ${after.eventName}`);
+		if (before.date !== after.date) changes.push(`開催日：${before.date} → ${after.date}`);
+		for (const key of [
+			"open",
+			"start",
+			"end"
+		]) if (before.times[key] !== after.times[key]) changes.push(`${TIME_NAMES[key]}：${orNone(before.times[key])} → ${orNone(after.times[key])}`);
+		const beforeIds = before.actors.map((a) => a.id);
+		const afterIds = after.actors.map((a) => a.id);
+		const added = after.actors.filter((a) => !beforeIds.includes(a.id));
+		const removed = before.actors.filter((a) => !afterIds.includes(a.id));
+		const actorParts = [added.length && `追加 ${names(added)}`, removed.length && `削除 ${names(removed)}`].filter(Boolean);
+		if (actorParts.length) changes.push(`出演者：${actorParts.join(" / ")}`);
+		else if (beforeIds.join() !== afterIds.join()) changes.push("出演者：並び順を変更");
+		if ((before.place?.id ?? "") !== (after.place?.id ?? "")) changes.push(`開催場所：${orNone(before.place?.name ?? "")} → ${orNone(after.place?.name ?? "")}`);
+		const [beforeLinks, afterLinks] = [lines(before.link), lines(after.link)];
+		const addedLinks = afterLinks.filter((l) => !beforeLinks.includes(l));
+		const removedLinks = beforeLinks.filter((l) => !afterLinks.includes(l));
+		if (addedLinks.length || removedLinks.length) changes.push([
+			"関連リンク：",
+			...addedLinks.map((l) => `  ＋ ${l}`),
+			...removedLinks.map((l) => `  － ${l}`)
+		].join("\n"));
+		else if (beforeLinks.join() !== afterLinks.join()) changes.push("関連リンク：並び順を変更");
+		if (!same(before.description, after.description)) changes.push("詳細：変更あり");
+		if (!same(before.hashtag, after.hashtag)) changes.push(`ハッシュタグ：${orNone(before.hashtag)} → ${orNone(after.hashtag)}`);
+		return changes;
+	};
+	var val = (id) => byId(id)?.value ?? "";
+	var time = (key) => {
+		const [hour, minute] = [val(`${key}_time_hour`), val(`${key}_time_minute`)];
+		return hour && minute ? `${pad2(Number(hour))}:${pad2(Number(minute))}` : "";
+	};
+	var readValues = (form) => {
+		const field = (name) => form.elements.namedItem(name)?.value ?? "";
+		const place = byId("places_list")?.selectedOptions[0];
+		return {
+			eventName: field("event_name"),
+			date: `${val("date_year")}/${val("date_month")}/${val("date_day")}`,
+			times: {
+				open: time("open"),
+				start: time("start"),
+				end: time("end")
+			},
+			actors: readSelectedActors(),
+			place: place?.value ? {
+				id: place.value,
+				name: place.text
+			} : null,
+			link: field("link"),
+			description: field("description"),
+			hashtag: field("hashtag")
+		};
+	};
+	var changes = null;
+	var editChanges = () => changes?.();
+	var initEditConfirm = (eventId) => {
+		const form = byId("event_form");
+		if (!form) return;
+		const before = readValues(form);
+		const initialPlace = findInitialPlace();
+		before.place = initialPlace && {
+			id: initialPlace.id,
+			name: `会場ID ${initialPlace.id}`
+		};
+		if (initialPlace) eventInfoCell(eventId, "開催場所").then((cell) => {
+			const name = cell?.querySelector(`a[href$="/places/${initialPlace.id}"]`)?.textContent?.trim();
+			if (name && before.place) before.place.name = name;
+		});
+		changes = () => {
+			const list = describeChanges(before, readValues(form));
+			if (form.querySelector("input[type=\"file\"][name=\"thumbnail_image\"]")?.files?.length) list.push("サムネイル画像：新しい画像に変更");
+			return list;
+		};
+		return { minutesRestored: () => {
+			for (const key of [
+				"open",
+				"start",
+				"end"
+			]) if (!before.times[key] && val(`${key}_time_hour`)) before.times[key] = time(key);
+		} };
 	};
 	var KEEP_MS = 2592e6;
 	var EVENT_IMAGE = /\/images\/events\/(\d+)(?:_s)?\.jpg/;
@@ -1207,20 +1523,6 @@
 			url.searchParams.set("v", String(version));
 			img.src = url.href;
 		}
-	};
-	var cache = new Map();
-	var fetchEventDoc = (eventId) => {
-		let doc = cache.get(eventId);
-		if (!doc) {
-			doc = fetch(`/events/${eventId}`, { credentials: "same-origin" }).then((res) => res.ok ? res.text() : null).then((html) => html ? parseHtml(html) : null).catch(() => null);
-			cache.set(eventId, doc);
-		}
-		return doc;
-	};
-	var eventInfoCell = async (eventId, ...labels) => {
-		const doc = await fetchEventDoc(eventId);
-		const head = doc && [...doc.querySelectorAll(".gb_events_info_table td, h2.gb_subtitle")].find((el) => labels.includes(el.textContent?.trim() ?? ""));
-		return head ? head.nextElementSibling : null;
 	};
 	var CLOSED_RE = /閉館|閉店|閉校|閉鎖|閉場|移転/;
 	var rankPlaces = (places, keyword) => {
@@ -1362,9 +1664,22 @@
 				if (found && stillInitial()) set(toPlace(found));
 			} catch {}
 		};
+		const suggestFrom = async (queries) => {
+			for (const q of queries) {
+				if (chosen) return null;
+				if (!(await searchPlaces(q, prefFilter.value).catch(() => [])).length) continue;
+				if (chosen) return null;
+				input.value = q;
+				input.focus();
+				suggest.run();
+				return q;
+			}
+			return null;
+		};
 		return {
 			set,
-			loadInitial
+			loadInitial,
+			suggestFrom
 		};
 	};
 	var initSubmitCheck = () => {
@@ -1381,11 +1696,17 @@
 			const placeSearch = searchInput("places_list");
 			if (placeSearch?.value.trim()) problems.push([`会場の検索欄に「${placeSearch.value.trim()}」が残っています（まだ選択されていません）`, placeSearch]);
 			else if (!byId("places_list")?.value) problems.push(["開催場所が選択されていません", placeSearch]);
-			if (!problems.length) return;
-			if (confirm(`${problems.map(([m]) => "・" + m).join("\n")}\n\nこのまま送信しますか？`)) return;
+			const duplicateBox = form.querySelector(".ene-duplicate");
+			for (const message of duplicateProblems()) problems.push([message, duplicateBox]);
+			const changes = editChanges();
+			if (!problems.length && !changes) return;
+			const sections = problems.length ? [problems.map(([m]) => "・" + m).join("\n")] : [];
+			if (changes) sections.push(changes.length ? `変更内容：\n${changes.map((c) => "・" + c).join("\n")}` : "変更はありません。");
+			sections.push(problems.length ? "このまま送信しますか？" : "この内容で保存しますか？");
+			if (confirm(sections.join("\n\n"))) return;
 			e.preventDefault();
 			e.stopImmediatePropagation();
-			const target = problems[0][1];
+			const target = problems[0]?.[1];
 			target?.scrollIntoView({ block: "center" });
 			target?.focus();
 		}, true);
@@ -1522,18 +1843,51 @@
 			show
 		};
 	};
+	var SCREENSHOT_SIDE = 1e3;
+	var fetchSourceImage = async (eventId) => {
+		const res = await fetch(`${S3_EVENT_IMAGE}${eventId}.jpg?t=${Date.now()}`, { cache: "no-store" });
+		if (!res.ok) return null;
+		const blob = await res.blob();
+		const url = URL.createObjectURL(blob);
+		try {
+			const img = await loadImage(url);
+			if (img.naturalWidth === SCREENSHOT_SIDE && img.naturalHeight === SCREENSHOT_SIDE) return null;
+		} finally {
+			URL.revokeObjectURL(url);
+		}
+		return normalizeImage(blob, `${eventId}.jpg`);
+	};
 	var initImagePicker = () => {
 		const submitRow = document.querySelector("#event_form input[type=\"submit\"]")?.closest("tr");
 		if (!submitRow) return;
 		if (!isReturning) save("draftImage", null);
 		const cell = insertField(submitRow, "サムネイル画像");
-		const picker = createImageDrop((image) => save("draftImage", image), () => save("draftImage", null));
-		cell.append(picker.element, Object.assign(document.createElement("p"), {
+		const copied = Object.assign(document.createElement("p"), {
+			className: "ene-image-note",
+			hidden: true
+		});
+		const picker = createImageDrop((image) => {
+			save("draftImage", image);
+			copied.hidden = true;
+		}, () => {
+			save("draftImage", null);
+			copied.hidden = true;
+		});
+		cell.append(picker.element, copied, Object.assign(document.createElement("p"), {
 			className: "ene-image-note",
 			textContent: "登録完了後、イベント編集機能を使って自動でアップロードします。"
 		}));
 		const draft = load("draftImage", null);
-		if (draft) picker.show(draft.dataUrl);
+		if (draft) return picker.show(draft.dataUrl);
+		const sourceId = new URLSearchParams(location.search).get("from_event_id");
+		if (!sourceId || isReturning) return;
+		fetchSourceImage(sourceId).then((image) => {
+			if (!image || load("draftImage", null)) return;
+			save("draftImage", image);
+			picker.show(image.dataUrl);
+			copied.textContent = "コピー元のイベントの画像を引き継ぎました。不要なら「画像を取り消す」を押してください。";
+			copied.hidden = false;
+		}).catch(() => {});
 	};
 	var addMissingImageField = (eventId) => {
 		const form = document.querySelector("#event_form");
@@ -1919,13 +2273,19 @@
 		initActorList();
 		initActorPresets();
 		initActorSearch();
-		initActorBulk();
+		const actorBulk = initActorBulk();
 		const placePicker = initPlacePicker();
 		initFormSnapshot(placePicker);
 		placePicker?.loadInitial(new URLSearchParams(location.search).get("from_event_id"));
 		const date = initDatePicker();
 		const time = initSmartTime();
-		initAnnounce(date, time);
+		initAnnounce({
+			date,
+			time,
+			place: placePicker,
+			actorBulk
+		});
+		initDuplicateCheck();
 		initSubmitCheck();
 		initDraft(placePicker, () => {
 			date?.refresh();
@@ -1933,16 +2293,24 @@
 		});
 		initImagePicker();
 	} else if (editId) {
+		const editConfirm = initEditConfirm(editId);
 		initMinuteOptions();
 		initActorList();
 		initActorPresets();
 		initActorSearch();
-		initActorBulk();
-		initPlacePicker()?.loadInitial(editId);
+		const actorBulk = initActorBulk();
+		const placePicker = initPlacePicker();
+		placePicker?.loadInitial(editId);
 		const time = initSmartTime();
-		initAnnounce(initDatePicker(), time);
+		initAnnounce({
+			date: initDatePicker(),
+			time,
+			place: placePicker,
+			actorBulk
+		});
+		initDuplicateCheck(editId);
 		initSubmitCheck();
-		restoreEditMinutes(editId).then(() => time?.refresh());
+		restoreEditMinutes(editId).finally(() => editConfirm?.minutesRestored()).then(() => time?.refresh());
 		initEditImagePicker(editId);
 	} else processPendingUpload();
 })();

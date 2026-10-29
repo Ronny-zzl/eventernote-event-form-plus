@@ -1,7 +1,10 @@
 import { byId } from '../lib/page';
+import { duplicateProblems } from './duplicateCheck';
+import { editChanges } from './editConfirm';
 
-// 提交前检查：活动名、出演者、会场是否填了，搜索框里是否留着没选中的文字。
-// 服务器要求哪些必填项没有确认过，所以只提示，用户确认后仍可提交
+// 提交前检查：活动名、出演者、会场是否填了，搜索框里是否留着没选中的文字，是否可能重复登录。
+// 服务器要求哪些必填项没有确认过，所以只提示，用户确认后仍可提交。
+// 编辑页（没有确认页）每次都确认，并列出和原来相比改了什么
 export const initSubmitCheck = () => {
   const form = byId<HTMLFormElement>('event_form');
   if (!form) return;
@@ -30,11 +33,18 @@ export const initSubmitCheck = () => {
       problems.push(['開催場所が選択されていません', placeSearch]);
     }
 
-    if (!problems.length) return;
-    if (confirm(`${problems.map(([m]) => '・' + m).join('\n')}\n\nこのまま送信しますか？`)) return;
+    const duplicateBox = form.querySelector<HTMLElement>('.ene-duplicate');
+    for (const message of duplicateProblems()) problems.push([message, duplicateBox]);
+
+    const changes = editChanges();
+    if (!problems.length && !changes) return;
+    const sections = problems.length ? [problems.map(([m]) => '・' + m).join('\n')] : [];
+    if (changes) sections.push(changes.length ? `変更内容：\n${changes.map((c) => '・' + c).join('\n')}` : '変更はありません。');
+    sections.push(problems.length ? 'このまま送信しますか？' : 'この内容で保存しますか？');
+    if (confirm(sections.join('\n\n'))) return;
     e.preventDefault();
     e.stopImmediatePropagation();
-    const target = problems[0][1];
+    const target = problems[0]?.[1];
     target?.scrollIntoView({ block: 'center' });
     target?.focus();
   }, true);

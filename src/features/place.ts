@@ -27,6 +27,8 @@ const searchPlaces = async (keyword: string, prefecture = '', signal?: AbortSign
 export type PlacePicker = {
   set: (place: Place | null) => void;
   loadInitial: (eventId: string | null) => Promise<void>;
+  // 还没选会场时，依次用这些词搜索，把第一个有结果的放进搜索框并列出候选；返回用的词
+  suggestFrom: (queries: string[]) => Promise<string | null>;
 };
 
 export const initPlacePicker = (): PlacePicker | null => {
@@ -139,5 +141,18 @@ export const initPlacePicker = (): PlacePicker | null => {
     }
   };
 
-  return { set, loadInitial };
+  const suggestFrom = async (queries: string[]) => {
+    for (const q of queries) {
+      if (chosen) return null;
+      if (!(await searchPlaces(q, prefFilter.value).catch(() => [])).length) continue;
+      if (chosen) return null; // 搜索期间用户自己选了
+      input.value = q;
+      input.focus();
+      suggest.run();
+      return q;
+    }
+    return null;
+  };
+
+  return { set, loadInitial, suggestFrom };
 };

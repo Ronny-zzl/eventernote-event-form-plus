@@ -78,6 +78,9 @@
 
 /* 告知文から入力 */
 .ene-announce { width: 95%; margin-bottom: 0; }
+.ene-announce-result { margin: 6px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+.ene-announce-result[hidden] { display: none; }
+.ene-announce-result .btn { margin-bottom: 0; }
 
 /* 開催日 */
 .ene-date { display: inline-flex; align-items: center; gap: 6px; }
@@ -88,6 +91,11 @@
 /* 草稿 */
 .ene-draft { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ene-draft .btn { margin-bottom: 0; }
+
+/* 重复登录提醒（颜色同 Bootstrap 的 .alert，手机版也用） */
+.ene-duplicate { margin: 8px 0; padding: 8px 12px; background: #fcf8e3; border: 1px solid #fbeed5; border-radius: 4px; color: #8a6d3b; }
+.ene-duplicate[hidden] { display: none; }
+.ene-duplicate ul { margin: 4px 0 0 20px; padding: 0; }
 
 /* 手机版页面（smartphone.css，没有 Bootstrap）：按钮做成和网站同色的描边按钮，高度和网站的按钮一致 */
 .ene-sp input.btn {

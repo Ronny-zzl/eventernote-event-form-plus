@@ -219,4 +219,15 @@ export const initActorBulk = () => {
   openBtn.addEventListener('click', open);
   row.append(openBtn);
   updateSummary();
+
+  // 告知文里读到的名单：填进去直接搜索
+  return {
+    openWith: (text: string) => {
+      textarea.value = text;
+      open();
+      search();
+    },
+  };
 };
+
+export type ActorBulk = NonNullable<ReturnType<typeof initActorBulk>>;

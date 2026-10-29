@@ -5,6 +5,8 @@ import { initActorSearch } from './features/actorSearch';
 import { initAnnounce } from './features/announce';
 import { initDatePicker } from './features/date';
 import { initDraft, initDraftClear } from './features/draft';
+import { initDuplicateCheck } from './features/duplicateCheck';
+import { initEditConfirm } from './features/editConfirm';
 import { refreshEventImages } from './features/imageCache';
 import { initPlacePicker } from './features/place';
 import { initConfirmBackButton, initFormSnapshot } from './features/snapshot';
@@ -32,14 +34,15 @@ if (path === '/events/add/confirm') {
   initActorList();
   initActorPresets();
   initActorSearch();
-  initActorBulk();
+  const actorBulk = initActorBulk();
   const placePicker = initPlacePicker();
   initFormSnapshot(placePicker);
   // ?from_event_id=… 复制登录时页面会预先指定会场
   placePicker?.loadInitial(new URLSearchParams(location.search).get('from_event_id'));
   const date = initDatePicker();
   const time = initSmartTime();
-  initAnnounce(date, time);
+  initAnnounce({ date, time, place: placePicker, actorBulk });
+  initDuplicateCheck();
   initSubmitCheck(); // 在时间检查之后注册
   initDraft(placePicker, () => {
     date?.refresh();
@@ -47,16 +50,19 @@ if (path === '/events/add/confirm') {
   });
   initImagePicker();
 } else if (editId) {
+  const editConfirm = initEditConfirm(editId); // 原来的值要在其他功能改动表单之前记下
   initMinuteOptions();
   initActorList();
   initActorPresets();
   initActorSearch();
-  initActorBulk();
-  initPlacePicker()?.loadInitial(editId);
+  const actorBulk = initActorBulk();
+  const placePicker = initPlacePicker();
+  placePicker?.loadInitial(editId);
   const time = initSmartTime();
-  initAnnounce(initDatePicker(), time);
+  initAnnounce({ date: initDatePicker(), time, place: placePicker, actorBulk });
+  initDuplicateCheck(editId);
   initSubmitCheck();
-  restoreEditMinutes(editId).then(() => time?.refresh());
+  restoreEditMinutes(editId).finally(() => editConfirm?.minutesRestored()).then(() => time?.refresh());
   initEditImagePicker(editId);
 } else {
   processPendingUpload();

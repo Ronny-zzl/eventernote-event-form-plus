@@ -120,6 +120,23 @@ const createImageDrop = (onImage: (image: ImageData) => void, onRemove: () => vo
   return { element: wrap, show };
 };
 
+// 复制登录（?from_event_id=…）的原活动图片。官方的复制不带图片，而巡演、DAY1/DAY2 多半用同一张宣传图。
+// 1000×1000 是网站按链接生成的网页截图（上传的图最大 700×700），不复制；没有图片时 S3 返回 403
+const SCREENSHOT_SIDE = 1000;
+const fetchSourceImage = async (eventId: string) => {
+  const res = await fetch(`${S3_EVENT_IMAGE}${eventId}.jpg?t=${Date.now()}`, { cache: 'no-store' });
+  if (!res.ok) return null;
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  try {
+    const img = await loadImage(url);
+    if (img.naturalWidth === SCREENSHOT_SIDE && img.naturalHeight === SCREENSHOT_SIDE) return null;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+  return normalizeImage(blob, `${eventId}.jpg`);
+};
+
 // 登录页：选中的图片存入 draftImage，登录完成后自动上传
 export const initImagePicker = () => {
   const submitRow = document.querySelector('#event_form input[type="submit"]')?.closest('tr');
@@ -128,13 +145,34 @@ export const initImagePicker = () => {
   if (!isReturning) save('draftImage', null);
 
   const cell = insertField(submitRow, 'サムネイル画像');
-  const picker = createImageDrop((image) => save('draftImage', image), () => save('draftImage', null));
-  cell.append(picker.element, Object.assign(document.createElement('p'), {
+  const copied = Object.assign(document.createElement('p'), { className: 'ene-image-note', hidden: true });
+  const picker = createImageDrop(
+    (image) => {
+      save('draftImage', image);
+      copied.hidden = true;
+    },
+    () => {
+      save('draftImage', null);
+      copied.hidden = true;
+    },
+  );
+  cell.append(picker.element, copied, Object.assign(document.createElement('p'), {
     className: 'ene-image-note',
     textContent: '登録完了後、イベント編集機能を使って自動でアップロードします。',
   }));
   const draft = load('draftImage', null);
-  if (draft) picker.show(draft.dataUrl);
+  if (draft) return picker.show(draft.dataUrl);
+
+  const sourceId = new URLSearchParams(location.search).get('from_event_id');
+  if (!sourceId || isReturning) return;
+  fetchSourceImage(sourceId).then((image) => {
+    // 取图期间用户自己选了图时不覆盖
+    if (!image || load('draftImage', null)) return;
+    save('draftImage', image);
+    picker.show(image.dataUrl);
+    copied.textContent = 'コピー元のイベントの画像を引き継ぎました。不要なら「画像を取り消す」を押してください。';
+    copied.hidden = false;
+  }).catch(() => {});
 };
 
 // 手机版编辑页没有图片栏，表单也不是 multipart。提交地址（edit/complete）和电脑版相同，
