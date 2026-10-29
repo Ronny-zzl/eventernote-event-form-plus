@@ -4,7 +4,7 @@ import { initActorBulk } from './features/actorBulk';
 import { initActorSearch } from './features/actorSearch';
 import { initAnnounce } from './features/announce';
 import { initDatePicker } from './features/date';
-import { initDraft, initDraftClear } from './features/draft';
+import { initDraft, initDraftClear, initEditDraft } from './features/draft';
 import { initDuplicateCheck } from './features/duplicateCheck';
 import { initEditConfirm } from './features/editConfirm';
 import { refreshEventImages } from './features/imageCache';
@@ -58,11 +58,19 @@ if (path === '/events/add/confirm') {
   const actorBulk = initActorBulk();
   const placePicker = initPlacePicker();
   placePicker?.loadInitial(editId);
+  const date = initDatePicker();
   const time = initSmartTime();
-  initAnnounce({ date: initDatePicker(), time, place: placePicker, actorBulk });
+  initAnnounce({ date, time, place: placePicker, actorBulk });
   initDuplicateCheck(editId);
   initSubmitCheck();
-  restoreEditMinutes(editId).finally(() => editConfirm?.minutesRestored()).then(() => time?.refresh());
+  restoreEditMinutes(editId).finally(() => {
+    editConfirm?.minutesRestored();
+    time?.refresh();
+    initEditDraft(editId, placePicker, () => {
+      date?.refresh();
+      time?.refresh();
+    });
+  });
   initEditImagePicker(editId);
 } else {
   processPendingUpload();

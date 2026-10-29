@@ -44,13 +44,15 @@ const withoutParens = (s: string) => {
   return t.trim();
 };
 
-// 用原文搜不到时依次换的写法：星和心形换成网站常用的字（「NOVA⭐︎CHAN」→「NOVA☆CHAN」）、去掉括号、换引号、
+// 用原文搜不到时依次换的写法：星和心形换成网站常用的字（「NOVA⭐︎CHAN」→「NOVA☆CHAN」）、
+// 片假名换成平假名（读音只存平假名，「カスガサクラ」搜不到「かすがさくら」）、去掉括号、换引号、
 // 只用最长的一个词（「ROSARIO+CROSS」→「ROSARIO」）
 export const fallbackQueries = (name: string) => {
   const base = name.normalize('NFKC').replace(VARIATION, '').trim();
   const longestWord = base.split(/[^\p{L}\p{N}]+/u).sort((a, b) => b.length - a.length)[0] ?? '';
   const queries = [
     base, base.replace(STARS, '☆').replace(HEARTS, '♡'), base.replace(STARS, '★').replace(HEARTS, '♥'),
+    base.replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60)),
     withoutParens(base), base.replace(/'/g, '’'), base.replace(/[‘’]/g, "'"), longestWord,
   ];
   return [...new Set(queries.map((q) => q.trim()))].filter((q) => q.length >= 2 && q !== name.trim());

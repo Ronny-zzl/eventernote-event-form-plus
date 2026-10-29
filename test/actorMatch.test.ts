@@ -70,6 +70,8 @@ describe('fallbackQueries（原文で見つからなかったときの検索語�
     ['NOVA⭐︎CHAN', 'NOVA☆CHAN'],
     ['NOVA⭐︎CHAN', 'NOVA★CHAN'],
     ['ハート❤️ガール', 'ハート♡ガール'],
+    ['カスガサクラ', 'かすがさくら'],
+    ['ノヴァチャン', 'のゔぁちゃん'],
   ])('%s → %s を含む', (name, query) => expect(fallbackQueries(name)).toContain(query));
 
   test('原文と同じ語や 1 文字の語は含めない', () => {

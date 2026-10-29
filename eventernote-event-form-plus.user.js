@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.5.1
+// @version            0.5.2
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -400,6 +400,7 @@
 			base,
 			base.replace(STARS, "☆").replace(HEARTS, "♡"),
 			base.replace(STARS, "★").replace(HEARTS, "♥"),
+			base.replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 96)),
 			withoutParens(base),
 			base.replace(/'/g, "’"),
 			base.replace(/[‘’]/g, "'"),
@@ -1165,6 +1166,121 @@
 			set
 		};
 	};
+	var cache$1 = new Map();
+	var fetchEventDoc = (eventId) => {
+		let doc = cache$1.get(eventId);
+		if (!doc) {
+			doc = fetch(`/events/${eventId}`, { credentials: "same-origin" }).then((res) => res.ok ? res.text() : null).then((html) => html ? parseHtml(html) : null).catch(() => null);
+			cache$1.set(eventId, doc);
+		}
+		return doc;
+	};
+	var eventInfoCell = async (eventId, ...labels) => {
+		const doc = await fetchEventDoc(eventId);
+		const head = doc && [...doc.querySelectorAll(".gb_events_info_table td, h2.gb_subtitle")].find((el) => labels.includes(el.textContent?.trim() ?? ""));
+		return head ? head.nextElementSibling : null;
+	};
+	var TIME_NAMES = {
+		open: "開場",
+		start: "開演",
+		end: "終演"
+	};
+	var SHOWN_NAMES = 5;
+	var orNone = (s) => s || "なし";
+	var names = (actors) => actors.slice(0, SHOWN_NAMES).map((a) => a.name).join("、") + (actors.length > SHOWN_NAMES ? ` ほか ${actors.length - SHOWN_NAMES} 名` : "");
+	var lines = (s) => s.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+	var describeChanges = (before, after) => {
+		const changes = [];
+		const same = (a, b) => a.trim() === b.trim();
+		if (!same(before.eventName, after.eventName)) changes.push(`イベント名：${before.eventName} → ${after.eventName}`);
+		if (before.date !== after.date) changes.push(`開催日：${before.date} → ${after.date}`);
+		for (const key of [
+			"open",
+			"start",
+			"end"
+		]) if (before.times[key] !== after.times[key]) changes.push(`${TIME_NAMES[key]}：${orNone(before.times[key])} → ${orNone(after.times[key])}`);
+		const beforeIds = before.actors.map((a) => a.id);
+		const afterIds = after.actors.map((a) => a.id);
+		const added = after.actors.filter((a) => !beforeIds.includes(a.id));
+		const removed = before.actors.filter((a) => !afterIds.includes(a.id));
+		const actorParts = [added.length && `追加 ${names(added)}`, removed.length && `削除 ${names(removed)}`].filter(Boolean);
+		if (actorParts.length) changes.push(`出演者：${actorParts.join(" / ")}`);
+		else if (beforeIds.join() !== afterIds.join()) changes.push("出演者：並び順を変更");
+		if ((before.place?.id ?? "") !== (after.place?.id ?? "")) changes.push(`開催場所：${orNone(before.place?.name ?? "")} → ${orNone(after.place?.name ?? "")}`);
+		const [beforeLinks, afterLinks] = [lines(before.link), lines(after.link)];
+		const addedLinks = afterLinks.filter((l) => !beforeLinks.includes(l));
+		const removedLinks = beforeLinks.filter((l) => !afterLinks.includes(l));
+		if (addedLinks.length || removedLinks.length) changes.push([
+			"関連リンク：",
+			...addedLinks.map((l) => `  ＋ ${l}`),
+			...removedLinks.map((l) => `  － ${l}`)
+		].join("\n"));
+		else if (beforeLinks.join() !== afterLinks.join()) changes.push("関連リンク：並び順を変更");
+		if (!same(before.description, after.description)) changes.push("詳細：変更あり");
+		if (!same(before.hashtag, after.hashtag)) changes.push(`ハッシュタグ：${orNone(before.hashtag)} → ${orNone(after.hashtag)}`);
+		return changes;
+	};
+	var val = (id) => byId(id)?.value ?? "";
+	var time = (key) => {
+		const [hour, minute] = [val(`${key}_time_hour`), val(`${key}_time_minute`)];
+		return hour && minute ? `${pad2(Number(hour))}:${pad2(Number(minute))}` : "";
+	};
+	var readValues = (form) => {
+		const field = (name) => form.elements.namedItem(name)?.value ?? "";
+		const place = byId("places_list")?.selectedOptions[0];
+		return {
+			eventName: field("event_name"),
+			date: `${val("date_year")}/${val("date_month")}/${val("date_day")}`,
+			times: {
+				open: time("open"),
+				start: time("start"),
+				end: time("end")
+			},
+			actors: readSelectedActors(),
+			place: place?.value ? {
+				id: place.value,
+				name: place.text
+			} : null,
+			link: field("link"),
+			description: field("description"),
+			hashtag: field("hashtag")
+		};
+	};
+	var changes = null;
+	var editChanges = () => changes?.();
+	var IMAGE_CHANGE = "サムネイル画像：新しい画像に変更";
+	var baseline = null;
+	var editBaseline = () => baseline?.();
+	var initEditConfirm = (eventId) => {
+		const form = byId("event_form");
+		if (!form) return;
+		const before = readValues(form);
+		const initialPlace = findInitialPlace();
+		before.place = initialPlace && {
+			id: initialPlace.id,
+			name: `会場ID ${initialPlace.id}`
+		};
+		if (initialPlace) eventInfoCell(eventId, "開催場所").then((cell) => {
+			const name = cell?.querySelector(`a[href$="/places/${initialPlace.id}"]`)?.textContent?.trim();
+			if (name && before.place) before.place.name = name;
+		});
+		changes = () => {
+			const list = describeChanges(before, readValues(form));
+			if (form.querySelector("input[type=\"file\"][name=\"thumbnail_image\"]")?.files?.length) list.push(IMAGE_CHANGE);
+			return list;
+		};
+		baseline = () => JSON.stringify({
+			...before,
+			place: before.place?.id ?? null
+		});
+		return { minutesRestored: () => {
+			for (const key of [
+				"open",
+				"start",
+				"end"
+			]) if (!before.times[key] && val(`${key}_time_hour`)) before.times[key] = time(key);
+		} };
+	};
 	var RESTORE_PARAM = "ene_restore";
 	var isReturning = new URLSearchParams(location.search).has(RESTORE_PARAM);
 	var FIELD_NAMES = [
@@ -1257,52 +1373,92 @@
 		const d = new Date(t);
 		return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
 	};
-	var initDraft = (placePicker, refresh) => {
-		const form = byId("event_form");
-		if (!form) return;
-		const draft = load("formDraft", null);
-		let banner = null;
-		if (draft && !isReturning && !new URLSearchParams(location.search).has("from_event_id") && Date.now() - draft.savedAt < TTL_MS) {
-			banner = document.createElement("div");
-			banner.className = "alert alert-info ene-draft";
-			banner.append(`前回の入力内容が残っています（${savedAtText(draft.savedAt)}・「${draft.fields.event_name?.trim() || "イベント名未入力"}」）`);
-			const button = (value, onClick) => {
-				const btn = Object.assign(document.createElement("input"), {
-					type: "button",
-					className: "btn btn-small",
-					value
-				});
-				btn.addEventListener("click", () => {
-					onClick();
-					banner?.remove();
-					banner = null;
-				});
-				banner.append(btn);
-			};
-			button("復元する", () => {
-				restoreSnapshot(form, draft, placePicker);
-				refresh();
+	var showBanner = (form, text, restore, discard) => {
+		let banner = document.createElement("div");
+		banner.className = "alert alert-info ene-draft";
+		banner.append(text);
+		const remove = () => {
+			banner?.remove();
+			banner = null;
+		};
+		for (const [value, onClick] of [["復元する", restore], ["破棄する", discard]]) {
+			const btn = Object.assign(document.createElement("input"), {
+				type: "button",
+				className: "btn btn-small",
+				value
 			});
-			button("破棄する", () => save("formDraft", null));
-			form.prepend(banner);
+			btn.addEventListener("click", () => {
+				onClick();
+				remove();
+			});
+			banner.append(btn);
 		}
+		form.prepend(banner);
+		return {
+			remove,
+			shown: () => !!banner
+		};
+	};
+	var watch = (form, onChange) => {
 		let last = JSON.stringify(takeSnapshot(form));
 		setInterval(() => {
 			const snapshot = takeSnapshot(form);
 			const json = JSON.stringify(snapshot);
 			if (json === last) return;
 			last = json;
+			onChange(snapshot);
+		}, INTERVAL_MS$1);
+	};
+	var initDraft = (placePicker, refresh) => {
+		const form = byId("event_form");
+		if (!form) return;
+		const draft = load("formDraft", null);
+		const banner = draft && !isReturning && !new URLSearchParams(location.search).has("from_event_id") && Date.now() - draft.savedAt < TTL_MS ? showBanner(form, `前回の入力内容が残っています（${savedAtText(draft.savedAt)}・「${draft.fields.event_name?.trim() || "イベント名未入力"}」）`, () => {
+			restoreSnapshot(form, draft, placePicker);
+			refresh();
+		}, () => save("formDraft", null)) : null;
+		watch(form, (snapshot) => {
 			if (isBlank(snapshot)) return;
 			banner?.remove();
-			banner = null;
 			save("formDraft", {
 				...snapshot,
 				savedAt: Date.now()
 			});
-		}, INTERVAL_MS$1);
+		});
 	};
 	var initDraftClear = () => {
 		document.querySelector("form[action=\"/events/add/complete\"]")?.addEventListener("submit", () => save("formDraft", null));
+	};
+	var initEditDraft = (eventId, placePicker, refresh) => {
+		const form = byId("event_form");
+		const base = editBaseline();
+		if (!form || base === void 0) return;
+		const drafts = () => Object.fromEntries(Object.entries(load("editDrafts", {})).filter(([, d]) => Date.now() - d.savedAt < TTL_MS));
+		const put = (draft) => {
+			const all = drafts();
+			if (draft) all[eventId] = {
+				...draft,
+				savedAt: Date.now(),
+				base
+			};
+			else delete all[eventId];
+			save("editDrafts", all);
+		};
+		const draft = drafts()[eventId];
+		const banner = draft ? showBanner(form, `前回編集中の内容が残っています（${savedAtText(draft.savedAt)}）` + (draft.base === base ? "" : "。その後このイベントは更新されています（復元すると、その更新を上書きします）"), () => {
+			for (const actor of readSelectedActors()) page.removeActor(actor.id);
+			restoreSnapshot(form, draft, placePicker);
+			refresh();
+		}, () => put(null)) : null;
+		watch(form, (snapshot) => {
+			if ((editChanges() ?? []).some((c) => c !== "サムネイル画像：新しい画像に変更")) {
+				banner?.remove();
+				put(snapshot);
+			} else if (!banner?.shown()) put(null);
+		});
+		form.addEventListener("submit", (e) => {
+			if (!e.defaultPrevented) put(null);
+		}, true);
 	};
 	var findDuplicates = (events, q) => {
 		if (!q.start || !q.placeId || !q.actorIds.length) return [];
@@ -1322,10 +1478,10 @@
 	};
 	var INTERVAL_MS = 1e3;
 	var SHOWN_ACTORS = 3;
-	var cache$1 = new Map();
+	var cache = new Map();
 	var fetchEvents = (date, placeId) => {
 		const key = `${date}|${placeId}`;
-		let result = cache$1.get(key);
+		let result = cache.get(key);
 		if (!result) {
 			const params = new URLSearchParams({
 				event_date: date,
@@ -1333,7 +1489,7 @@
 				limit: "1000"
 			});
 			result = fetch("/api/events/search?" + params, { credentials: "same-origin" }).then((res) => res.json()).then((json) => json.results ?? []).catch(() => []);
-			cache$1.set(key, result);
+			cache.set(key, result);
 		}
 		return result;
 	};
@@ -1411,114 +1567,6 @@
 		};
 		check();
 		setInterval(check, INTERVAL_MS);
-	};
-	var cache = new Map();
-	var fetchEventDoc = (eventId) => {
-		let doc = cache.get(eventId);
-		if (!doc) {
-			doc = fetch(`/events/${eventId}`, { credentials: "same-origin" }).then((res) => res.ok ? res.text() : null).then((html) => html ? parseHtml(html) : null).catch(() => null);
-			cache.set(eventId, doc);
-		}
-		return doc;
-	};
-	var eventInfoCell = async (eventId, ...labels) => {
-		const doc = await fetchEventDoc(eventId);
-		const head = doc && [...doc.querySelectorAll(".gb_events_info_table td, h2.gb_subtitle")].find((el) => labels.includes(el.textContent?.trim() ?? ""));
-		return head ? head.nextElementSibling : null;
-	};
-	var TIME_NAMES = {
-		open: "開場",
-		start: "開演",
-		end: "終演"
-	};
-	var SHOWN_NAMES = 5;
-	var orNone = (s) => s || "なし";
-	var names = (actors) => actors.slice(0, SHOWN_NAMES).map((a) => a.name).join("、") + (actors.length > SHOWN_NAMES ? ` ほか ${actors.length - SHOWN_NAMES} 名` : "");
-	var lines = (s) => s.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-	var describeChanges = (before, after) => {
-		const changes = [];
-		const same = (a, b) => a.trim() === b.trim();
-		if (!same(before.eventName, after.eventName)) changes.push(`イベント名：${before.eventName} → ${after.eventName}`);
-		if (before.date !== after.date) changes.push(`開催日：${before.date} → ${after.date}`);
-		for (const key of [
-			"open",
-			"start",
-			"end"
-		]) if (before.times[key] !== after.times[key]) changes.push(`${TIME_NAMES[key]}：${orNone(before.times[key])} → ${orNone(after.times[key])}`);
-		const beforeIds = before.actors.map((a) => a.id);
-		const afterIds = after.actors.map((a) => a.id);
-		const added = after.actors.filter((a) => !beforeIds.includes(a.id));
-		const removed = before.actors.filter((a) => !afterIds.includes(a.id));
-		const actorParts = [added.length && `追加 ${names(added)}`, removed.length && `削除 ${names(removed)}`].filter(Boolean);
-		if (actorParts.length) changes.push(`出演者：${actorParts.join(" / ")}`);
-		else if (beforeIds.join() !== afterIds.join()) changes.push("出演者：並び順を変更");
-		if ((before.place?.id ?? "") !== (after.place?.id ?? "")) changes.push(`開催場所：${orNone(before.place?.name ?? "")} → ${orNone(after.place?.name ?? "")}`);
-		const [beforeLinks, afterLinks] = [lines(before.link), lines(after.link)];
-		const addedLinks = afterLinks.filter((l) => !beforeLinks.includes(l));
-		const removedLinks = beforeLinks.filter((l) => !afterLinks.includes(l));
-		if (addedLinks.length || removedLinks.length) changes.push([
-			"関連リンク：",
-			...addedLinks.map((l) => `  ＋ ${l}`),
-			...removedLinks.map((l) => `  － ${l}`)
-		].join("\n"));
-		else if (beforeLinks.join() !== afterLinks.join()) changes.push("関連リンク：並び順を変更");
-		if (!same(before.description, after.description)) changes.push("詳細：変更あり");
-		if (!same(before.hashtag, after.hashtag)) changes.push(`ハッシュタグ：${orNone(before.hashtag)} → ${orNone(after.hashtag)}`);
-		return changes;
-	};
-	var val = (id) => byId(id)?.value ?? "";
-	var time = (key) => {
-		const [hour, minute] = [val(`${key}_time_hour`), val(`${key}_time_minute`)];
-		return hour && minute ? `${pad2(Number(hour))}:${pad2(Number(minute))}` : "";
-	};
-	var readValues = (form) => {
-		const field = (name) => form.elements.namedItem(name)?.value ?? "";
-		const place = byId("places_list")?.selectedOptions[0];
-		return {
-			eventName: field("event_name"),
-			date: `${val("date_year")}/${val("date_month")}/${val("date_day")}`,
-			times: {
-				open: time("open"),
-				start: time("start"),
-				end: time("end")
-			},
-			actors: readSelectedActors(),
-			place: place?.value ? {
-				id: place.value,
-				name: place.text
-			} : null,
-			link: field("link"),
-			description: field("description"),
-			hashtag: field("hashtag")
-		};
-	};
-	var changes = null;
-	var editChanges = () => changes?.();
-	var initEditConfirm = (eventId) => {
-		const form = byId("event_form");
-		if (!form) return;
-		const before = readValues(form);
-		const initialPlace = findInitialPlace();
-		before.place = initialPlace && {
-			id: initialPlace.id,
-			name: `会場ID ${initialPlace.id}`
-		};
-		if (initialPlace) eventInfoCell(eventId, "開催場所").then((cell) => {
-			const name = cell?.querySelector(`a[href$="/places/${initialPlace.id}"]`)?.textContent?.trim();
-			if (name && before.place) before.place.name = name;
-		});
-		changes = () => {
-			const list = describeChanges(before, readValues(form));
-			if (form.querySelector("input[type=\"file\"][name=\"thumbnail_image\"]")?.files?.length) list.push("サムネイル画像：新しい画像に変更");
-			return list;
-		};
-		return { minutesRestored: () => {
-			for (const key of [
-				"open",
-				"start",
-				"end"
-			]) if (!before.times[key] && val(`${key}_time_hour`)) before.times[key] = time(key);
-		} };
 	};
 	var KEEP_MS = 2592e6;
 	var EVENT_IMAGE = /\/images\/events\/(\d+)(?:_s)?\.jpg/;
@@ -2317,16 +2365,24 @@
 		const actorBulk = initActorBulk();
 		const placePicker = initPlacePicker();
 		placePicker?.loadInitial(editId);
+		const date = initDatePicker();
 		const time = initSmartTime();
 		initAnnounce({
-			date: initDatePicker(),
+			date,
 			time,
 			place: placePicker,
 			actorBulk
 		});
 		initDuplicateCheck(editId);
 		initSubmitCheck();
-		restoreEditMinutes(editId).finally(() => editConfirm?.minutesRestored()).then(() => time?.refresh());
+		restoreEditMinutes(editId).finally(() => {
+			editConfirm?.minutesRestored();
+			time?.refresh();
+			initEditDraft(editId, placePicker, () => {
+				date?.refresh();
+				time?.refresh();
+			});
+		});
 		initEditImagePicker(editId);
 	} else processPendingUpload();
 })();

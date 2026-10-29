@@ -30,6 +30,11 @@ const readValues = (form: HTMLFormElement): EditValues => {
 let changes: (() => string[]) | null = null;
 // 编辑页以外返回 undefined
 export const editChanges = () => changes?.();
+export const IMAGE_CHANGE = 'サムネイル画像：新しい画像に変更';
+
+let baseline: (() => string) | null = null;
+// 原来的值（会场只看 ID，名字是异步读的）。编辑页草稿用它判断保存草稿后活动有没有被更新
+export const editBaseline = () => baseline?.();
 
 // 要在其他功能改动表单之前调用
 export const initEditConfirm = (eventId: string) => {
@@ -51,9 +56,10 @@ export const initEditConfirm = (eventId: string) => {
     const list = describeChanges(before, readValues(form));
     // 手机版的图片栏由脚本稍后补上，所以提交时再找
     const file = form.querySelector<HTMLInputElement>('input[type="file"][name="thumbnail_image"]');
-    if (file?.files?.length) list.push('サムネイル画像：新しい画像に変更');
+    if (file?.files?.length) list.push(IMAGE_CHANGE);
     return list;
   };
+  baseline = () => JSON.stringify({ ...before, place: before.place?.id ?? null });
 
   return {
     // 非 5 分钟的值在原下拉框里没有选项，分钟一开始是空的：补读（restoreEditMinutes）完成后再记

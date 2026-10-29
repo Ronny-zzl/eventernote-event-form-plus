@@ -97,4 +97,11 @@ describe.skipIf(!loggedIn)('出演者', () => {
     const results = await searchIn(p, input, 'NOVA⭐︎CHAN');
     expect(results[0].firstChild!.textContent).toBe('N0VA☆CHAN');
   });
+
+  test('検索：カタカナのよみがなでも見つかる（ひらがなに換えて再検索）', async () => {
+    const { p } = await withActors({});
+    const input = p.$<HTMLInputElement>('#selected_actors ~ .ene-search input');
+    const results = await searchIn(p, input, 'カスガサクラ');
+    expect(results[0].firstChild!.textContent).toBe('春日さくら');
+  });
 });

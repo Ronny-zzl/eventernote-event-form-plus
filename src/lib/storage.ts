@@ -30,6 +30,7 @@ type Store = {
   draftImage: ImageData | null;
   pendingUpload: PendingUpload | null;
   formDraft: (FormSnapshot & { savedAt: number }) | null;
+  editDrafts: Record<string, FormSnapshot & { savedAt: number; base: string }>; // 活动 ID → 编辑页草稿（base：打开时的原值）
   imageVersions: Record<string, number>; // 活动 ID → 图片更新时间（用来绕过浏览器缓存）
 };
 
