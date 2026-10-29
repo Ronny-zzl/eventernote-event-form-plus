@@ -1,4 +1,4 @@
 # 与 package.json 的 engines 和 CI（.github/workflows）保持一致。pnpm 的版本只由这里决定
 [tools]
-node = "26.12.1"
+node = "26.13.0"
 pnpm = "12.16.1"
