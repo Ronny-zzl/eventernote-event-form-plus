@@ -1,0 +1,93 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+
+  extends: ["config:recommended", "group:allNonMajor"],
+  timezone: "Asia/Tokyo",
+
+  // 提交信息用祈使句（"Add ..."），不加 conventional commit 前缀
+  semanticCommits: "disabled",
+
+  // 不设 schedule、不限 PR 数：个人项目有更新就跟，时间窗太窄还会被整次错过，更新越堆越多。
+  // config:recommended 默认每小时最多 2 个、同时最多 10 个，设成 0 即不限
+  prHourlyLimit: 0,
+  prConcurrentLimit: 0,
+
+  // 1 天是下限而不是偏好：pnpm 自己的 minimumReleaseAge 默认 1 天，更新的版本 CI 装不上
+  minimumReleaseAge: "1 day",
+
+  // 所有 Renovate PR 都带 deps 标签，下面的规则只追加
+  labels: ["deps"],
+
+  dependencyDashboard: true,
+
+  // 时间窗给一整天，理由同上
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ["on the first day of the month"],
+  },
+
+  // 已知漏洞不等发布满期。prPriority 只能写在 packageRules 里，写在这里校验会报错
+  vulnerabilityAlerts: {
+    enabled: true,
+    minimumReleaseAge: null,
+    schedule: null,
+    addLabels: ["security"],
+  },
+
+  packageRules: [
+    {
+      // Node 写在两处、由两个 manager 读：mise.toml 固定运行时，package.json 的 engines 声明要求。
+      // 两处是同一个决定，放进一个 PR，避免只合一半。pnpm 只写在 mise.toml，不需要这条
+      description: "Node 的 mise.toml 和 engines 一起升",
+      matchPackageNames: ["node"],
+      groupName: "node",
+    },
+    {
+      // Node 大版本要同时改 mise.toml、engines 和 @types/node；pnpm 大版本会改锁文件格式
+      description: "Node / pnpm / @types/node 的大版本先在看板里批准",
+      matchPackageNames: ["node", "pnpm", "@types/node"],
+      matchUpdateTypes: ["major"],
+      dependencyDashboardApproval: true,
+    },
+
+    // CI（typecheck、lint、单元测试、构建 + 产物一致检查）覆盖得到的自动合并；
+    // 覆盖不到的在 PR 正文里写明合并前要跑什么。
+    // 产物一致检查是关键：更新若改变了 .user.js，CI 会失败，就不会自动合并——
+    // 已安装的用户和 Greasy Fork 都从提交的 .user.js 更新，产物只能随发布一起变
+
+    {
+      // 非大版本由 group:allNonMajor 合成一个 PR（Node、构建工具各自单独，见上下的分组）。
+      // 锁文件维护同样由 CI 覆盖，一起自动合并
+      description: "小版本更新合并成一个 PR，CI 通过后自动合并",
+      matchUpdateTypes: ["minor", "patch", "pin", "digest", "lockFileMaintenance"],
+      automerge: true,
+      prBodyNotes: ["CI 通过后自动合并。"],
+    },
+    {
+      // 最可能改变产物的两个包单独成组，免得它们卡住其他更新
+      description: "构建工具单独一个 PR",
+      matchPackageNames: ["vite", "vite-plugin-monkey"],
+      groupName: "build tools",
+      prBodyNotes: [
+        "构建产物有变化时 CI 的 `git diff --exit-code eventernote-event-form-plus.user.js` 会失败，不会自动合并。",
+        "这时看一下 diff（`==UserScript==` 头部、`@grant`、代码），没问题就留到下次发布时一起合并、重新构建。",
+      ],
+    },
+    {
+      description: "大版本单独开 PR，手动合并",
+      matchUpdateTypes: ["major"],
+      prBodyNotes: ["大版本不会自动合并：看过 changelog、CI 通过后手动合并。"],
+    },
+    {
+      // e2e 测试和 pnpm site 需要登录，CI 不跑
+      description: "jsdom / playwright-core 的大版本要实跑",
+      matchPackageNames: ["jsdom", "@types/jsdom", "playwright-core"],
+      matchUpdateTypes: ["major"],
+      addLabels: ["需要实跑验证"],
+      prBodyNotes: [
+        "**CI 绿了也不够。** jsdom 只用在 e2e 测试，playwright-core 只用在 `pnpm site login`，CI 都不跑。",
+        "合并前本地跑一次 `pnpm test:e2e`（playwright-core 的话再跑 `pnpm site login`）。",
+      ],
+    },
+  ],
+}

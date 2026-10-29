@@ -11,7 +11,9 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 - **根目录的 `eventernote-event-form-plus.user.js` 是构建产物，不要手改**。它必须留在这个路径并提交：已安装的用户和 Greasy Fork 都从它的 raw URL 更新。构建先输出到 `dist/`（忽略），再由 `vite.config.ts` 里的小插件复制到根目录
 - **产物不压缩**：Greasy Fork 禁止压缩 / 混淆的代码
 - 包管理器 pnpm。命令：`pnpm build` / `pnpm dev`（开发服务器，Tampermonkey 自动更新）/ `pnpm typecheck`（src 和 scripts、e2e 分两个 tsconfig）/ `pnpm lint`（oxlint）/ `pnpm test` / `pnpm test:e2e` / `pnpm site …`（见下）
-- CI（`.github/workflows/ci.yml`）：typecheck、lint、test、build，并检查提交的 `.user.js` 和构建结果一致
+- 工具链由 `mise.toml` 固定（Node 26、pnpm 12），本地和 CI（`jdx/mise-action`）共用；pnpm 版本只写在这里（不用 `packageManager`），Node 同时写在 `package.json` 的 `engines`
+- CI（`.github/workflows/ci.yml`）：typecheck、lint、test、build，并检查提交的 `.user.js` 和构建结果一致。push 只在 main 上跑，其他分支只在 PR 上跑
+- Renovate（`renovate.json5`，参考 ../ricotta 的设置）：非大版本合成一个 PR，CI 通过后自动合并；vite / vite-plugin-monkey 单独一组——产物变化时 CI 的一致检查会失败、不会自动合并，留到发布时一起合并重新构建；jsdom / playwright-core 的大版本要本地跑 `pnpm test:e2e`
 - 目录：`src/main.ts`（按页面分发）、`src/style.css`（全部样式，打包时用 GM_addStyle 注入）、`src/lib/`（page = 页面全局变量与小工具、storage = 带类型的 GM 存储、notice、eventPage = 活动页读取缓存、suggest = 会场和出演者共用的输入即搜索候选列表）、`src/features/`（actors、actorSearch、actorBulk、announce、date、time、place、snapshot、thumbnail；纯函数放在 `timeParse.ts`、`dateParse.ts`、`placeRank.ts`、`actorRank.ts`、`actorMatch.ts`，供单元测试）
 - GM API 从 `'$'` 导入（vite-plugin-monkey 的别名）。依赖 `'$'` 的模块在 vitest 里无法加载，所以要测试的逻辑写成不依赖它的纯函数模块
 - 同一行里的输入框、下拉框、按钮用 `ene-ctl` 类统一高度（电脑版 30px，手机版 36px；选择器要写成 `input.ene-ctl[type]`，否则会输给 Bootstrap 的 `input[type="text"] { height: 20px }`）；`.ene-search-row` 里只有文字输入框伸展（`input[type="text"]`），否则按钮也会被拉伸

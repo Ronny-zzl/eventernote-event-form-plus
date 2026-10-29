@@ -1,19 +1,22 @@
 name: CI
 
+# 推送到 main / PR 时检查。其他分支（如 Renovate）只在 PR 上检查，避免同一提交跑两次
 on:
   push:
+    branches: [main]
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: pnpm
+      - uses: actions/checkout@v7
+      # Node / pnpm 版本取自 mise.toml（与本地一致），安装结果由 mise-action 缓存
+      - uses: jdx/mise-action@v5
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
