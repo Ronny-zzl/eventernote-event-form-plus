@@ -43,6 +43,7 @@ export default defineConfig(({ mode }) => {
             'zh-CN': '改善 Eventernote 活动登录和编辑页面：会场搜索、批量添加出演者、重复登录提醒、时间输入改进、出演者排序、出演者组合、从确认页返回修改、添加缩略图',
             en: 'Improves the Eventernote event add/edit forms: venue search, bulk-add performers, duplicate warnings, smarter time input, reorder performers, performer sets, back button on the confirm page, thumbnail images',
           },
+          icon: 'https://www.google.com/s2/favicons?sz=64&domain=eventernote.com',
           namespace: preview ? `${repo}#preview` : repo,
           version: preview ? `${version}.${stamp}` : version,
           author: 'Ronny-zzl',
