@@ -51,6 +51,7 @@ export default defineConfig(({ mode }) => {
           homepageURL: repo,
           supportURL: `${repo}/issues`,
           match: ['https://www.eventernote.com/events/*'],
+          connect: ['www.eventernote.com'], // 手机版取电脑版活动页（GM_xmlhttpRequest）
           'run-at': 'document-idle',
         },
         build: { fileName },

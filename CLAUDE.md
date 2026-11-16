@@ -3,7 +3,7 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 当前已发布版本：`0.5.3`（已打 `v0.5.3` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 当前已发布版本：`0.6.0`（已打 `v0.6.0` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 工程结构
 
@@ -131,6 +131,8 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 14. **重复登录提醒**（`features/duplicateCheck.ts` + 纯函数 `duplicate.ts`，登录页和编辑页）：同日、同会场、開演时间相同、有共同出演者的活动已存在时，在出演者栏末尾显示黄色提示（活动链接、共同出演者、中止 / 延期），提交前检查也列出。每秒读一次表单（值会被很多地方改），按「日期 + 会场」请求并缓存，出演者和时间在本地比较；開演没填时不判定。用户决定：同一天的其他活动（「同日の出演」）不显示
 15. **复制登录带上缩略图**（`thumbnail.ts` 的 `fetchSourceImage`，登录页 `?from_event_id=`）：把原活动的 S3 图片放进图片框（显示「コピー元のイベントの画像を引き継ぎました」）。1000×1000 是网站生成的网页截图（上传的图最大 700），不复制。取图期间用户自己选了图时不覆盖。jsdom 没有 canvas 测不了，用真实 Chrome 验证过（playwright，只放行 GET；`.local/tmp/chrome-copy.ts`）
 16. **编辑页的改动确认**（`features/editConfirm.ts` + 纯函数 `editDiff.ts`）：编辑页没有确认页，提交前检查（`submitCheck.ts`）在编辑页每次都 confirm，列出改了什么（活动名、日期、时间、出演者的增删 / 顺序、会场、关联链接的增删 / 顺序、詳細、ハッシュタグ、新图片）。原来的值在其他功能改动表单之前记下；会场 ID 从内联脚本读、名字从活动页读；非 5 分钟的分钟等 `restoreEditMinutes` 完成后再记
+17. **编辑历史から復元**（`features/history.ts` + 纯函数 `historyParse.ts`，编辑页，0.6.0）：用户的需求是和别人同时编辑时自己的输入被整个覆盖，要能快速取回历史版本填进表单。表单开头的按钮打开 modal，列出活动页的历史（`fetchHistoryList`），选中后取 `/api/events/history` 的快照，用 `describeChanges` 显示「现在的输入 → 该版本」的差别，确认后 `replaceSnapshot`（和编辑页草稿恢复共用）。只改表单不提交
+   - 手机版活动页的历史列表**没有历史 ID 和准确时间**，也没有按活动 ID 列历史的 API（`event_id=` 等都是 InvalidParameter）。所以手机版用 `GM_xmlhttpRequest` 带电脑版 UA 取活动页（`@connect www.eventernote.com`）。e2e 里通过；**iPhone 的 Tampermonkey for Safari 能否改 UA 未实测**
 
 `@match` 是 `https://www.eventernote.com/events/*`，入口在文件末尾按 pathname 分发。
 

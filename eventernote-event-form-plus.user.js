@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.5.3
+// @version            0.6.0
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -15,9 +15,11 @@
 // @homepageURL        https://github.com/Ronny-zzl/eventernote-event-form-plus
 // @supportURL         https://github.com/Ronny-zzl/eventernote-event-form-plus/issues
 // @match              https://www.eventernote.com/events/*
+// @connect            www.eventernote.com
 // @grant              GM_addStyle
 // @grant              GM_getValue
 // @grant              GM_setValue
+// @grant              GM_xmlhttpRequest
 // @grant              unsafeWindow
 // @run-at             document-idle
 // ==/UserScript==
@@ -33,7 +35,7 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:0;display:flex}.ene-presets select{flex:200px;width:auto;min-width:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input[type=text]{flex:1;min-width:160px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-announce-result{flex-wrap:wrap;align-items:center;gap:4px 16px;margin:6px 0 0;display:flex}.ene-announce-result[hidden]{display:none}.ene-announce-result .btn{margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}.ene-duplicate{color:#8a6d3b;background:#fcf8e3;border:1px solid #fbeed5;border-radius:4px;margin:8px 0;padding:8px 12px}.ene-duplicate[hidden]{display:none}.ene-duplicate ul{margin:4px 0 0 20px;padding:0}.ene-sp input.btn{color:#007aff;-webkit-appearance:none;background:#fff;border:1px solid #007aff;border-radius:0;height:30px;margin:2px 0;padding:0 10px;font-size:14px}.ene-sp .ene-time-row input.ene-time{width:80px}.ene-sp .ene-drop img{max-width:100%}.ene-sp .ene-notice{max-width:none;left:10px;right:10px}.ene-modal{z-index:10001;background:#00000073;justify-content:center;align-items:center;padding:16px;display:none;position:fixed;inset:0}.ene-modal.ene-open{display:flex}.ene-modal-box{background:#fff;border-radius:6px;flex-direction:column;width:100%;max-width:720px;max-height:100%;font-size:13px;display:flex;box-shadow:0 6px 24px #0000004d}.ene-modal-head{border-bottom:1px solid #ddd;padding:10px 14px;font-size:15px;font-weight:700}.ene-modal-close{float:right;cursor:pointer;color:#888;font-size:20px;line-height:1}.ene-modal-body{flex:1;padding:10px 14px;overflow-y:auto}.ene-modal-body textarea{box-sizing:border-box;width:100%;margin-bottom:6px}.ene-modal-foot{border-top:1px solid #ddd;justify-content:flex-end;gap:8px;padding:10px 14px;display:flex}.ene-modal-foot .btn{margin-bottom:0}.ene-bulk-bar{flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;display:flex}.ene-bulk-bar .btn{margin-bottom:0}.ene-bulk-bar label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-bulk-bar label input{margin:0}.ene-bulk-summary{color:#666;flex:1;font-size:12px}.ene-bulk-list{margin:0;padding:0;list-style:none}.ene-bulk-row[hidden]{display:none}.ene-bulk-row{border-bottom:1px solid #f0f0f0;align-items:flex-start;gap:8px;padding:6px 4px;display:flex}.ene-bulk-row>input{margin:3px 0 0}.ene-bulk-main{flex:1;min-width:0}.ene-bulk-name{font-weight:700}.ene-bulk-result{color:#555}.ene-bulk-result .ene-suggest-sub{color:#888;margin-left:8px;font-size:11px}.ene-bulk-result select{max-width:100%;margin:2px 0 0}.ene-bulk-result .btn{margin:0 0 0 4px}.ene-bulk-badge{color:#666;background:#eee;border-radius:3px;flex:none;padding:1px 6px;font-size:11px}.ene-bulk-row[data-status=exact] .ene-bulk-badge{color:#3c763d;background:#dff0d8}.ene-bulk-row[data-status=multiple] .ene-bulk-badge,.ene-bulk-row[data-status=candidates] .ene-bulk-badge{color:#8a6d3b;background:#fcf8e3}.ene-bulk-row[data-status=none] .ene-bulk-badge,.ene-bulk-row[data-status=error] .ene-bulk-badge{color:#a94442;background:#f2dede}.ene-bulk-row[data-status=added]{opacity:.6}.ene-sp .ene-modal{padding:0}.ene-sp .ene-modal-box{border-radius:0;height:100%}.ene-transfer-help{color:#555;margin:0 0 8px}.ene-modal-body textarea[spellcheck=false]{font-family:monospace;font-size:13px}.ene-bulk-research{gap:4px;margin-top:4px;display:flex}.ene-bulk-research input[type=text]{flex:1;min-width:0;margin:0}.ene-bulk-research .btn{margin:0}input.ene-ctl[type],select.ene-ctl{box-sizing:border-box;vertical-align:middle;height:30px;margin:0}.ene-sp input.ene-ctl[type],.ene-sp select.ene-ctl{height:36px;margin:0;font-size:14px}.ene-sp input.ene-ctl[type=text],.ene-sp select.ene-ctl{background:#fff;border:1px solid #aaa;padding:0 6px}#selected_actors+.ene-search{margin-top:6px}");
+	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:0;display:flex}.ene-presets select{flex:200px;width:auto;min-width:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input[type=text]{flex:1;min-width:160px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-announce-result{flex-wrap:wrap;align-items:center;gap:4px 16px;margin:6px 0 0;display:flex}.ene-announce-result[hidden]{display:none}.ene-announce-result .btn{margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}.ene-duplicate{color:#8a6d3b;background:#fcf8e3;border:1px solid #fbeed5;border-radius:4px;margin:8px 0;padding:8px 12px}.ene-duplicate[hidden]{display:none}.ene-duplicate ul{margin:4px 0 0 20px;padding:0}.ene-sp input.btn{color:#007aff;-webkit-appearance:none;background:#fff;border:1px solid #007aff;border-radius:0;height:30px;margin:2px 0;padding:0 10px;font-size:14px}.ene-sp .ene-time-row input.ene-time{width:80px}.ene-sp .ene-drop img{max-width:100%}.ene-sp .ene-notice{max-width:none;left:10px;right:10px}.ene-modal{z-index:10001;background:#00000073;justify-content:center;align-items:center;padding:16px;display:none;position:fixed;inset:0}.ene-modal.ene-open{display:flex}.ene-modal-box{background:#fff;border-radius:6px;flex-direction:column;width:100%;max-width:720px;max-height:100%;font-size:13px;display:flex;box-shadow:0 6px 24px #0000004d}.ene-modal-head{border-bottom:1px solid #ddd;padding:10px 14px;font-size:15px;font-weight:700}.ene-modal-close{float:right;cursor:pointer;color:#888;font-size:20px;line-height:1}.ene-modal-body{flex:1;padding:10px 14px;overflow-y:auto}.ene-modal-body textarea{box-sizing:border-box;width:100%;margin-bottom:6px}.ene-modal-foot{border-top:1px solid #ddd;justify-content:flex-end;gap:8px;padding:10px 14px;display:flex}.ene-modal-foot .btn{margin-bottom:0}.ene-bulk-bar{flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;display:flex}.ene-bulk-bar .btn{margin-bottom:0}.ene-bulk-bar label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-bulk-bar label input{margin:0}.ene-bulk-summary{color:#666;flex:1;font-size:12px}.ene-bulk-list{margin:0;padding:0;list-style:none}.ene-bulk-row[hidden]{display:none}.ene-bulk-row{border-bottom:1px solid #f0f0f0;align-items:flex-start;gap:8px;padding:6px 4px;display:flex}.ene-bulk-row>input{margin:3px 0 0}.ene-bulk-main{flex:1;min-width:0}.ene-bulk-name{font-weight:700}.ene-bulk-result{color:#555}.ene-bulk-result .ene-suggest-sub{color:#888;margin-left:8px;font-size:11px}.ene-bulk-result select{max-width:100%;margin:2px 0 0}.ene-bulk-result .btn{margin:0 0 0 4px}.ene-bulk-badge{color:#666;background:#eee;border-radius:3px;flex:none;padding:1px 6px;font-size:11px}.ene-bulk-row[data-status=exact] .ene-bulk-badge{color:#3c763d;background:#dff0d8}.ene-bulk-row[data-status=multiple] .ene-bulk-badge,.ene-bulk-row[data-status=candidates] .ene-bulk-badge{color:#8a6d3b;background:#fcf8e3}.ene-bulk-row[data-status=none] .ene-bulk-badge,.ene-bulk-row[data-status=error] .ene-bulk-badge{color:#a94442;background:#f2dede}.ene-bulk-row[data-status=added]{opacity:.6}.ene-sp .ene-modal{padding:0}.ene-sp .ene-modal-box{border-radius:0;height:100%}.ene-transfer-help{color:#555;margin:0 0 8px}.ene-modal-body textarea[spellcheck=false]{font-family:monospace;font-size:13px}.ene-history-entry{margin:0 0 8px}.ene-history-list{border:1px solid #ddd;border-radius:3px;max-height:240px;margin:0 0 8px;padding:0;list-style:none;overflow-y:auto}.ene-history-list li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:6px 8px}.ene-history-list li:last-child{border-bottom:none}.ene-history-list li.ene-active{background:#eef6fb;font-weight:700}.ene-history-diff p{white-space:pre-wrap;word-break:break-all;margin:0 0 4px}.ene-history-diff .ene-history-diff-head{color:#555}.ene-bulk-research{gap:4px;margin-top:4px;display:flex}.ene-bulk-research input[type=text]{flex:1;min-width:0;margin:0}.ene-bulk-research .btn{margin:0}input.ene-ctl[type],select.ene-ctl{box-sizing:border-box;vertical-align:middle;height:30px;margin:0}.ene-sp input.ene-ctl[type],.ene-sp select.ene-ctl{height:36px;margin:0;font-size:14px}.ene-sp input.ene-ctl[type=text],.ene-sp select.ene-ctl{background:#fff;border:1px solid #aaa;padding:0 6px}#selected_actors+.ene-search{margin-top:6px}");
 	var showNotice = (message, kind) => {
 		const box = document.createElement("div");
 		box.className = kind === "error" ? "ene-notice ene-error" : "ene-notice";
@@ -47,6 +49,7 @@
 	};
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+	var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
 	var page = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
 	var byId = (id) => document.getElementById(id);
 	var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -669,7 +672,7 @@
 		return { run };
 	};
 	var RECENT_MAX$1 = 20;
-	var cache$2 = new Map();
+	var cache$3 = new Map();
 	var FIRST_LIMIT = 50;
 	var fetchActors = (keyword, simple, limit) => fetch("/api/actors/search?" + new URLSearchParams({
 		keyword,
@@ -683,12 +686,12 @@
 		return mergeMissingNames(results, (await fetchActors(keyword, "1", 1e3)).results ?? [], keyword);
 	};
 	var searchActors = (keyword, fresh = false) => {
-		if (fresh) cache$2.delete(keyword);
-		let result = cache$2.get(keyword);
+		if (fresh) cache$3.delete(keyword);
+		let result = cache$3.get(keyword);
 		if (!result) {
 			result = fetchWithMissingNames(keyword);
-			result.catch(() => cache$2.delete(keyword));
-			cache$2.set(keyword, result);
+			result.catch(() => cache$3.delete(keyword));
+			cache$3.set(keyword, result);
 		}
 		return result;
 	};
@@ -1308,14 +1311,44 @@
 			set
 		};
 	};
-	var cache$1 = new Map();
+	var cache$2 = new Map();
 	var fetchEventDoc = (eventId) => {
-		let doc = cache$1.get(eventId);
+		let doc = cache$2.get(eventId);
 		if (!doc) {
 			doc = fetch(`/events/${eventId}`, { credentials: "same-origin" }).then((res) => res.ok ? res.text() : null).then((html) => html ? parseHtml(html) : null).catch(() => null);
-			cache$1.set(eventId, doc);
+			cache$2.set(eventId, doc);
 		}
 		return doc;
+	};
+	var DESKTOP_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36";
+	var fetchDesktopDoc = (eventId) => new Promise((resolve) => {
+		_GM_xmlhttpRequest({
+			method: "GET",
+			url: `${location.origin}/events/${eventId}`,
+			headers: { "User-Agent": DESKTOP_UA },
+			onload: (res) => resolve(res.status === 200 ? parseHtml(res.responseText) : null),
+			onerror: () => resolve(null),
+			ontimeout: () => resolve(null)
+		});
+	});
+	var HISTORY_RE = /showHistory\('(\d+)'\)/;
+	var parseHistoryList = (doc) => [...doc.querySelectorAll("#authors li")].flatMap((li) => {
+		const id = HISTORY_RE.exec(li.querySelector("a[href*=\"showHistory\"]")?.getAttribute("href") ?? "")?.[1];
+		const span = li.querySelector("span[title]");
+		if (!id || !span) return [];
+		return [{
+			id,
+			user: li.querySelector("a.noline")?.textContent?.replace(span.textContent ?? "", "").trim() ?? "",
+			time: span.getAttribute("title") ?? ""
+		}];
+	});
+	var fetchHistoryList = async (eventId) => {
+		const doc = await fetchEventDoc(eventId);
+		const list = doc ? parseHistoryList(doc) : [];
+		if (list.length) return list;
+		const desktop = await fetchDesktopDoc(eventId);
+		const fallback = desktop ? parseHistoryList(desktop) : [];
+		return fallback.length ? fallback : null;
 	};
 	var eventInfoCell = async (eventId, ...labels) => {
 		const doc = await fetchEventDoc(eventId);
@@ -1363,7 +1396,7 @@
 		return changes;
 	};
 	var val = (id) => byId(id)?.value ?? "";
-	var time = (key) => {
+	var time$1 = (key) => {
 		const [hour, minute] = [val(`${key}_time_hour`), val(`${key}_time_minute`)];
 		return hour && minute ? `${pad2(Number(hour))}:${pad2(Number(minute))}` : "";
 	};
@@ -1374,9 +1407,9 @@
 			eventName: field("event_name"),
 			date: `${val("date_year")}/${val("date_month")}/${val("date_day")}`,
 			times: {
-				open: time("open"),
-				start: time("start"),
-				end: time("end")
+				open: time$1("open"),
+				start: time$1("start"),
+				end: time$1("end")
 			},
 			actors: readSelectedActors(),
 			place: place?.value ? {
@@ -1420,7 +1453,7 @@
 				"open",
 				"start",
 				"end"
-			]) if (!before.times[key] && val(`${key}_time_hour`)) before.times[key] = time(key);
+			]) if (!before.times[key] && val(`${key}_time_hour`)) before.times[key] = time$1(key);
 		} };
 	};
 	var RESTORE_PARAM = "ene_restore";
@@ -1482,6 +1515,10 @@
 			selectById("places_list").replaceChildren();
 			page.searchPlaces(snapshot.prefecture, place?.id);
 		} else if (place) selectById("places_list").append(new Option(place.name, place.id, true, true));
+	};
+	var replaceSnapshot = (form, snapshot, placePicker) => {
+		for (const actor of readSelectedActors()) page.removeActor(actor.id);
+		restoreSnapshot(form, snapshot, placePicker);
 	};
 	var initFormSnapshot = (placePicker) => {
 		const form = byId("event_form");
@@ -1588,8 +1625,7 @@
 		};
 		const draft = drafts()[eventId];
 		const banner = draft ? showBanner(form, `前回編集中の内容が残っています（${savedAtText(draft.savedAt)}）` + (draft.base === base ? "" : "。その後このイベントは更新されています（復元すると、その更新を上書きします）"), () => {
-			for (const actor of readSelectedActors()) page.removeActor(actor.id);
-			restoreSnapshot(form, draft, placePicker);
+			replaceSnapshot(form, draft, placePicker);
 			refresh();
 		}, () => put(null)) : null;
 		watch(form, (snapshot) => {
@@ -1620,10 +1656,10 @@
 	};
 	var INTERVAL_MS = 1e3;
 	var SHOWN_ACTORS = 3;
-	var cache = new Map();
+	var cache$1 = new Map();
 	var fetchEvents = (date, placeId) => {
 		const key = `${date}|${placeId}`;
-		let result = cache.get(key);
+		let result = cache$1.get(key);
 		if (!result) {
 			const params = new URLSearchParams({
 				event_date: date,
@@ -1631,7 +1667,7 @@
 				limit: "1000"
 			});
 			result = fetch("/api/events/search?" + params, { credentials: "same-origin" }).then((res) => res.json()).then((json) => json.results ?? []).catch(() => []);
-			cache.set(key, result);
+			cache$1.set(key, result);
 		}
 		return result;
 	};
@@ -1709,6 +1745,187 @@
 		};
 		check();
 		setInterval(check, INTERVAL_MS);
+	};
+	var time = (key, value) => {
+		const m = /^(\d{1,2}):(\d{2})/.exec(value ?? "");
+		return {
+			[`${key}_time_hour`]: m ? m[1].padStart(2, "0") : "",
+			[`${key}_time_minute`]: m ? m[2] : ""
+		};
+	};
+	var historySnapshot = (h) => {
+		const [year, month, day] = h.event_date.split("-").map(Number);
+		const names = new Map((h.actors ?? []).map((a) => [String(a.id), a.name]));
+		return {
+			fields: {
+				event_name: h.event_name ?? "",
+				link: (h.link ?? "").replace(/\r\n?/g, "\n"),
+				description: (h.description ?? "").replace(/\r\n?/g, "\n"),
+				hashtag: h.hashtag ?? ""
+			},
+			selects: {
+				date_year: String(year),
+				date_month: String(month),
+				date_day: String(day),
+				...time("open", h.open_time),
+				...time("start", h.start_time),
+				...time("end", h.end_time)
+			},
+			actors: h.actor_id.split(",").map((id) => id.trim()).filter(Boolean).map((id) => ({
+				id,
+				name: names.get(id) ?? `ID ${id}`
+			})),
+			prefecture: h.place ? String(h.place.prefecture) : "",
+			place: h.place ? {
+				id: String(h.place.id),
+				name: h.place.place_name
+			} : null
+		};
+	};
+	var snapshotValues = (s) => {
+		const t = (key) => {
+			const [hour, minute] = [s.selects[`${key}_time_hour`], s.selects[`${key}_time_minute`]];
+			return hour && minute ? `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}` : "";
+		};
+		return {
+			eventName: s.fields.event_name ?? "",
+			date: `${s.selects.date_year}/${s.selects.date_month}/${s.selects.date_day}`,
+			times: {
+				open: t("open"),
+				start: t("start"),
+				end: t("end")
+			},
+			actors: s.actors,
+			place: s.place,
+			link: s.fields.link ?? "",
+			description: s.fields.description ?? "",
+			hashtag: s.fields.hashtag ?? ""
+		};
+	};
+	var historyTimeText = (title) => {
+		const m = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/.exec(title);
+		return m ? `${m[1]}/${Number(m[2])}/${Number(m[3])} ${m[4]}:${m[5]}` : title;
+	};
+	var cache = new Map();
+	var fetchHistory = (id) => {
+		let snapshot = cache.get(id);
+		if (!snapshot) {
+			snapshot = fetch(`/api/events/history?event_history_id=${id}`, { credentials: "same-origin" }).then((res) => res.ok ? res.json() : null).then((data) => data?.results?.[0] ? historySnapshot(data.results[0]) : null).catch(() => null);
+			snapshot.then((s) => {
+				if (!s) cache.delete(id);
+			});
+			cache.set(id, snapshot);
+		}
+		return snapshot;
+	};
+	var initEditHistory = (eventId, placePicker, refresh) => {
+		const form = byId("event_form");
+		if (!form) return;
+		const entry = document.createElement("p");
+		entry.className = "ene-history-entry";
+		const openBtn = Object.assign(document.createElement("input"), {
+			type: "button",
+			className: "btn btn-small",
+			value: "編集履歴から復元",
+			title: "以前に保存された内容をフォームに入れます（同時に編集して入力が消えてしまったときなど）"
+		});
+		entry.append(openBtn);
+		form.prepend(entry);
+		const modal = document.createElement("div");
+		modal.className = "ene-modal";
+		modal.innerHTML = `
+    <div class="ene-modal-box" role="dialog" aria-modal="true" aria-label="編集履歴から復元">
+      <div class="ene-modal-head">編集履歴から復元<span class="ene-modal-close" title="閉じる">×</span></div>
+      <div class="ene-modal-body">
+        <p class="ene-transfer-help">選んだ版の内容（保存されたときの全項目）をフォームに入れます。「編集完了」を押すまで保存はされません。サムネイル画像は履歴に残っていないため変わりません。</p>
+        <ul class="ene-history-list"></ul>
+        <div class="ene-history-diff"></div>
+      </div>
+      <div class="ene-modal-foot">
+        <input type="button" class="btn btn-small" value="閉じる">
+        <input type="button" class="btn btn-small btn-primary" value="フォームに入れる" disabled>
+      </div>
+    </div>
+  `;
+		document.body.append(modal);
+		const list = modal.querySelector(".ene-history-list");
+		const diff = modal.querySelector(".ene-history-diff");
+		const [closeBtn, applyBtn] = modal.querySelectorAll(".ene-modal-foot input");
+		let entries = null;
+		let chosen = null;
+		let run = 0;
+		const label = (e, i) => `${historyTimeText(e.time)}　${e.user}${i === 0 ? "（最新）" : ""}${i === entries.length - 1 ? "（登録）" : ""}`;
+		const select = async (li, e) => {
+			const current = ++run;
+			list.querySelectorAll(".ene-active").forEach((x) => x.classList.remove("ene-active"));
+			li.classList.add("ene-active");
+			chosen = null;
+			applyBtn.disabled = true;
+			diff.textContent = "読み込み中…";
+			const snapshot = await fetchHistory(e.id);
+			if (current !== run) return;
+			if (!snapshot) {
+				diff.textContent = "読み込めませんでした。もう一度選んでください";
+				return;
+			}
+			const changes = describeChanges(snapshotValues(takeSnapshot(form)), snapshotValues(snapshot));
+			diff.replaceChildren(Object.assign(document.createElement("p"), {
+				className: "ene-history-diff-head",
+				textContent: changes.length ? "現在の入力内容から次のように変わります：" : "現在の入力内容と同じです"
+			}), ...changes.map((c) => Object.assign(document.createElement("p"), { textContent: c })));
+			if (changes.length) {
+				chosen = {
+					entry: e,
+					snapshot
+				};
+				applyBtn.disabled = false;
+			}
+		};
+		const render = () => {
+			if (!entries) return;
+			list.replaceChildren(...entries.map((e, i) => {
+				const li = Object.assign(document.createElement("li"), {
+					textContent: label(e, i),
+					tabIndex: 0
+				});
+				li.dataset.id = e.id;
+				li.addEventListener("click", () => select(li, e));
+				li.addEventListener("keydown", (ev) => {
+					if (ev.key === "Enter") select(li, e);
+				});
+				return li;
+			}));
+		};
+		const close = () => modal.classList.remove("ene-open");
+		openBtn.addEventListener("click", async () => {
+			modal.classList.add("ene-open");
+			chosen = null;
+			applyBtn.disabled = true;
+			diff.replaceChildren();
+			if (entries) {
+				render();
+				return;
+			}
+			list.textContent = "読み込み中…";
+			entries = await fetchHistoryList(eventId);
+			if (entries) render();
+			else list.textContent = "編集履歴を読み込めませんでした";
+		});
+		applyBtn.addEventListener("click", () => {
+			if (!chosen) return;
+			replaceSnapshot(form, chosen.snapshot, placePicker);
+			refresh();
+			close();
+			showNotice(`${historyTimeText(chosen.entry.time)}（${chosen.entry.user}）の内容をフォームに入れました。確認してから「編集完了」で保存してください`);
+		});
+		closeBtn.addEventListener("click", close);
+		modal.querySelector(".ene-modal-close").addEventListener("click", close);
+		modal.addEventListener("click", (e) => {
+			if (e.target === modal) close();
+		});
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && modal.classList.contains("ene-open")) close();
+		});
 	};
 	var KEEP_MS = 2592e6;
 	var EVENT_IMAGE = /\/images\/events\/(\d+)(?:_s)?\.jpg/;
@@ -2517,13 +2734,15 @@
 		});
 		initDuplicateCheck(editId);
 		initSubmitCheck();
+		const refresh = () => {
+			date?.refresh();
+			time?.refresh();
+		};
+		initEditHistory(editId, placePicker, refresh);
 		restoreEditMinutes(editId).finally(() => {
 			editConfirm?.minutesRestored();
 			time?.refresh();
-			initEditDraft(editId, placePicker, () => {
-				date?.refresh();
-				time?.refresh();
-			});
+			initEditDraft(editId, placePicker, refresh);
 		});
 		initEditImagePicker(editId);
 	} else processPendingUpload();

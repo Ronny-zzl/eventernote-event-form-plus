@@ -1,9 +1,8 @@
-import { byId, page } from '../lib/page';
+import { byId } from '../lib/page';
 import { load, save, type FormSnapshot } from '../lib/storage';
-import { readSelectedActors } from './actors';
 import { IMAGE_CHANGE, editBaseline, editChanges } from './editConfirm';
 import type { PlacePicker } from './place';
-import { isBlank, isReturning, restoreSnapshot, takeSnapshot } from './snapshot';
+import { isBlank, isReturning, replaceSnapshot, restoreSnapshot, takeSnapshot } from './snapshot';
 
 // 草稿自动保存：误关标签页、误点后退时，下次打开页面可以恢复。
 // 每 2 秒检查一次表单，有变化就保存；提交后清除。缩略图太大，不保存
@@ -98,9 +97,7 @@ export const initEditDraft = (eventId: string, placePicker: PlacePicker | null, 
       `前回編集中の内容が残っています（${savedAtText(draft.savedAt)}）` +
         (draft.base === base ? '' : '。その後このイベントは更新されています（復元すると、その更新を上書きします）'),
       () => {
-        // 出演者按草稿的人员和顺序重排：先全部去掉
-        for (const actor of readSelectedActors()) page.removeActor(actor.id);
-        restoreSnapshot(form, draft, placePicker);
+        replaceSnapshot(form, draft, placePicker);
         refresh();
       },
       () => put(null))

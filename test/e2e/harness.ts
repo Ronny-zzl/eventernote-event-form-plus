@@ -59,6 +59,14 @@ export const openPage = async (path: string, { html, store = {}, routes = {}, co
     GM_addStyle: () => {},
     GM_getValue: (key: string, fallback: unknown) => (key in store ? structuredClone(store[key]) : fallback),
     GM_setValue: (key: string, value: unknown) => { store[key] = structuredClone(value); },
+    // 用户脚本自己指定的头（如电脑版的 User-Agent）优先
+    GM_xmlhttpRequest: ({ method = 'GET', url, headers = {}, onload, onerror }: {
+      method?: string; url: string; headers?: Record<string, string>;
+      onload?: (res: { status: number; responseText: string }) => void; onerror?: (e: unknown) => void;
+    }) => {
+      siteFetch(new URL(url, BASE), { method, headers: { ...(mobile ? { 'User-Agent': MOBILE_UA } : {}), ...headers } })
+        .then(async (res) => onload?.({ status: res.status, responseText: await res.text() }), onerror);
+    },
     alert: (message: string) => { dialogs.push(message); },
     confirm: (message: string) => { dialogs.push(message); return confirm; },
     fetch: (input: string | URL, { signal, ...init }: RequestInit = {}) => {

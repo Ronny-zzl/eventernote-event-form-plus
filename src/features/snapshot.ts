@@ -52,7 +52,13 @@ export const restoreSnapshot =(form: HTMLFormElement, snapshot: FormSnapshot, pl
   }
 };
 
-export const initFormSnapshot = (placePicker: PlacePicker | null) => {
+// 编辑页：出演者按快照的人员和顺序重排（先全部去掉），再恢复其他字段
+export const replaceSnapshot = (form: HTMLFormElement, snapshot: FormSnapshot, placePicker: PlacePicker | null) => {
+  for (const actor of readSelectedActors()) page.removeActor(actor.id);
+  restoreSnapshot(form, snapshot, placePicker);
+};
+
+export const initFormSnapshot =(placePicker: PlacePicker | null) => {
   const form = byId<HTMLFormElement>('event_form');
   if (!form) return;
   form.addEventListener('submit', () => save('formSnapshot', takeSnapshot(form)));

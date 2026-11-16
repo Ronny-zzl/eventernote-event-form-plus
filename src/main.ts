@@ -7,6 +7,7 @@ import { initDatePicker } from './features/date';
 import { initDraft, initDraftClear, initEditDraft } from './features/draft';
 import { initDuplicateCheck } from './features/duplicateCheck';
 import { initEditConfirm } from './features/editConfirm';
+import { initEditHistory } from './features/history';
 import { refreshEventImages } from './features/imageCache';
 import { initPlacePicker } from './features/place';
 import { initConfirmBackButton, initFormSnapshot } from './features/snapshot';
@@ -63,13 +64,15 @@ if (path === '/events/add/confirm') {
   initAnnounce({ date, time, place: placePicker, actorBulk });
   initDuplicateCheck(editId);
   initSubmitCheck();
+  const refresh = () => {
+    date?.refresh();
+    time?.refresh();
+  };
+  initEditHistory(editId, placePicker, refresh);
   restoreEditMinutes(editId).finally(() => {
     editConfirm?.minutesRestored();
     time?.refresh();
-    initEditDraft(editId, placePicker, () => {
-      date?.refresh();
-      time?.refresh();
-    });
+    initEditDraft(editId, placePicker, refresh);
   });
   initEditImagePicker(editId);
 } else {

@@ -148,6 +148,13 @@
 .ene-sp .ene-modal-box { height: 100%; border-radius: 0; }
 .ene-transfer-help { margin: 0 0 8px; color: #555; }
 .ene-modal-body textarea[spellcheck="false"] { font-family: monospace; font-size: 13px; }
+.ene-history-entry { margin: 0 0 8px; }
+.ene-history-list { list-style: none; margin: 0 0 8px; padding: 0; border: 1px solid #ddd; border-radius: 3px; max-height: 240px; overflow-y: auto; }
+.ene-history-list li { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+.ene-history-list li:last-child { border-bottom: none; }
+.ene-history-list li.ene-active { background: #eef6fb; font-weight: bold; }
+.ene-history-diff p { margin: 0 0 4px; white-space: pre-wrap; word-break: break-all; }
+.ene-history-diff .ene-history-diff-head { color: #555; }
 .ene-bulk-research { display: flex; gap: 4px; margin-top: 4px; }
 .ene-bulk-research input[type="text"] { flex: 1; min-width: 0; margin: 0; }
 .ene-bulk-research .btn { margin: 0; }
