@@ -4,7 +4,7 @@
 // @name:zh-CN         Eventernote 活动登录增强
 // @name:en            Eventernote Add Event Enhancer
 // @namespace          https://github.com/Ronny-zzl/eventernote-event-form-plus
-// @version            0.5.2
+// @version            0.5.3
 // @author             Ronny-zzl
 // @description        イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
 // @description:ja     イベンターノートのイベント登録・編集画面を使いやすくします：会場検索、出演者のまとめて追加、重複登録の確認、時間入力の改善、出演者の並び替え、出演者セット、確認画面からの戻る、サムネイル画像の追加
@@ -33,7 +33,18 @@
 			else (document.head || document.documentElement).appendChild(document.createElement("style")).append(c);
 		})(t);
 	};
-	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:0;display:flex}.ene-presets select{flex:200px;width:auto;min-width:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input[type=text]{flex:1;min-width:160px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-announce-result{flex-wrap:wrap;align-items:center;gap:4px 16px;margin:6px 0 0;display:flex}.ene-announce-result[hidden]{display:none}.ene-announce-result .btn{margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}.ene-duplicate{color:#8a6d3b;background:#fcf8e3;border:1px solid #fbeed5;border-radius:4px;margin:8px 0;padding:8px 12px}.ene-duplicate[hidden]{display:none}.ene-duplicate ul{margin:4px 0 0 20px;padding:0}.ene-sp input.btn{color:#007aff;-webkit-appearance:none;background:#fff;border:1px solid #007aff;border-radius:0;height:30px;margin:2px 0;padding:0 10px;font-size:14px}.ene-sp .ene-time-row input.ene-time{width:80px}.ene-sp .ene-drop img{max-width:100%}.ene-sp .ene-notice{max-width:none;left:10px;right:10px}.ene-modal{z-index:10001;background:#00000073;justify-content:center;align-items:center;padding:16px;display:none;position:fixed;inset:0}.ene-modal.ene-open{display:flex}.ene-modal-box{background:#fff;border-radius:6px;flex-direction:column;width:100%;max-width:720px;max-height:100%;font-size:13px;display:flex;box-shadow:0 6px 24px #0000004d}.ene-modal-head{border-bottom:1px solid #ddd;padding:10px 14px;font-size:15px;font-weight:700}.ene-modal-close{float:right;cursor:pointer;color:#888;font-size:20px;line-height:1}.ene-modal-body{flex:1;padding:10px 14px;overflow-y:auto}.ene-modal-body textarea{box-sizing:border-box;width:100%;margin-bottom:6px}.ene-modal-foot{border-top:1px solid #ddd;justify-content:flex-end;gap:8px;padding:10px 14px;display:flex}.ene-modal-foot .btn{margin-bottom:0}.ene-bulk-bar{flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;display:flex}.ene-bulk-bar .btn{margin-bottom:0}.ene-bulk-bar label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-bulk-bar label input{margin:0}.ene-bulk-summary{color:#666;flex:1;font-size:12px}.ene-bulk-list{margin:0;padding:0;list-style:none}.ene-bulk-row[hidden]{display:none}.ene-bulk-row{border-bottom:1px solid #f0f0f0;align-items:flex-start;gap:8px;padding:6px 4px;display:flex}.ene-bulk-row>input{margin:3px 0 0}.ene-bulk-main{flex:1;min-width:0}.ene-bulk-name{font-weight:700}.ene-bulk-result{color:#555}.ene-bulk-result .ene-suggest-sub{color:#888;margin-left:8px;font-size:11px}.ene-bulk-result select{max-width:100%;margin:2px 0 0}.ene-bulk-result .btn{margin:0 0 0 4px}.ene-bulk-badge{color:#666;background:#eee;border-radius:3px;flex:none;padding:1px 6px;font-size:11px}.ene-bulk-row[data-status=exact] .ene-bulk-badge{color:#3c763d;background:#dff0d8}.ene-bulk-row[data-status=multiple] .ene-bulk-badge,.ene-bulk-row[data-status=candidates] .ene-bulk-badge{color:#8a6d3b;background:#fcf8e3}.ene-bulk-row[data-status=none] .ene-bulk-badge,.ene-bulk-row[data-status=error] .ene-bulk-badge{color:#a94442;background:#f2dede}.ene-bulk-row[data-status=added]{opacity:.6}.ene-sp .ene-modal{padding:0}.ene-sp .ene-modal-box{border-radius:0;height:100%}.ene-bulk-research{gap:4px;margin-top:4px;display:flex}.ene-bulk-research input[type=text]{flex:1;min-width:0;margin:0}.ene-bulk-research .btn{margin:0}input.ene-ctl[type],select.ene-ctl{box-sizing:border-box;vertical-align:middle;height:30px;margin:0}.ene-sp input.ene-ctl[type],.ene-sp select.ene-ctl{height:36px;margin:0;font-size:14px}.ene-sp input.ene-ctl[type=text],.ene-sp select.ene-ctl{background:#fff;border:1px solid #aaa;padding:0 6px}#selected_actors+.ene-search{margin-top:6px}");
+	_css("#selected_actors{margin-left:0;list-style:none}#selected_actors li.ene-actor{background:#fff;border:1px solid #ddd;border-radius:3px;align-items:center;gap:6px;margin-bottom:2px;padding:3px 6px;display:flex}#selected_actors li.ene-dragging{opacity:.4}#selected_actors .ene-handle{cursor:grab;color:#999;-webkit-user-select:none;user-select:none}#selected_actors .ene-name{flex:1}#selected_actors .ene-move{cursor:pointer;color:#08c;-webkit-user-select:none;user-select:none;padding:0 2px}#selected_actors li.ene-selected{background:#eef6fb;border-color:#9cc6e0}#selected_actors .ene-check{margin:0}.ene-actor-tools{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;display:flex}.ene-actor-tools label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-actor-tools label input{margin:0}.ene-actor-tools .btn{margin-bottom:0}.ene-presets{flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:0;display:flex}.ene-presets select{flex:200px;width:auto;min-width:0}.ene-time-row{flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px;display:flex}.ene-time-row input.ene-time{width:70px;margin-bottom:0}.ene-time-row input.ene-time.ene-invalid{background:#fdf0f0;border-color:#b94a48}.ene-time-row .btn{margin-bottom:0}.ene-time-badge{color:#fff;background:#f89406;border-radius:3px;padding:1px 5px;font-size:11px}.ene-time-error{color:#b94a48;font-size:11px}.ene-search{margin-bottom:8px;position:relative}.ene-search-row{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.ene-search-row select{width:auto;margin-bottom:0}.ene-search-row input[type=text]{flex:1;min-width:160px;margin-bottom:0}.ene-suggest{z-index:1000;background:#fff;border:1px solid #ccc;border-radius:3px;max-height:360px;margin:2px 0 0;padding:0;list-style:none;position:absolute;left:0;right:0;overflow-y:auto;box-shadow:0 4px 12px #00000026}.ene-suggest li{cursor:pointer;border-bottom:1px solid #f0f0f0;padding:5px 8px;position:relative}.ene-suggest li.ene-active{background:#eef6fb}.ene-suggest li.ene-dim{opacity:.5}.ene-suggest li.ene-done{color:#999;cursor:default;padding-right:72px}.ene-suggest li.ene-done:after{content:\"追加済み\";border:1px solid #ccc;border-radius:3px;padding:1px 6px;font-size:11px;position:absolute;top:50%;right:8px;transform:translateY(-50%)}.ene-suggest li.ene-heading{cursor:default;color:#888;background:#f7f7f7;font-size:11px}.ene-suggest .ene-suggest-sub{color:#888;font-size:11px;display:block}.ene-place-current{background:#fff;border:1px solid #ddd;border-radius:3px;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;padding:6px 8px;display:flex}.ene-place-current .ene-place-name{font-weight:700}.ene-place-current .ene-place-sub{color:#888;flex:1;font-size:11px}.ene-place-current .btn{margin-bottom:0}.ene-drop{text-align:center;color:#888;cursor:pointer;background:#fafafa;border:2px dashed #bbb;border-radius:4px;padding:14px}.ene-drop.ene-over{color:#08c;background:#eef6fb;border-color:#08c}.ene-drop img{max-width:300px;max-height:200px;margin:0 auto 6px;display:block}.ene-image-note{color:#888;margin-top:4px;font-size:11px}.ene-notice{z-index:10000;color:#3c763d;background:#dff0d8;border:1px solid #d6e9c6;border-radius:4px;max-width:360px;padding:10px 14px;font-size:13px;position:fixed;top:60px;right:20px;box-shadow:0 2px 8px #0003}.ene-notice.ene-error{color:#a94442;background:#f2dede;border-color:#ebccd1}.ene-notice .ene-close{float:right;cursor:pointer;margin-left:10px}.ene-announce{width:95%;margin-bottom:0}.ene-announce-result{flex-wrap:wrap;align-items:center;gap:4px 16px;margin:6px 0 0;display:flex}.ene-announce-result[hidden]{display:none}.ene-announce-result .btn{margin-bottom:0}.ene-date{align-items:center;gap:6px;display:inline-flex}.ene-date input{width:auto;margin-bottom:0}.ene-weekday[data-day=\"0\"]{color:#c00}.ene-weekday[data-day=\"6\"]{color:#06c}.ene-draft{flex-wrap:wrap;align-items:center;gap:8px;display:flex}.ene-draft .btn{margin-bottom:0}.ene-duplicate{color:#8a6d3b;background:#fcf8e3;border:1px solid #fbeed5;border-radius:4px;margin:8px 0;padding:8px 12px}.ene-duplicate[hidden]{display:none}.ene-duplicate ul{margin:4px 0 0 20px;padding:0}.ene-sp input.btn{color:#007aff;-webkit-appearance:none;background:#fff;border:1px solid #007aff;border-radius:0;height:30px;margin:2px 0;padding:0 10px;font-size:14px}.ene-sp .ene-time-row input.ene-time{width:80px}.ene-sp .ene-drop img{max-width:100%}.ene-sp .ene-notice{max-width:none;left:10px;right:10px}.ene-modal{z-index:10001;background:#00000073;justify-content:center;align-items:center;padding:16px;display:none;position:fixed;inset:0}.ene-modal.ene-open{display:flex}.ene-modal-box{background:#fff;border-radius:6px;flex-direction:column;width:100%;max-width:720px;max-height:100%;font-size:13px;display:flex;box-shadow:0 6px 24px #0000004d}.ene-modal-head{border-bottom:1px solid #ddd;padding:10px 14px;font-size:15px;font-weight:700}.ene-modal-close{float:right;cursor:pointer;color:#888;font-size:20px;line-height:1}.ene-modal-body{flex:1;padding:10px 14px;overflow-y:auto}.ene-modal-body textarea{box-sizing:border-box;width:100%;margin-bottom:6px}.ene-modal-foot{border-top:1px solid #ddd;justify-content:flex-end;gap:8px;padding:10px 14px;display:flex}.ene-modal-foot .btn{margin-bottom:0}.ene-bulk-bar{flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;display:flex}.ene-bulk-bar .btn{margin-bottom:0}.ene-bulk-bar label{align-items:center;gap:4px;margin:0;display:inline-flex}.ene-bulk-bar label input{margin:0}.ene-bulk-summary{color:#666;flex:1;font-size:12px}.ene-bulk-list{margin:0;padding:0;list-style:none}.ene-bulk-row[hidden]{display:none}.ene-bulk-row{border-bottom:1px solid #f0f0f0;align-items:flex-start;gap:8px;padding:6px 4px;display:flex}.ene-bulk-row>input{margin:3px 0 0}.ene-bulk-main{flex:1;min-width:0}.ene-bulk-name{font-weight:700}.ene-bulk-result{color:#555}.ene-bulk-result .ene-suggest-sub{color:#888;margin-left:8px;font-size:11px}.ene-bulk-result select{max-width:100%;margin:2px 0 0}.ene-bulk-result .btn{margin:0 0 0 4px}.ene-bulk-badge{color:#666;background:#eee;border-radius:3px;flex:none;padding:1px 6px;font-size:11px}.ene-bulk-row[data-status=exact] .ene-bulk-badge{color:#3c763d;background:#dff0d8}.ene-bulk-row[data-status=multiple] .ene-bulk-badge,.ene-bulk-row[data-status=candidates] .ene-bulk-badge{color:#8a6d3b;background:#fcf8e3}.ene-bulk-row[data-status=none] .ene-bulk-badge,.ene-bulk-row[data-status=error] .ene-bulk-badge{color:#a94442;background:#f2dede}.ene-bulk-row[data-status=added]{opacity:.6}.ene-sp .ene-modal{padding:0}.ene-sp .ene-modal-box{border-radius:0;height:100%}.ene-transfer-help{color:#555;margin:0 0 8px}.ene-modal-body textarea[spellcheck=false]{font-family:monospace;font-size:13px}.ene-bulk-research{gap:4px;margin-top:4px;display:flex}.ene-bulk-research input[type=text]{flex:1;min-width:0;margin:0}.ene-bulk-research .btn{margin:0}input.ene-ctl[type],select.ene-ctl{box-sizing:border-box;vertical-align:middle;height:30px;margin:0}.ene-sp input.ene-ctl[type],.ene-sp select.ene-ctl{height:36px;margin:0;font-size:14px}.ene-sp input.ene-ctl[type=text],.ene-sp select.ene-ctl{background:#fff;border:1px solid #aaa;padding:0 6px}#selected_actors+.ene-search{margin-top:6px}");
+	var showNotice = (message, kind) => {
+		const box = document.createElement("div");
+		box.className = kind === "error" ? "ene-notice ene-error" : "ene-notice";
+		const close = document.createElement("span");
+		close.className = "ene-close";
+		close.textContent = "×";
+		close.addEventListener("click", () => box.remove());
+		box.append(close, message);
+		document.body.append(box);
+		return box;
+	};
 	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
 	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
 	var page = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
@@ -87,6 +98,68 @@
 	var decodeEntities = (text) => text.includes("&") ? parseHtml(text).body.textContent ?? text : text;
 	var load = (key, fallback) => _GM_getValue(key, fallback);
 	var save = (key, value) => _GM_setValue(key, value);
+	var HEADER_RE = /^[#＃]\s*(.+)$/;
+	var ACTOR_RE = /^([0-9０-９]+)\s+(.+)$/;
+	var formatPresets = (presets) => presets.map((p) => [`# ${p.name}`, ...p.actors.map((a) => `${a.id} ${a.name}`)].join("\n")).join("\n\n") + "\n";
+	var parsePresets = (text) => {
+		const presets = [];
+		const errors = [];
+		let current = null;
+		text.split(/\r?\n/).forEach((raw, i) => {
+			const line = raw.trim();
+			if (!line) return;
+			const actor = ACTOR_RE.exec(line);
+			if (actor && current) {
+				const id = actor[1].normalize("NFKC");
+				if (!current.actors.some((a) => a.id === id)) current.actors.push({
+					id,
+					name: actor[2].trim()
+				});
+				return;
+			}
+			const header = actor ? null : HEADER_RE.exec(line);
+			if (!header) {
+				errors.push(i + 1);
+				return;
+			}
+			const name = header[1].trim();
+			const index = presets.findIndex((p) => p.name === name);
+			if (index >= 0) presets.splice(index, 1);
+			current = {
+				name,
+				actors: []
+			};
+			presets.push(current);
+		});
+		return {
+			presets: presets.filter((p) => p.actors.length),
+			errors
+		};
+	};
+	var sameActors = (a, b) => a.actors.length === b.actors.length && a.actors.every((x, i) => x.id === b.actors[i].id && x.name === b.actors[i].name);
+	var mergePresets = (existing, incoming) => {
+		const presets = existing.map((p) => ({ ...p }));
+		const added = [];
+		const replaced = [];
+		const unchanged = [];
+		for (const preset of incoming) {
+			const index = presets.findIndex((p) => p.name === preset.name);
+			if (index < 0) {
+				presets.push(preset);
+				added.push(preset.name);
+			} else if (sameActors(presets[index], preset)) unchanged.push(preset.name);
+			else {
+				presets[index] = preset;
+				replaced.push(preset.name);
+			}
+		}
+		return {
+			presets,
+			added,
+			replaced,
+			unchanged
+		};
+	};
 	var actorId = (li) => li.id.replace(/^actor_/, "");
 	var syncActorOrder = () => {
 		const list = byId("selected_actors");
@@ -301,10 +374,11 @@
     <input type="button" class="btn ene-ctl" value="追加" title="選んだセットの出演者を追加します">
     <input type="button" class="btn ene-ctl" value="現在の出演者を保存" title="今リストにいる出演者をセットとして保存します">
     <input type="button" class="btn ene-ctl" value="削除" title="選んだセットを削除します">
+    <input type="button" class="btn ene-ctl" value="書き出し・読み込み" title="ほかのパソコンやスマートフォンとセットをやり取りします">
   `;
 		list.after(box);
 		const select = box.querySelector("select");
-		const [addBtn, saveBtn, deleteBtn] = box.querySelectorAll("input");
+		const [addBtn, saveBtn, deleteBtn, transferBtn] = box.querySelectorAll("input");
 		const render = (selectedName) => {
 			const presets = loadPresets();
 			select.replaceChildren(new Option(presets.length ? "出演者セットを選んでください" : "（保存済みのセットはありません）", ""), ...presets.map((p, i) => new Option(`${p.name}（${p.actors.length}名）`, String(i), false, p.name === selectedName)));
@@ -342,18 +416,86 @@
 			save("actorPresets", presets);
 			render();
 		});
+		transferBtn.addEventListener("click", () => openPresetTransfer(render));
 		render();
 	};
-	var showNotice = (message, kind) => {
-		const box = document.createElement("div");
-		box.className = kind === "error" ? "ene-notice ene-error" : "ene-notice";
-		const close = document.createElement("span");
-		close.className = "ene-close";
-		close.textContent = "×";
-		close.addEventListener("click", () => box.remove());
-		box.append(close, message);
-		document.body.append(box);
-		return box;
+	var transferModal = null;
+	var openPresetTransfer = (onImport) => {
+		transferModal ??= createPresetTransfer();
+		transferModal.open(onImport);
+	};
+	var createPresetTransfer = () => {
+		const modal = document.createElement("div");
+		modal.className = "ene-modal";
+		modal.innerHTML = `
+    <div class="ene-modal-box" role="dialog" aria-modal="true" aria-label="出演者セットの書き出し・読み込み">
+      <div class="ene-modal-head">出演者セットの書き出し・読み込み<span class="ene-modal-close" title="閉じる">×</span></div>
+      <div class="ene-modal-body">
+        <p class="ene-transfer-help">セットはお使いのブラウザごとに保存されています。ほかのパソコンやスマートフォンで使うには、下の内容をコピーし、移したい先のこの画面に貼り付けて「読み込む」を押してください。同じ名前のセットは上書きされ、それ以外のセットはそのまま残ります。</p>
+        <textarea rows="12" spellcheck="false"></textarea>
+      </div>
+      <div class="ene-modal-foot">
+        <input type="button" class="btn btn-small" value="コピー">
+        <input type="button" class="btn btn-small" value="閉じる">
+        <input type="button" class="btn btn-small btn-primary" value="読み込む">
+      </div>
+    </div>
+  `;
+		document.body.append(modal);
+		const textarea = modal.querySelector("textarea");
+		const [copyBtn, closeBtn, importBtn] = modal.querySelectorAll(".ene-modal-foot input");
+		let onImport = () => {};
+		const close = () => modal.classList.remove("ene-open");
+		const open = (callback) => {
+			onImport = callback;
+			const presets = load("actorPresets", []);
+			textarea.value = presets.length ? formatPresets(presets) : "";
+			textarea.placeholder = "（保存済みのセットはありません）\nほかの端末で書き出した内容をここに貼り付けてください";
+			modal.classList.add("ene-open");
+		};
+		copyBtn.addEventListener("click", async () => {
+			try {
+				await navigator.clipboard.writeText(textarea.value);
+			} catch {
+				textarea.select();
+				if (!document.execCommand("copy")) {
+					alert("コピーできませんでした。内容を選択してコピーしてください");
+					return;
+				}
+			}
+			showNotice("出演者セットをコピーしました");
+		});
+		importBtn.addEventListener("click", () => {
+			const { presets: incoming, errors } = parsePresets(textarea.value);
+			if (errors.length) {
+				alert(`読み込めない行があります（${errors.slice(0, 10).join("・")}${errors.length > 10 ? " ほか" : ""} 行目）。\n「# セット名」の行のあとに「ID 名前」の行を並べてください`);
+				return;
+			}
+			if (!incoming.length) {
+				alert("読み込むセットがありません");
+				return;
+			}
+			const { presets, added, replaced } = mergePresets(load("actorPresets", []), incoming);
+			if (!added.length && !replaced.length) {
+				alert("すべて保存済みのセットと同じ内容です");
+				return;
+			}
+			const lines = [added.length ? `追加：${added.join("、")}` : "", replaced.length ? `上書き：${replaced.join("、")}` : ""].filter(Boolean);
+			if (!confirm(`次のセットを読み込みます。よろしいですか？\n\n${lines.join("\n")}`)) return;
+			save("actorPresets", presets);
+			onImport();
+			close();
+			showNotice(`出演者セットを読み込みました（追加 ${added.length} 件・上書き ${replaced.length} 件）`);
+		});
+		closeBtn.addEventListener("click", close);
+		modal.querySelector(".ene-modal-close").addEventListener("click", close);
+		modal.addEventListener("click", (e) => {
+			if (e.target === modal) close();
+		});
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && modal.classList.contains("ene-open")) close();
+		});
+		return { open };
 	};
 	var normalize$1 = (s) => s.normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 96));
 	var withoutParens$1 = (t) => t.replace(/\([^()]*\)|【[^【】]*】/g, "").trim();

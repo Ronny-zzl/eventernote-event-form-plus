@@ -1,5 +1,7 @@
+import { showNotice } from '../lib/notice';
 import { byId, decodeEntities, page } from '../lib/page';
 import { load, save, type Actor, type ActorPreset } from '../lib/storage';
+import { formatPresets, mergePresets, parsePresets } from './presetText';
 
 const actorId = (li: Element) => li.id.replace(/^actor_/, '');
 
@@ -237,10 +239,11 @@ export const initActorPresets = () => {
     <input type="button" class="btn ene-ctl" value="追加" title="選んだセットの出演者を追加します">
     <input type="button" class="btn ene-ctl" value="現在の出演者を保存" title="今リストにいる出演者をセットとして保存します">
     <input type="button" class="btn ene-ctl" value="削除" title="選んだセットを削除します">
+    <input type="button" class="btn ene-ctl" value="書き出し・読み込み" title="ほかのパソコンやスマートフォンとセットをやり取りします">
   `;
   list.after(box);
   const select = box.querySelector('select')!;
-  const [addBtn, saveBtn, deleteBtn] = box.querySelectorAll('input');
+  const [addBtn, saveBtn, deleteBtn, transferBtn] = box.querySelectorAll('input');
 
   const render = (selectedName?: string) => {
     const presets = loadPresets();
@@ -285,5 +288,95 @@ export const initActorPresets = () => {
     render();
   });
 
+  transferBtn.addEventListener('click', () => openPresetTransfer(render));
+
   render();
+};
+
+// ---- セットの書き出し・読み込み：GM 存储按设备分开，用复制粘贴在电脑和手机之间同步 ----
+
+let transferModal: { open: (onImport: () => void) => void } | null = null;
+
+const openPresetTransfer = (onImport: () => void) => {
+  transferModal ??= createPresetTransfer();
+  transferModal.open(onImport);
+};
+
+const createPresetTransfer = () => {
+  const modal = document.createElement('div');
+  modal.className = 'ene-modal';
+  modal.innerHTML = `
+    <div class="ene-modal-box" role="dialog" aria-modal="true" aria-label="出演者セットの書き出し・読み込み">
+      <div class="ene-modal-head">出演者セットの書き出し・読み込み<span class="ene-modal-close" title="閉じる">×</span></div>
+      <div class="ene-modal-body">
+        <p class="ene-transfer-help">セットはお使いのブラウザごとに保存されています。ほかのパソコンやスマートフォンで使うには、下の内容をコピーし、移したい先のこの画面に貼り付けて「読み込む」を押してください。同じ名前のセットは上書きされ、それ以外のセットはそのまま残ります。</p>
+        <textarea rows="12" spellcheck="false"></textarea>
+      </div>
+      <div class="ene-modal-foot">
+        <input type="button" class="btn btn-small" value="コピー">
+        <input type="button" class="btn btn-small" value="閉じる">
+        <input type="button" class="btn btn-small btn-primary" value="読み込む">
+      </div>
+    </div>
+  `;
+  document.body.append(modal);
+  const textarea = modal.querySelector('textarea')!;
+  const [copyBtn, closeBtn, importBtn] = modal.querySelectorAll<HTMLInputElement>('.ene-modal-foot input');
+  let onImport = () => {};
+
+  const close = () => modal.classList.remove('ene-open');
+  const open = (callback: () => void) => {
+    onImport = callback;
+    // 从没保存过时不导出示例セット
+    const presets = load('actorPresets', []);
+    textarea.value = presets.length ? formatPresets(presets) : '';
+    textarea.placeholder = '（保存済みのセットはありません）\nほかの端末で書き出した内容をここに貼り付けてください';
+    modal.classList.add('ene-open');
+  };
+
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(textarea.value);
+    } catch {
+      // clipboard API 不可用时（旧浏览器等）退回到选中 + execCommand
+      textarea.select();
+      if (!document.execCommand('copy')) {
+        alert('コピーできませんでした。内容を選択してコピーしてください');
+        return;
+      }
+    }
+    showNotice('出演者セットをコピーしました');
+  });
+
+  importBtn.addEventListener('click', () => {
+    const { presets: incoming, errors } = parsePresets(textarea.value);
+    if (errors.length) {
+      alert(`読み込めない行があります（${errors.slice(0, 10).join('・')}${errors.length > 10 ? ' ほか' : ''} 行目）。\n「# セット名」の行のあとに「ID 名前」の行を並べてください`);
+      return;
+    }
+    if (!incoming.length) {
+      alert('読み込むセットがありません');
+      return;
+    }
+    const { presets, added, replaced } = mergePresets(load('actorPresets', []), incoming);
+    if (!added.length && !replaced.length) {
+      alert('すべて保存済みのセットと同じ内容です');
+      return;
+    }
+    const lines = [
+      added.length ? `追加：${added.join('、')}` : '',
+      replaced.length ? `上書き：${replaced.join('、')}` : '',
+    ].filter(Boolean);
+    if (!confirm(`次のセットを読み込みます。よろしいですか？\n\n${lines.join('\n')}`)) return;
+    save('actorPresets', presets);
+    onImport();
+    close();
+    showNotice(`出演者セットを読み込みました（追加 ${added.length} 件・上書き ${replaced.length} 件）`);
+  });
+
+  closeBtn.addEventListener('click', close);
+  modal.querySelector('.ene-modal-close')!.addEventListener('click', close);
+  modal.addEventListener('click', (e) => { if (e.target === modal) close(); }); // 点背景关闭
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('ene-open')) close(); });
+  return { open };
 };

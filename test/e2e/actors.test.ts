@@ -71,6 +71,24 @@ describe.skipIf(!loggedIn)('出演者', () => {
     expect(inSync(p)).toBe(true);
   });
 
+  test('出演者セット：書き出し・読み込み（同名は上書き、ほかは残す）', async () => {
+    const store: Record<string, unknown> = { actorPresets: [{ name: 'A', actors: [{ id: '1', name: '古い' }] }, { name: 'B', actors: [{ id: '2', name: 'B' }] }] };
+    const { p } = await withActors(store);
+    p.click(p.$$('.ene-presets input').at(-1)!);
+    const textarea = p.$<HTMLTextAreaElement>('.ene-modal.ene-open textarea');
+    expect(textarea.value).toBe('# A\n1 古い\n\n# B\n2 B\n');
+
+    textarea.value = '# A\n3 新しい\n\n# C\n4 C\n';
+    const [, , importBtn] = p.$$<HTMLInputElement>('.ene-modal.ene-open .ene-modal-foot input');
+    p.click(importBtn);
+    expect(p.dialogs.at(-1)).toContain('追加：C\n上書き：A');
+    expect(store.actorPresets).toEqual([
+      { name: 'A', actors: [{ id: '3', name: '新しい' }] }, { name: 'B', actors: [{ id: '2', name: 'B' }] }, { name: 'C', actors: [{ id: '4', name: 'C' }] },
+    ]);
+    expect(p.$$<HTMLOptionElement>('.ene-presets option').map((o) => o.text)).toContain('C（1名）');
+    expect(p.$$('.ene-modal.ene-open')).toHaveLength(0);
+  });
+
   test('検索：一致度順、続けて追加、追加済み、最近追加した出演者', async () => {
     const store: Record<string, unknown> = {};
     const { p } = await withActors(store);

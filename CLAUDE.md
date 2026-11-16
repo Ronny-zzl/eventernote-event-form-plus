@@ -3,7 +3,7 @@
 Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tampermonkey 用户脚本。
 
 - 仓库：https://github.com/Ronny-zzl/eventernote-event-form-plus （公开，MIT）
-- 当前已发布版本：`0.5.2`（已打 `v0.5.2` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
+- 当前已发布版本：`0.5.3`（已打 `v0.5.3` 标签并推送，GitHub Release 附更新说明；Greasy Fork 通过 webhook 自动同步）
 
 ## 工程结构
 
@@ -80,6 +80,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
   - 脚本对策（`features/imageRules.ts`）：选图时长边不超过 700 就用 canvas 放大到 701；编辑页不选新图、有链接时，把 S3 上现在的图（放大后）作为 thumbnail_image 一起提交，防止被重新生成（用户决定：没选图就是不想改图，自动生成的大图因此缩到 700 也可以接受；曾做过「現在の画像を残す」勾选框，被否决）
   - 用 Node 的 FormData 发送空 Blob 作为 file 栏时 500（浏览器的空 file 栏没问题，原因未查）
 - 编辑历史 API：`GET /api/events/history?event_history_id=…`（活动页里 `showHistory(id)` 的 id）
+  - 2026-11-16 调查：活动页「イベント登録/最終更新履歴」列出每次保存（用户、时间、`showHistory(id)`，默认只显示最新一条，「編集履歴を全て表示する」展开）。每条历史是**保存后的完整快照**（event_name / event_date / 时间 / actor_id / place_id / link / description / hashtag / actors / place / edited_at 等），不是差分；网站的弹窗也只是逐项显示快照，不标出改了什么。图片不在历史里
 
 ### 出演者条目（2026-10-27 调查）
 - `/actors/{id}/edit` → POST `/actors/{id}/edit/complete`：只有 名前 / よみがな / 検索キーワード（逗号分隔，搜索 API 的 keyword 字段）/ 性別。没有合并、删除功能；问い合わせ（Google 表单）可以申请删除，但运营方实际上几乎不删（ID 没有空缺，`31246【重複】…` 留了多年）
@@ -109,6 +110,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 
 1. **已选出演者列表**（`initActorList`）：拖动 ☰ 或 ▲▼ 排序；只有 ☰ 可拖动（名字可选中复制）；复选框（Shift+点击选范围）选中多人，列表上方工具栏可成组 ▲▼、删除（多人时确认，调用页面的 `removeActor`），用全选框全选 / 清除；按钮用 visibility 隐藏以免工具栏高度变化；拖动选中的行时整组移动。调整 DOM 后同步 `unsafeWindow.selected_actors` 和 `#actor_ids`
 2. **出演者セット**：把已选出演者存为组合（`GM_setValue('actorPresets')`），从没保存过时默认显示示例セット「前橋ウィッチーズ」（`defaultPresets`，删光后存的是 `[]`，不会再出现），一键添加；列表里已有セット第一项（团体名）时，新成员插在它（及紧随其后的已有成员）后面，否则追加到末尾
+   - 「書き出し・読み込み」（0.5.3）：GM 存储按设备分开，用文字复制粘贴同步（纯函数 `presetText.ts`）。格式是「# セット名」+「ID 名前」行；读入时同名覆盖、其他保留；从没保存过时不导出示例セット
    - 1、2 在登录页和编辑页都启用（编辑页从 0.2.2 起；已有出演者由内联脚本 `addActor(数字ID, 名字)` 加入，结构与登录页相同）
 3. **确认页「戻って修正する」**：登录页提交时存快照（`formSnapshot`），跳回 `/events/add?ene_restore=1` 后恢复全部字段
 4. **登录页缩略图**：拖入 / Ctrl+V / 选文件（`createImageDrop` 组件）→ `draftImage` → 确认页提交时转为 `pendingUpload`（30 分钟有效）→ 完成后在完成页链接或活动页 URL 找到新活动 ID（完成页不依赖结构：先取文字含活动名的活动链接，再按页面顺序取其他的，最多 5 个；手机版完成页没有 `.page`，之前因此什么都不做），**核对活动名和会场**；有链接时先轮询 S3 等网站自动生成的图片出现（最多 60 秒），再用编辑页原样提交 + `thumbnail_image`，最后用 `Last-Modified` 确认已被替换。0.2.1 起；494918 实测：登录 13:03:54 → 等待后 13:04:00 上传 → 没有再被覆盖
@@ -135,7 +137,8 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 ### 测试状态
 - 用户实际试用过：登录页图片自动上传（「看起来成功了」）
 - 编辑页的重建表单逻辑用保存的编辑页 HTML + jsdom 离线验证过（字段与原值一致）
-- 其他功能只做过语法检查，未见用户反馈问题；编辑页图片框尚未确认
+- 编辑页图片框：用户在实际使用中确认没问题（2026-11-16）
+- 其他功能只做过语法检查，未见用户反馈问题
 
 ## 时间输入改进（0.2.0 已发布）
 
@@ -153,7 +156,7 @@ Eventernote（https://www.eventernote.com/ ）活动登录页 / 编辑页的 Tam
 ## 其他想法（未做）
 
 - 登录后检查自动生成的缩略图是否是网页截图（1000×1000），是的话提示去编辑页设置图片：用户决定先放着
-- 用户不要的：登录后自动参加登录（`notes/add`）、关联链接清理（去掉跟踪参数）、终演时间自动补全的提示、第一个链接是 X 时的提醒（实测 x.com 多半能取到推文的图，见「图片」）
+- 用户不要的：登录后自动参加登录（`notes/add`）、关联链接清理（去掉跟踪参数）、终演时间自动补全的提示、第一个链接是 X 时的提醒（实测 x.com 多半能取到推文的图，见「图片」）、昼夜公演 / 巡演的连续登录（网站自带的复制登录已够用）
 
 ## 调试网站的方法（开发环境）
 
